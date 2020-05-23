@@ -34,6 +34,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class IndexController {
 
+    /**
+     * Serve the index page of Self.
+     * @return Index page.
+     */
     @GetMapping("/")
     public String index() {
         return "index.html";

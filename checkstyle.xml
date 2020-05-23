@@ -127,7 +127,6 @@
         <module name="FinalClass"/>
         <module name="InterfaceIsType"/>
         <module name="HideUtilityClassConstructor"/>
-        <module name="DesignForExtension"/>
         <module name="MutableException"/>
         <module name="ThrowsCount" />
         <module name="InnerTypeLast"/>
