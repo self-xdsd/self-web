@@ -1,0 +1,8 @@
+os:
+  - linux
+language: java
+jdk:
+  - openjdk11
+script:
+  - set -e
+  - mvn clean install # -Pcheckstyle,itcases -PtestCoverage jacoco:report coveralls:report
