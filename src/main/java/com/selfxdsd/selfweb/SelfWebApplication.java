@@ -30,12 +30,16 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @checkstyle HideUtilityClassConstructor (100 lines)
  */
 @SpringBootApplication
 public class SelfWebApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SelfWebApplication.class, args);
-	}
-
+    /**
+     * Main method entry point.
+     * @param args Command-line args.
+     */
+    public static void main(final String[] args) {
+        SpringApplication.run(SelfWebApplication.class, args);
+    }
 }

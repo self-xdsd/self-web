@@ -4,7 +4,7 @@ architect:
   - amihaiemil
 merge:
   script: |-
-    mvn clean install
+    mvn clean install -Pcheckstyle
 deploy:
   script: |-
     echo 'Nothing to deploy yet'

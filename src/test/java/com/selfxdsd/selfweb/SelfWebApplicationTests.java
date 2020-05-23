@@ -34,8 +34,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class SelfWebApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    /**
+     * SpringBoot webapp can start.
+     */
+    @Test
+    void contextLoads() { }
 
 }
