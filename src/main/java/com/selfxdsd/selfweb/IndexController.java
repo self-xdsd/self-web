@@ -22,25 +22,21 @@
  */
 package com.selfxdsd.selfweb;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
- * Spring Boot entry point.
+ * Controller for the index/landing page.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @checkstyle HideUtilityClassConstructor (100 lines)
  */
-@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
-public class SelfWebApplication {
+@Controller
+public class IndexController {
 
-    /**
-     * Main method entry point.
-     * @param args Command-line args.
-     */
-    public static void main(final String[] args) {
-        SpringApplication.run(SelfWebApplication.class, args);
+    @GetMapping("/")
+    public String index() {
+        return "index.html";
     }
+
 }
