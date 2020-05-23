@@ -32,7 +32,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @since 0.0.1
  */
 @SpringBootTest
-class SelfWebApplicationTests {
+class SelfWebApplicationITCase {
 
     /**
      * SpringBoot webapp can start.
