@@ -58,10 +58,7 @@ public class SelfWebApplication extends WebSecurityConfigurerAdapter {
         @AuthenticationPrincipal
         final OAuth2User principal
     ) {
-        return Collections.singletonMap(
-            "login",
-            principal.getAttribute("login")
-        );
+        return principal.getAttributes();
     }
 
     @Override
