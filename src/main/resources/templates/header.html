@@ -3,7 +3,7 @@
 <header id="header" th:fragment="header">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">
-            <img src="images/self-xdsd.png" width="30" height="30" class="d-inline-block align-top" alt="">
+            <img src="images/self-xdsd.png" width="35" height="35" class="d-inline-block align-top" alt="">
             Self XDSD
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,10 +34,24 @@
                 <div class="container unauthenticated">
                     <a class="btn btn-outline-primary" href="/oauth2/authorization/github">Github Login</a>
                 </div>
+
                 <div class="container authenticated" style="display:none">
-                    Logged in as: <span id="user"></span>
-                    <div>
-                        <button onClick="logout()" class="btn btn-primary">Logout</button>
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="avatarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img
+                                id="user_avatar"
+                                src="images/user_avatar.jpg"
+                                width="40"
+                                height="40"
+                                class="d-inline-block align-top"
+                                alt="User avatar">
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="#">Settings</a>
+                            <a class="dropdown-item" href="#">Repos</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#" onclick="logout()">Sign Out</a>
+                        </div>
                     </div>
                 </div>
             </div>

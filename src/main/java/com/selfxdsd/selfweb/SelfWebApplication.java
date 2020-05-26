@@ -34,7 +34,6 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -58,10 +57,7 @@ public class SelfWebApplication extends WebSecurityConfigurerAdapter {
         @AuthenticationPrincipal
         final OAuth2User principal
     ) {
-        return Collections.singletonMap(
-            "login",
-            principal.getAttribute("login")
-        );
+        return principal.getAttributes();
     }
 
     @Override

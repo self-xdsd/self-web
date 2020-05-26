@@ -11,6 +11,7 @@
     <script type="text/javascript">
         $.get("/user", function(data) {
             $("#user").html(data.login);
+            $("#user_avatar").attr("src",data.avatar_url);
             $(".unauthenticated").hide()
             $(".authenticated").show()
         });
