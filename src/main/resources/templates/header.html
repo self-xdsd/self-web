@@ -1,25 +1,47 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <header id="header" th:fragment="header">
-    <h1 id="logo" class="logo">
-        <a href="/">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">
+            <img src="images/self-xdsd.png" width="30" height="30" class="d-inline-block align-top" alt="">
             Self XDSD
         </a>
-    </h1>
-    <nav id="navigation" class="navigation ">
-        <!-- ul with section links -->
-    </nav>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <div id="logins">
-        <div class="container unauthenticated">
-            <a class="btn btn-outline-primary" href="/oauth2/authorization/github">Github Login</a>
-        </div>
-        <div class="container authenticated" style="display:none">
-            Logged in as: <span id="user"></span>
-            <div>
-                <button onClick="logout()" class="btn btn-primary">Logout</button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Dropdown
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                </li>
+            </ul>
+            <div id="logins" class="form-inline my-2 my-lg-0">
+                <div class="container unauthenticated">
+                    <a class="btn btn-outline-primary" href="/oauth2/authorization/github">Github Login</a>
+                </div>
+                <div class="container authenticated" style="display:none">
+                    Logged in as: <span id="user"></span>
+                    <div>
+                        <button onClick="logout()" class="btn btn-primary">Logout</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </nav>
 </header>
 </html>
