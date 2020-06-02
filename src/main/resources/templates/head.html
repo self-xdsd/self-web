@@ -5,12 +5,13 @@
     <link rel="icon" href="images/self-xdsd.png">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/main.css"/>
     <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
     <script type="text/javascript">
         $.get("/user", function(data) {
-            $("#user").html(data.login);
+            $("#user_login").html(data.login);
             $("#user_avatar").attr("src",data.avatar_url);
             $(".unauthenticated").hide()
             $(".authenticated").show()

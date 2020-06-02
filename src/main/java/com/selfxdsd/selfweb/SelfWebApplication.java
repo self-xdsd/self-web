@@ -63,10 +63,16 @@ public class SelfWebApplication extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         http.authorizeRequests(
-            link -> link.antMatchers("/", "/images/*", "/error", "/webjars/**")
-                .permitAll()
-                .anyRequest()
-                .authenticated()
+            link -> link.antMatchers(
+                "/",
+                "/images/*",
+                "/css/*",
+                "/error",
+                "/webjars/**"
+            )
+            .permitAll()
+            .anyRequest()
+            .authenticated()
         ).exceptionHandling(
             error -> error.authenticationEntryPoint(
                 new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)

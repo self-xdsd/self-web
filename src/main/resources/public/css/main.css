@@ -1,0 +1,24 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto);
+
+body {
+  font-family:"Roboto", "Times New Roman", serif;
+}
+
+.padding-header-navbar {
+    padding-top: 10px;
+    padding-right: 10%;
+    padding-bottom: 10px;
+    padding-left: 10%;
+}
+
+.btn-outline-primary {
+    color: #701516;
+    border-color: #701516;
+}
+
+a.btn-outline-primary:hover {
+    color: white;
+    border-color: #701516;
+    background-color: #701516;
+}
+
