@@ -3,7 +3,12 @@
 <head th:replace="head.html :: head"></head>
 <body>
 <header th:replace="header.html :: header"></header>
-<p>Repositories page!</p>
+<main class="container" role="main">
+    <article class="mainContainer">
+        <ul id="repos"></ul>
+    </article>
+</main>
 <footer th:replace="footer.html :: footer"></footer>
 </body>
+<script src="/js/getPublicRepos.js"></script>
 </html>
