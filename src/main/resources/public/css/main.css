@@ -3,7 +3,20 @@
 body {
   font-family:"Roboto", "Times New Roman", serif;
 }
+header {
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: #701516;
+}
 
+footer {
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-top-color: #701516;
+}
+ul {
+    list-style: none;
+}
 .padding-header-navbar {
     padding-top: 10px;
     padding-right: 10%;
@@ -22,3 +35,7 @@ a.btn-outline-primary:hover {
     background-color: #701516;
 }
 
+.checkmark {
+    width: 20px;
+    vertical-align: middle;
+}
