@@ -39,6 +39,9 @@ public class ProjectsController {
 
     /**
      * Serve a Project's page.
+     * @param owner The owner's Username.
+     * @param name The repo's name.
+     * @param user Authenticated user.
      * @return Project page.
      */
     @GetMapping("/github/{owner}/{name}")
