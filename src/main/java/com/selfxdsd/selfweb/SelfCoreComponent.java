@@ -22,30 +22,53 @@
  */
 package com.selfxdsd.selfweb;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import com.selfxdsd.api.*;
+import com.selfxdsd.core.SelfCore;
+import com.selfxdsd.storage.MySql;
+import com.selfxdsd.storage.SelfJooq;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.SessionScope;
 
 /**
- * Projects controller.
+ * Self Core component.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-@Controller
-public class ProjectsController {
+@Component
+@SessionScope
+public class SelfCoreComponent implements Self {
 
     /**
-     * Serve a Project's page.
-     * @param owner The owner's Username.
-     * @param name The repo's name.
-     * @return Project page.
+     * Self's core.
      */
-    @GetMapping("/github/{owner}/{name}")
-    public String project(
-        @PathVariable("owner") final String owner,
-        @PathVariable("name") final String name
-    ) {
-        return "project.html";
+    private final Self core = new SelfCore(
+        new SelfJooq(
+            new MySql(
+                System.getenv("db.url"),
+                System.getenv("db.user"),
+                System.getenv("db.password")
+            )
+        )
+    );
+
+    @Override
+    public User login(final Login login) {
+        return this.core.login(login);
+    }
+
+    @Override
+    public ProjectManagers projectManagers() {
+        return this.core.projectManagers();
+    }
+
+    @Override
+    public Projects projects() {
+        return this.core.projects();
+    }
+
+    @Override
+    public void close() throws Exception {
+        this.core.close();
     }
 }

@@ -16,9 +16,43 @@
 
 	<properties>
 		<java.version>11</java.version>
-	</properties>
+        <self.core.version>0.0.8</self.core.version>
+        <self.storage.version>0.0.3</self.storage.version>
+    </properties>
 
 	<dependencies>
+        <dependency>
+            <groupId>com.selfxdsd</groupId>
+            <artifactId>self-api</artifactId>
+            <version>${self.core.version}</version>
+            <exclusions> <!--Comes from Yasson JSON-B-->
+                <exclusion>
+                    <groupId>javax.json</groupId>
+                    <artifactId>javax.json-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.selfxdsd</groupId>
+            <artifactId>self-core-impl</artifactId>
+            <version>${self.core.version}</version>
+            <exclusions> <!--Comes from Yassom JSON-B-->
+                <exclusion>
+                    <groupId>org.glassfish</groupId>
+                    <artifactId>javax.json</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse</groupId>
+            <artifactId>yasson</artifactId>
+            <version>1.0.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.selfxdsd</groupId>
+            <artifactId>self-storage</artifactId>
+            <version>${self.storage.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-oauth2-client</artifactId>
@@ -100,7 +134,6 @@
                                     <encoding>UTF-8</encoding>
                                     <consoleOutput>true</consoleOutput>
                                     <failsOnError>true</failsOnError>
-                                    <linkXRef>false</linkXRef>
                                 </configuration>
                                 <goals>
                                     <goal>check</goal>
@@ -166,4 +199,11 @@
             </build>
         </profile>
     </profiles>
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>Self Core on Github Packages</name>
+            <url>https://maven.pkg.github.com/self-xdsd/self-core</url>
+        </repository>
+    </repositories>
 </project>
