@@ -12,7 +12,7 @@
     <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
     <script type="text/javascript">
-        $.get("/user", function(data) {
+        $.get("/api/users/self", function(data) {
             $("#user_login").html(data.login);
             $("#user_avatar").attr("src",data.avatar_url);
             $(".unauthenticated").hide()
