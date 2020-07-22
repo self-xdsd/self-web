@@ -66,6 +66,7 @@ public class SelfWebApplication extends WebSecurityConfigurerAdapter {
             link -> link.antMatchers(
                 "/",
                 "/github/*/*",
+                "/api/projects/github/*/*",
                 "/images/*",
                 "/images/illustrations/*",
                 "/css/*",
