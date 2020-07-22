@@ -67,6 +67,7 @@ public class SelfWebApplication extends WebSecurityConfigurerAdapter {
                 "/",
                 "/github/*/*",
                 "/images/*",
+                "/images/illustrations/*",
                 "/css/*",
                 "/error",
                 "/webjars/**"
