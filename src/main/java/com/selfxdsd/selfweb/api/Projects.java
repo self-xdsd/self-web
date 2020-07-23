@@ -22,6 +22,9 @@
  */
 package com.selfxdsd.selfweb.api;
 
+import com.selfxdsd.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,20 +42,45 @@ import javax.json.JsonObject;
 public class Projects extends BaseApiController {
 
     /**
-     * Serve a Project's page.
-     * @param owner The owner's Username.
-     * @param name The repo's name.
-     * @return Project page.
+     * Self's core.
+     */
+    private final Self core;
+
+    /**
+     * Ctor.
+     * @param core Self's core.
+     */
+    @Autowired
+    public Projects(final Self core) {
+        this.core = core;
+    }
+
+    /**
+     * Get a Github project in JSON format.
+     * @param owner Owner of the repo (username or org name).
+     * @param name Simple name of the repo.
+     * @return Json response or NO CONTENT if the project is not found.
      */
     @GetMapping("/projects/github/{owner}/{name}")
-    public JsonObject project(
+    public ResponseEntity<JsonObject> project(
         @PathVariable("owner") final String owner,
         @PathVariable("name") final String name
     ) {
-        return Json.createObjectBuilder()
-            .add("owner", owner)
-            .add("name", name)
-            .build();
+        final Project found = this.core.projects().getProjectById(
+            owner + "/" + name, Provider.Names.GITHUB
+        );
+        final ResponseEntity<JsonObject> response;
+        if(found == null) {
+            response = ResponseEntity.noContent().build();
+        } else {
+            response = ResponseEntity.ok(
+                Json.createObjectBuilder()
+                    .add("repoFullName", found.repoFullName())
+                    .add("provider", found.provider())
+                    .build()
+            );
+        }
+        return response;
     }
 
 }
