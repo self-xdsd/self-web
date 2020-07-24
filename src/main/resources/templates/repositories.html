@@ -4,9 +4,39 @@
 <body>
 <header th:replace="header.html :: header"></header>
 <main class="container" role="main">
-    <article class="mainContainer">
-        <ul id="repos"></ul>
-    </article>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Personal Repos</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                    <table id="repos" class="display">
+                        <thead>
+                        <tr>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--<article class="mainContainer">
+        <table id="repos" class="display">
+            <thead>
+            <tr>
+                <th>Repositories</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </article>-->
 </main>
 <footer th:replace="footer.html :: footer"></footer>
 </body>

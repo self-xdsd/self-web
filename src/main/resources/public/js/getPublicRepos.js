@@ -1,10 +1,9 @@
 $.get(
-    "/user",
+    "/api/users/self",
     function(data) {
       $.get(
           "https://api.github.com/users/" + data.login + "/repos",
           function(repos) {
-              console.log(repos);
               repos.sort(
                   function(one, other) {
                       if(one.fork == true) {
@@ -17,9 +16,10 @@ $.get(
                   }
               ).forEach(
                   function(repo){
-                      $("#repos").append(repoAsLi(repo));
+                      $("#repos").find("tbody").append(repoAsTableRow(repo));
                   }
               )
+              $('#repos').dataTable();
           }
       )
     }
@@ -28,8 +28,8 @@ $.get(
 /**
  * Wrap a repo's information between <li> tags, with anchor.
  */
-function repoAsLi(repo) {
-    return "<li>" +
+function repoAsTableRow(repo) {
+    return "<tr><td>" +
         repo.full_name
-    + "</li>"
+    + "</td></tr>"
 }
