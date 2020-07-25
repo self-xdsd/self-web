@@ -3,7 +3,7 @@
 body {
   font-family:"Roboto", "Times New Roman", serif;
 }
-header {
+#header {
     border-bottom-style: solid;
     border-bottom-width: 1px;
     border-bottom-color: #701516;

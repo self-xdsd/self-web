@@ -3,74 +3,78 @@
 <head th:replace="head.html :: head"></head>
 <body>
 <header th:replace="header.html :: header"></header>
-<main class="container" role="main">
-    <div id="accordion">
-        <div class="card">
-            <div class="card-header" id="headingOne">
-                <h5 class="mb-0">
-                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        Personal Repositories
-                    </button>
-                </h5>
-            </div>
 
-            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
-                            <table id="repos" class="display">
-                                <thead>
-                                <tr>
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
+<article class="container" role="main">
+    <header class="profile-header">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Special title treatment</h5>
+                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+            <div class="card-footer">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                        <button class="nav-link active" role="button" id="personalReposButton">Personal Repos</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" role="button" id="orgReposButton">Organization Repos</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+        <div class="collapse multi-collapse show" id="personalRepos">
+            <div class="card card-body">
+                <div class="table-responsive">
+                    <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                        <table id="repos" class="display">
+                            <thead>
+                            <tr>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="card">
-            <div class="card-header" id="headingTwo">
-                <h5 class="mb-0">
-                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                        Organization Repos
-                    </button>
-                </h5>
-            </div>
-            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                <div class="card-body">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                </div>
+        <div class="collapse multi-collapse" id="orgRepos">
+            <div class="card card-body">
+                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
             </div>
         </div>
-    </div>
-
-
-    <!--<div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Personal Repos</h6>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
-                    <table id="repos" class="display">
-                        <thead>
-                        <tr>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>-->
-</main>
+</article>
 <footer th:replace="footer.html :: footer"></footer>
 </body>
 <script src="/js/getPublicRepos.js"></script>
+<script>
+    $(document).ready(
+        function () {
+            $("#personalReposButton").on(
+                "click",
+                function(){
+                    $(this).addClass("active");
+                    $("#personalRepos").addClass("show");
+
+                    $("#orgReposButton").removeClass("active");
+                    $("#orgRepos").removeClass("show");
+                }
+            );
+
+            $("#orgReposButton").on(
+                "click",
+                function(){
+                    $(this).addClass("active");
+                    $("#orgRepos").addClass("show");
+
+                    $("#personalReposButton").removeClass("active");
+                    $("#personalRepos").removeClass("show");
+                }
+            );
+        }
+    )
+</script>
 </html>
