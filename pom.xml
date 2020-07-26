@@ -16,8 +16,8 @@
 
 	<properties>
 		<java.version>11</java.version>
-        <self.core.version>0.0.9</self.core.version>
-        <self.storage.version>0.0.3</self.storage.version>
+        <self.core.version>0.0.11</self.core.version>
+        <self.storage.version>0.0.4</self.storage.version>
     </properties>
 
 	<dependencies>

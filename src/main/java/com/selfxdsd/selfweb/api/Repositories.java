@@ -26,17 +26,21 @@ import com.selfxdsd.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.json.Json;
-import javax.json.JsonObject;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 
 /**
  * Repositories.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #33:60min Design the front-end part, similarly to how
+ *  we already read and display the public repos. Don't forget to
+ *  add a tooltip advising the user to go to Github Settings and
+ *  grant Org Access if they do not see all the repos.
  */
 @RestController
 public class Repositories extends BaseApiController {
@@ -53,6 +57,7 @@ public class Repositories extends BaseApiController {
 
     /**
      * Ctor.
+     * @param login User's login.
      * @param core Self's core.
      */
     @Autowired
@@ -70,15 +75,24 @@ public class Repositories extends BaseApiController {
      * @return ResponseEntity.
      */
     @GetMapping("/repositories/orgs")
-    public ResponseEntity<JsonObject> organizationRepos() {
-        final Organizations orgs = this.core.login(this.login).organizations();
+    public ResponseEntity<JsonArray> organizationRepos() {
+        JsonArrayBuilder reposBuilder = Json.createArrayBuilder();
+        final Organizations orgs = this.core
+            .login(this.login)
+            .provider()
+            .organizations();
         for(final Organization org : orgs) {
-            System.out.println("ORGANIZATION: " + org.organizationId());
             for(final Repo repo : org.repos()) {
-                System.out.println("REPO: " + repo.fullName());
+                reposBuilder = reposBuilder.add(repo.json());
             }
         }
-        final ResponseEntity<JsonObject> response = null;
+        final JsonArray repos = reposBuilder.build();
+        final ResponseEntity<JsonArray> response;
+        if(repos.isEmpty()){
+            response = ResponseEntity.noContent().build();
+        } else {
+            response = ResponseEntity.ok(repos);
+        }
         return response;
     }
 }
