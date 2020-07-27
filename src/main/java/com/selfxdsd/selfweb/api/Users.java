@@ -46,6 +46,10 @@ public class Users extends BaseApiController {
      */
     private User user;
 
+    /**
+     * Constructor.
+     * @param user Authenticated User.
+     */
     @Autowired
     public Users(final User user) {
         this.user = user;
