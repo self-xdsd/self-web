@@ -1,3 +1,4 @@
+$("#loadingOrgRepos").show();
 $.get(
     "/api/repositories/orgs",
     function(repos) {
@@ -16,6 +17,7 @@ $.get(
                 $("#orgReposTable").find("tbody").append(repoAsTableRow(repo));
             }
         )
+        $("#loadingOrgRepos").hide();
         $('#orgReposTable').dataTable();
     }
 );
