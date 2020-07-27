@@ -46,27 +46,17 @@ import javax.json.JsonArrayBuilder;
 public class Repositories extends BaseApiController {
 
     /**
-     * User's login.
+     * Self XDSD user.
      */
-    private final Login login;
-
-    /**
-     * Self's core.
-     */
-    private final Self core;
+    private User user;
 
     /**
      * Ctor.
-     * @param login User's login.
-     * @param core Self's core.
+     * @param user Authenticatd user.
      */
     @Autowired
-    public Repositories(
-        final Login login,
-        final Self core
-    ) {
-        this.login = login;
-        this.core = core;
+    public Repositories(final User user) {
+        this.user = user;
     }
 
     /**
@@ -77,8 +67,7 @@ public class Repositories extends BaseApiController {
     @GetMapping("/repositories/orgs")
     public ResponseEntity<JsonArray> organizationRepos() {
         JsonArrayBuilder reposBuilder = Json.createArrayBuilder();
-        final Organizations orgs = this.core
-            .login(this.login)
+        final Organizations orgs = this.user
             .provider()
             .organizations();
         for(final Organization org : orgs) {

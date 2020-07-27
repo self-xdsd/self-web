@@ -31,7 +31,7 @@
         <div class="collapse multi-collapse show" id="personalRepos">
             <div class="card card-body">
                 <div class="table-responsive">
-                    <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                    <div id="reposTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
                         <table id="repos" class="display">
                             <thead>
                             <tr>
@@ -47,13 +47,27 @@
         </div>
         <div class="collapse multi-collapse" id="orgRepos">
             <div class="card card-body">
-                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                <div class="table-responsive">
+                    <div id="orgReposTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                        <img id="loadingOrgRepos" src="/images/loading.gif">
+                        <table id="orgReposTable" class="display">
+                            <thead>
+                            <tr>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 </article>
 <footer th:replace="footer.html :: footer"></footer>
 </body>
 <script src="/js/getPublicRepos.js"></script>
+<script src="/js/getOrgRepos.js"></script>
 <script>
     $(document).ready(
         function () {

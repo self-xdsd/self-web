@@ -23,6 +23,9 @@
 package com.selfxdsd.selfweb;
 
 import com.selfxdsd.api.Login;
+import com.selfxdsd.api.Self;
+import com.selfxdsd.api.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,41 +46,49 @@ import org.springframework.web.context.annotation.SessionScope;
 public class LoginProducer {
 
     /**
-     * Produce the Login.
+     * Self.
+     */
+    @Autowired
+    private Self self;
+
+    /**
+     * Authenticate and return the User.
      * @param clientService Spring OAuth2 client service.
      * @return Login.
      */
     @Bean
     @SessionScope
-    public Login login(
+    public User login(
         final OAuth2AuthorizedClientService clientService
     ) {
-        return new Login() {
-            private final OAuth2AuthenticationToken oauthToken =
-                (OAuth2AuthenticationToken) SecurityContextHolder
-                    .getContext()
-                    .getAuthentication();
-            @Override
-            public String username() {
-                return this.oauthToken.getPrincipal().getAttribute("login");
-            }
+        return this.self.login(
+            new Login() {
+                private final OAuth2AuthenticationToken oauthToken =
+                    (OAuth2AuthenticationToken) SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+                @Override
+                public String username() {
+                    return this.oauthToken.getPrincipal().getAttribute("login");
+                }
 
-            @Override
-            public String email() {
-                return this.oauthToken.getPrincipal().getAttribute("email");
-            }
+                @Override
+                public String email() {
+                    return this.oauthToken.getPrincipal().getAttribute("email");
+                }
 
-            @Override
-            public String accessToken() {
-                return clientService.loadAuthorizedClient(
-                    this.provider(), this.oauthToken.getName()
-                ).getAccessToken().getTokenValue();
-            }
+                @Override
+                public String accessToken() {
+                    return clientService.loadAuthorizedClient(
+                        this.provider(), this.oauthToken.getName()
+                    ).getAccessToken().getTokenValue();
+                }
 
-            @Override
-            public String provider() {
-                return this.oauthToken.getAuthorizedClientRegistrationId();
+                @Override
+                public String provider() {
+                    return this.oauthToken.getAuthorizedClientRegistrationId();
+                }
             }
-        };
+        );
     }
 }

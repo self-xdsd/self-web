@@ -22,11 +22,14 @@
  */
 package com.selfxdsd.selfweb.api;
 
+import com.selfxdsd.api.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -39,6 +42,19 @@ import java.util.Map;
 public class Users extends BaseApiController {
 
     /**
+     * Authenticated user.
+     */
+    private User user;
+
+    /**
+     * Constructor.
+     * @param user Authenticated User.
+     */
+    @Autowired
+    public Users(final User user) {
+        this.user = user;
+    }
+    /**
      * Get the authenticated user from the session.
      * @param principal Authenticated user.
      * @return Map.
@@ -48,7 +64,10 @@ public class Users extends BaseApiController {
         @AuthenticationPrincipal
         final OAuth2User principal
     ) {
-        return principal.getAttributes();
+        final Map<String, Object> attributes = new HashMap<>();
+        attributes.putAll(principal.getAttributes());
+        attributes.put("provider", this.user.provider().name());
+        return attributes;
     }
 
 }
