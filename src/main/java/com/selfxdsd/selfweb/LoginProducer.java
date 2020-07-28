@@ -40,6 +40,8 @@ import org.springframework.web.context.annotation.SessionScope;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #40:30min Write unit tests for LoginProducer covering login cases for
+ *  Github and Gitlab providers.
  */
 @Configuration
 public class LoginProducer {
@@ -47,8 +49,16 @@ public class LoginProducer {
     /**
      * Self.
      */
+    private final Self self;
+
+    /**
+     * Ctor.
+     * @param self Self.
+     */
     @Autowired
-    private Self self;
+    public LoginProducer(final Self self){
+        this.self = self;
+    }
 
     /**
      * Authenticate and return the User.
