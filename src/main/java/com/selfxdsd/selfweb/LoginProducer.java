@@ -23,6 +23,7 @@
 package com.selfxdsd.selfweb;
 
 import com.selfxdsd.api.Login;
+import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.Self;
 import com.selfxdsd.api.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.context.annotation.SessionScope;
 
 /**
@@ -38,9 +40,8 @@ import org.springframework.web.context.annotation.SessionScope;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #25:30min Make sure to extract the username and email from the
- *  principal's attributes, according to the provider (Github, Gitlab etc).
- *  At the moment, it assumes only Github as provider.
+ * @todo #40:30min Write unit tests for LoginProducer covering login cases for
+ *  Github and Gitlab providers.
  */
 @Configuration
 public class LoginProducer {
@@ -48,8 +49,16 @@ public class LoginProducer {
     /**
      * Self.
      */
+    private final Self self;
+
+    /**
+     * Ctor.
+     * @param self Self.
+     */
     @Autowired
-    private Self self;
+    public LoginProducer(final Self self){
+        this.self = self;
+    }
 
     /**
      * Authenticate and return the User.
@@ -61,34 +70,128 @@ public class LoginProducer {
     public User login(
         final OAuth2AuthorizedClientService clientService
     ) {
-        return this.self.login(
-            new Login() {
-                private final OAuth2AuthenticationToken oauthToken =
-                    (OAuth2AuthenticationToken) SecurityContextHolder
-                        .getContext()
-                        .getAuthentication();
-                @Override
-                public String username() {
-                    return this.oauthToken.getPrincipal().getAttribute("login");
-                }
+        final OAuth2AuthenticationToken oauthToken =
+            (OAuth2AuthenticationToken) SecurityContextHolder
+                .getContext()
+                .getAuthentication();
+        final String provider = oauthToken.getAuthorizedClientRegistrationId();
+        final Login login;
+        if (provider.equalsIgnoreCase(Provider.Names.GITHUB)) {
+            login = new GithubLogin(oauthToken, clientService);
+        } else if(provider.equalsIgnoreCase(Provider.Names.GITLAB)) {
+            login = new GitlabLogin(oauthToken, clientService);
+        } else{
+            throw new UnsupportedOperationException("Unsupported provider "
+                + provider +" for login.");
+        }
+        return this.self.login(login);
+    }
 
-                @Override
-                public String email() {
-                    return this.oauthToken.getPrincipal().getAttribute("email");
-                }
+    /**
+     * Base class for Login implementations that are using
+     * a OAuth2 authentication token.
+     */
+    private abstract static class OAuth2Login implements Login {
 
-                @Override
-                public String accessToken() {
-                    return clientService.loadAuthorizedClient(
-                        this.provider(), this.oauthToken.getName()
-                    ).getAccessToken().getTokenValue();
-                }
+        /**
+         * The OAuth2 token.
+         */
+        private final OAuth2AuthenticationToken oauthToken;
 
-                @Override
-                public String provider() {
-                    return this.oauthToken.getAuthorizedClientRegistrationId();
-                }
-            }
-        );
+        /**
+         * Service used to obtain the access token.
+         */
+        private final OAuth2AuthorizedClientService clientService;
+
+        /**
+         * Ctor.
+         * @param oauthToken The OAuth2 token.
+         * @param clientService Service used to obtain the access token.
+         */
+        OAuth2Login(final OAuth2AuthenticationToken oauthToken,
+                    final OAuth2AuthorizedClientService clientService) {
+            this.oauthToken = oauthToken;
+            this.clientService = clientService;
+        }
+
+        @Override
+        public String accessToken() {
+            return this.clientService
+                .loadAuthorizedClient(this.provider(),
+                    this.oauthToken.getName())
+                .getAccessToken()
+                .getTokenValue();
+        }
+
+        @Override
+        public String provider() {
+            return this.oauthToken.getAuthorizedClientRegistrationId()
+                .toLowerCase();
+        }
+
+        /**
+         * The oauth token Principal.
+         * <br/>
+         * Should be used by implementations to extract oauth token attributes.
+         * @return OAuth2User.
+         */
+        protected OAuth2User getPrincipal(){
+            return this.oauthToken.getPrincipal();
+        }
+
+    }
+
+    /**
+     * Github Login implementation.
+     */
+    private static final class GithubLogin extends OAuth2Login{
+
+        /**
+         * Ctor.
+         *
+         * @param oauthToken The OAuth2 token.
+         * @param clientService Service used to obtain the access token.
+         */
+        GithubLogin(final OAuth2AuthenticationToken oauthToken,
+                    final OAuth2AuthorizedClientService clientService) {
+            super(oauthToken, clientService);
+        }
+
+        @Override
+        public String username() {
+            return super.getPrincipal().getAttribute("login");
+        }
+
+        @Override
+        public String email() {
+            return super.getPrincipal().getAttribute("email");
+        }
+    }
+
+    /**
+     * Gitlab Login implementation.
+     */
+    private static final class GitlabLogin extends OAuth2Login{
+
+        /**
+         * Ctor.
+         *
+         * @param oauthToken The OAuth2 token.
+         * @param clientService Service used to obtain the access token.
+         */
+        GitlabLogin(final OAuth2AuthenticationToken oauthToken,
+                    final OAuth2AuthorizedClientService clientService) {
+            super(oauthToken, clientService);
+        }
+
+        @Override
+        public String username() {
+            return super.getPrincipal().getAttribute("username");
+        }
+
+        @Override
+        public String email() {
+            return super.getPrincipal().getAttribute("email");
+        }
     }
 }
