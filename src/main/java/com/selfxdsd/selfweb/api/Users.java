@@ -37,6 +37,8 @@ import java.util.Map;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo: #43:30min Update "/users/self" endpoint to have user's public
+ *  repos uri in its attributes.
  */
 @RestController
 public class Users extends BaseApiController {
