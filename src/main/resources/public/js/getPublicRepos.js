@@ -1,3 +1,4 @@
+$("#loadingPersonalRepos").show();
 $.get(
     "/api/users/self",
     function(data) {
@@ -19,6 +20,7 @@ $.get(
                       $("#repos").find("tbody").append(repoAsTableRow(repo));
                   }
               )
+              $("#loadingPersonalRepos").hide();
               $('#repos').dataTable();
           }
       )
