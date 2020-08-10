@@ -42,6 +42,9 @@ import org.springframework.web.context.annotation.SessionScope;
  * @since 0.0.1
  * @todo #40:30min Write unit tests for LoginProducer covering login cases for
  *  Github and Gitlab providers.
+ * @todo #45:60min At the moment only the "amihaiemil" user has the admin role.
+ *  Everyone who is an admin in the Github or GitLab self-xdsd Organization,
+ *  should have the admin role.
  */
 @Configuration
 public class LoginProducer {
@@ -166,6 +169,17 @@ public class LoginProducer {
         public String email() {
             return super.getPrincipal().getAttribute("email");
         }
+
+        @Override
+        public String role() {
+            final String role;
+            if("amihaiemil".equals(this.username())) {
+                role = "admin";
+            } else {
+                role = "user";
+            }
+            return role;
+        }
     }
 
     /**
@@ -192,6 +206,17 @@ public class LoginProducer {
         @Override
         public String email() {
             return super.getPrincipal().getAttribute("email");
+        }
+
+        @Override
+        public String role() {
+            final String role;
+            if("amihaiemil".equals(this.username())) {
+                role = "admin";
+            } else {
+                role = "user";
+            }
+            return role;
         }
     }
 }

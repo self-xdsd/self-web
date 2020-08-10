@@ -70,6 +70,7 @@ public class Users extends BaseApiController {
         final Map<String, Object> attributes = new HashMap<>();
         attributes.putAll(principal.getAttributes());
         attributes.put("provider", this.user.provider().name());
+        attributes.put("role", this.user.role());
         return attributes;
     }
 
