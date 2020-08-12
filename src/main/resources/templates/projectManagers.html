@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="head.html :: head"></head>
+<body>
+<header th:replace="header.html :: header"></header>
+<main class="container" role="main">
+    <p>PMs PAGE</p>
+</main>
+<footer th:replace="footer.html :: footer"></footer>
+</body>
+<script>
+    $(document).ready(
+        function () {
+            $("#pmsHeaderLink").addClass("active");
+        }
+    )
+</script>
+</html>
