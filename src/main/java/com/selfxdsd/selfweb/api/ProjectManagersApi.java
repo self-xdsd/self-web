@@ -23,14 +23,18 @@
 package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.selfweb.api.input.PmInput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.validation.Valid;
 
 /**
  * Project Managers.
@@ -53,6 +57,7 @@ public class ProjectManagersApi extends BaseApiController {
 
     /**
      * Ctor.
+     * @param user Authenticated user.
      * @param core Self's core.
      */
     @Autowired
@@ -76,7 +81,7 @@ public class ProjectManagersApi extends BaseApiController {
         } else {
             final JsonArrayBuilder builder = Json.createArrayBuilder();
             final ProjectManagers managers = this.core.projectManagers();
-            for(ProjectManager manager : managers) {
+            for(final ProjectManager manager : managers) {
                 builder.add(
                     Json.createObjectBuilder()
                         .add("id", manager.id())
@@ -88,6 +93,36 @@ public class ProjectManagersApi extends BaseApiController {
             }
             final JsonArray array = builder.build();
             response = ResponseEntity.ok(array);
+        }
+        return response;
+    }
+
+    /**
+     * Register a new PM in Self.
+     * @param newPm PM's data.
+     * @return JsonObject.
+     */
+    @PostMapping("/managers/new")
+    public ResponseEntity<JsonObject> register(@Valid final PmInput newPm) {
+        final ResponseEntity<JsonObject> response;
+        if(!"admin".equals(this.user.role())) {
+            response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } else {
+            final ProjectManager registered = this.core
+                .projectManagers()
+                .register(
+                    newPm.getUserId(),
+                    newPm.getUsername(),
+                    newPm.getProvider(),
+                    newPm.getToken()
+                );
+            response = ResponseEntity.ok(
+                Json.createObjectBuilder()
+                    .add("userId", registered.userId())
+                    .add("username", registered.username())
+                    .add("provider", registered.provider().name())
+                    .build()
+            );
         }
         return response;
     }

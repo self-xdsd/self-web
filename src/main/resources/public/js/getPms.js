@@ -20,7 +20,6 @@ function getPms() {
             $("#pmsTable").dataTable();
         }
     );
-
 }
 
 /**
