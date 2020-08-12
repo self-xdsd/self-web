@@ -15,12 +15,18 @@
     <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
     <script type="text/javascript">
-        $.get("/api/users/self", function(data) {
-            $("#user_login").html(data.login);
-            $("#user_avatar").attr("src",data.avatar_url);
-            $(".unauthenticated").hide()
-            $(".authenticated").show()
-        });
+        $.get(
+            "/api/users/self",
+            function(data) {
+                $("#user_login").html(data.login);
+                $("#user_avatar").attr("src",data.avatar_url);
+                $(".unauthenticated").hide()
+                $(".authenticated").show()
+                if(data.role == 'admin') {
+                    $(".admin-only").show()
+                }
+            }
+        );
         var logout = function() {
             $.post("/logout", function() {
                 window.location = "/"
