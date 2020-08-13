@@ -1,6 +1,6 @@
 $(document).ready(
     function () {
-        getOrgRepos();
+        getPublicRepos();
     }
 );
 /**
@@ -8,6 +8,7 @@ $(document).ready(
  * public repos.
  */
 function getPublicRepos() {
+    $("#repos").find("tbody").html('');
     $("#loadingPersonalRepos").show();
     $.get(
         "/api/users/self",

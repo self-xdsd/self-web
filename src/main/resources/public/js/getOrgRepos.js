@@ -7,6 +7,7 @@ $(document).ready(
  * Get Org Repos to which the authenticated user has admin rights.
  */
 function getOrgRepos() {
+    $("#orgReposTable").find("tbody").html('');
     $("#loadingOrgRepos").show();
     $.get(
         "/api/repositories/orgs",
