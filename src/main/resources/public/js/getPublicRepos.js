@@ -12,39 +12,41 @@ function getPublicRepos() {
     $("#loadingPersonalRepos").show();
     $.get(
         "/api/users/self",
-        function(data) {
-            $.get(
-                "https://api.github.com/users/" + data.login + "/repos",
-                function(repos) {
-                    repos.sort(
-                        function(one, other) {
-                            if(one.fork == true) {
-                                return 1
+        function(user) {
+            if(user.provider == 'github') {
+                $.get(
+                    "https://api.github.com/users/" + user.login + "/repos",
+                    function (repos) {
+                        repos.forEach(
+                            function (repo) {
+                                $("#repos").find("tbody").append(
+                                    "<tr><td>" + repo.full_name + "</td></tr>"
+                                );
                             }
-                            if(other.fork == true) {
-                                return -1
+                        )
+                        $("#loadingPersonalRepos").hide();
+                        $('#repos').dataTable();
+                    }
+                )
+            } else if(user.provider == 'gitlab') {
+                $.get(
+                    "https://gitlab.com/api/v4/users/" + user.login + "/projects",
+                    function (repos) {
+                        console.log(repos)
+                        repos.forEach(
+                            function (repo) {
+                                console.log(repo);
+                                console.log(repo.path_with_namespace);
+                                $("#repos").find("tbody").append(
+                                    "<tr><td>" + repo.path_with_namespace + "</td></tr>"
+                                );
                             }
-                            return 0
-                        }
-                    ).forEach(
-                        function(repo){
-                            $("#repos").find("tbody").append(repoAsTableRow(repo));
-                        }
-                    )
-                    $("#loadingPersonalRepos").hide();
-                    $('#repos').dataTable();
-                }
-            )
+                        )
+                        $("#loadingPersonalRepos").hide();
+                        $('#repos').dataTable();
+                    }
+                )
+            }
         }
     );
-}
-
-
-/**
- * Wrap a repo's information between <li> tags, with anchor.
- */
-function repoAsTableRow(repo) {
-    return "<tr><td>" +
-        repo.full_name
-    + "</td></tr>"
 }
