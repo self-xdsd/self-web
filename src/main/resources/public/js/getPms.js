@@ -7,6 +7,7 @@ $(document).ready(
  * Get the Project Managers
  */
 function getPms() {
+    $("#pmsTable").find("tbody").html('');
     $("#loadingPmsTable").show();
     $.get(
         "/api/managers",

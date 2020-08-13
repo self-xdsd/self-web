@@ -26,10 +26,10 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.selfweb.api.input.PmInput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
@@ -102,7 +102,10 @@ public class ProjectManagersApi extends BaseApiController {
      * @param newPm PM's data.
      * @return JsonObject.
      */
-    @PostMapping("/managers/new")
+    @PostMapping(
+        value = "/managers/new",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<JsonObject> register(@Valid final PmInput newPm) {
         final ResponseEntity<JsonObject> response;
         if(!"admin".equals(this.user.role())) {
@@ -118,6 +121,7 @@ public class ProjectManagersApi extends BaseApiController {
                 );
             response = ResponseEntity.ok(
                 Json.createObjectBuilder()
+                    .add("id", registered.id())
                     .add("userId", registered.userId())
                     .add("username", registered.username())
                     .add("provider", registered.provider().name())
