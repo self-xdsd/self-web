@@ -18,8 +18,9 @@
         $.get(
             "/api/users/self",
             function(data) {
-                $("#user_login").html(data.login);
-                $("#user_avatar").attr("src",data.avatar_url);
+                $(".user_login").html('@' + data.login);
+                $(".user_name").html(data.name);
+                $(".user_avatar").attr("src",data.avatar_url);
                 $(".unauthenticated").hide()
                 $(".authenticated").show()
                 if(data.role == 'admin') {
