@@ -23,6 +23,7 @@
 package com.selfxdsd.selfweb.api.input;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 
 /**
  * Input for registering a new PM.
@@ -57,6 +58,12 @@ public class PmInput {
     @NotBlank(message = "PM's token is mandatory!")
     private String token;
 
+    /**
+     * PM's commission.
+     */
+    @Positive(message = "PM's commission must be a positive number!")
+    private double commission;
+
     public String getUserId() {
         return userId;
     }
@@ -87,5 +94,13 @@ public class PmInput {
 
     public void setToken(final String tkn) {
         this.token = tkn;
+    }
+
+    public double getCommission() {
+        return commission;
+    }
+
+    public void setCommission(final double comm) {
+        this.commission = comm;
     }
 }

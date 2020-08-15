@@ -34,6 +34,7 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.validation.Valid;
+import java.math.BigDecimal;
 
 /**
  * Project Managers.
@@ -90,6 +91,13 @@ public class ProjectManagersApi extends BaseApiController {
                         .add("username", manager.username())
                         .add("userId", manager.userId())
                         .add("provider", manager.provider().name())
+                        .add(
+                            "commission",
+                            manager
+                                .commission()
+                                .divide(BigDecimal.valueOf(100))
+                                .doubleValue()
+                        )
                         .build()
                 );
             }
@@ -119,7 +127,10 @@ public class ProjectManagersApi extends BaseApiController {
                     newPm.getUserId(),
                     newPm.getUsername(),
                     newPm.getProvider(),
-                    newPm.getToken()
+                    newPm.getToken(),
+                    BigDecimal.valueOf(
+                        newPm.getCommission() * 100
+                    )
                 );
             response = ResponseEntity.ok(
                 Json.createObjectBuilder()
@@ -127,6 +138,13 @@ public class ProjectManagersApi extends BaseApiController {
                     .add("userId", registered.userId())
                     .add("username", registered.username())
                     .add("provider", registered.provider().name())
+                    .add(
+                        "commission",
+                        registered
+                            .commission()
+                            .divide(BigDecimal.valueOf(100))
+                            .doubleValue()
+                    )
                     .build()
                     .toString()
             );

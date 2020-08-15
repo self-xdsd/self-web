@@ -22,6 +22,7 @@
                                     <th>Username</th>
                                     <th>Provider</th>
                                     <th>User ID</th>
+                                    <th>Commission</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -63,6 +64,13 @@
                             <input name="userId" type="text" class="form-control required" id="pmUserId" placeholder="User ID (e.g. 12345)">
                             <div class="invalid-feedback">
                                 Please specify a user ID.
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="pmCommission">Commission per task ($)*</label>
+                            <input name="commission" type="number" min="0.01" step="0.01" class="form-control required" id="pmCommission" placeholder="0.25">
+                            <div class="invalid-feedback">
+                                Please specify a numeric commission.
                             </div>
                         </div>
                         <div class="form-group">
@@ -113,7 +121,8 @@
                                         [
                                             "<a href='https://" + manager.provider + ".com/"+ manager.username + "' target='_blank'>@" + manager.username + "</a>",
                                             manager.provider,
-                                            manager.userId
+                                            manager.userId,
+                                            '$' + manager.commission
                                         ]
                                     ).draw(false)
                                     $("#addPmForm input").val('');
