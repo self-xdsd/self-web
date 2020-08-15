@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
 import javax.validation.Valid;
 
 /**
@@ -73,9 +72,12 @@ public class ProjectManagersApi extends BaseApiController {
      * Get all the pms working in Self.
      * @return JsonArray.
      */
-    @GetMapping("/managers")
-    public ResponseEntity<JsonArray> managers() {
-        final ResponseEntity<JsonArray> response;
+    @GetMapping(
+        value = "/managers",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> managers() {
+        final ResponseEntity<String> response;
         if(!"admin".equals(this.user.role())) {
             response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } else {
@@ -92,7 +94,7 @@ public class ProjectManagersApi extends BaseApiController {
                 );
             }
             final JsonArray array = builder.build();
-            response = ResponseEntity.ok(array);
+            response = ResponseEntity.ok(array.toString());
         }
         return response;
     }
@@ -106,8 +108,8 @@ public class ProjectManagersApi extends BaseApiController {
         value = "/managers/new",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<JsonObject> register(@Valid final PmInput newPm) {
-        final ResponseEntity<JsonObject> response;
+    public ResponseEntity<String> register(@Valid final PmInput newPm) {
+        final ResponseEntity<String> response;
         if(!"admin".equals(this.user.role())) {
             response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } else {
@@ -126,6 +128,7 @@ public class ProjectManagersApi extends BaseApiController {
                     .add("username", registered.username())
                     .add("provider", registered.provider().name())
                     .build()
+                    .toString()
             );
         }
         return response;

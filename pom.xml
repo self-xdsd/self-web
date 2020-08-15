@@ -29,28 +29,11 @@
             <groupId>com.selfxdsd</groupId>
             <artifactId>self-api</artifactId>
             <version>${self.core.version}</version>
-            <exclusions> <!--Comes from Yasson JSON-B-->
-                <exclusion>
-                    <groupId>javax.json</groupId>
-                    <artifactId>javax.json-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.selfxdsd</groupId>
             <artifactId>self-core-impl</artifactId>
             <version>${self.core.version}</version>
-            <exclusions> <!--Comes from Yassom JSON-B-->
-                <exclusion>
-                    <groupId>org.glassfish</groupId>
-                    <artifactId>javax.json</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>yasson</artifactId>
-            <version>1.0.7</version>
         </dependency>
         <dependency>
             <groupId>com.selfxdsd</groupId>

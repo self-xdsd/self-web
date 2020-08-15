@@ -24,6 +24,7 @@ package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,8 +65,11 @@ public class Repositories extends BaseApiController {
      * to which the user has admin rights).
      * @return ResponseEntity.
      */
-    @GetMapping("/repositories/orgs")
-    public ResponseEntity<JsonArray> organizationRepos() {
+    @GetMapping(
+        value = "/repositories/orgs",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> organizationRepos() {
         JsonArrayBuilder reposBuilder = Json.createArrayBuilder();
         final Organizations orgs = this.user
             .provider()
@@ -76,11 +80,11 @@ public class Repositories extends BaseApiController {
             }
         }
         final JsonArray repos = reposBuilder.build();
-        final ResponseEntity<JsonArray> response;
+        final ResponseEntity<String> response;
         if(repos.isEmpty()){
             response = ResponseEntity.noContent().build();
         } else {
-            response = ResponseEntity.ok(repos);
+            response = ResponseEntity.ok(repos.toString());
         }
         return response;
     }

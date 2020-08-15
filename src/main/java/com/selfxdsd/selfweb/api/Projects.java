@@ -24,13 +24,13 @@ package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.json.Json;
-import javax.json.JsonObject;
 
 /**
  * Projects.
@@ -61,15 +61,18 @@ public class Projects extends BaseApiController {
      * @param name Simple name of the repo.
      * @return Json response or NO CONTENT if the project is not found.
      */
-    @GetMapping("/projects/github/{owner}/{name}")
-    public ResponseEntity<JsonObject> project(
+    @GetMapping(
+        value = "/projects/github/{owner}/{name}",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> project(
         @PathVariable("owner") final String owner,
         @PathVariable("name") final String name
     ) {
         final Project found = this.core.projects().getProjectById(
             owner + "/" + name, Provider.Names.GITHUB
         );
-        final ResponseEntity<JsonObject> response;
+        final ResponseEntity<String> response;
         if(found == null) {
             response = ResponseEntity.noContent().build();
         } else {
@@ -78,6 +81,7 @@ public class Projects extends BaseApiController {
                     .add("repoFullName", found.repoFullName())
                     .add("provider", found.provider())
                     .build()
+                    .toString()
             );
         }
         return response;
