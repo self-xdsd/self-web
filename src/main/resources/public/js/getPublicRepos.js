@@ -15,7 +15,7 @@ function getPublicRepos() {
         function(user) {
             if(user.provider == 'github') {
                 $.get(
-                    "https://api.github.com/users/" + user.login + "/repos",
+                    "https://api.github.com/users/" + user.login + "/repos?per_page=100g",
                     function (repos) {
                         repos.forEach(
                             function (repo) {
