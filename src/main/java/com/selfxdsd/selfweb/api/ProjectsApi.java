@@ -23,8 +23,6 @@
 package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.*;
-import com.selfxdsd.core.managers.InvitePm;
-import com.selfxdsd.selfweb.api.input.PmInput;
 import com.selfxdsd.selfweb.api.input.RepoInput;
 import com.selfxdsd.selfweb.api.output.JsonProject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +34,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.json.Json;
 import javax.validation.Valid;
 
 /**
@@ -44,6 +41,11 @@ import javax.validation.Valid;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #56:60min A project can be owned by a single Self user,
+ *  but if the repo belongs to an Organization, it can have multiple
+ *  administrators. Add the ``owned`` flag to JsonProject and modify
+ *  the project(...) method to search in all of Self's projects, not
+ *  only in the ones owned by the User.
  */
 @RestController
 public class ProjectsApi extends BaseApiController {

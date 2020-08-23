@@ -49,16 +49,16 @@ public class RepoInput {
         return this.owner;
     }
 
-    public void setOwner(final String owner) {
-        this.owner = owner;
+    public void setOwner(final String newOwner) {
+        this.owner = newOwner;
     }
 
     public String getName() {
         return this.name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
+    public void setName(final String newName) {
+        this.name = newName;
     }
 
     public String fullName() {
