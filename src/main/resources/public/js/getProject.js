@@ -13,6 +13,17 @@ function getProject() {
             $("#loadingProject").hide();
             if(project === undefined) {
                 $(".project-not-registered").show();
+            } else {
+                $(".managedBy").html(
+                    "Project managed by: "
+                ).append(
+                    $('<a></a>')
+                        .attr("href","https://github.com/" + project.manager.username)
+                        .attr("_target", "blank")
+                        .html("@" + project.manager.username)
+                );
+                $("#projectOverview").addClass("show");
+                $(".project-buttons").show();
             }
         }
     );

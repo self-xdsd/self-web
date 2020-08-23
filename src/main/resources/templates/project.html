@@ -2,7 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="head.html :: head"></head>
 <body>
-<header th:replace="header.html :: header"></header>
+<header th:replace="header.html :: header">
+</header>
 <main class="container" role="main">
     <header class="profile-header">
         <div class="card">
@@ -12,15 +13,102 @@
                     <h3 id="repoFullName" th:text="${owner} + '/' + ${name}" />
                 </div>
             </div>
+            <div class="card-footer project-buttons" style="display:none;">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                        <button class="nav-link active" role="button" id="projectOverviewButton">Overview</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" role="button" id="projectContractsButton">Contracts</button>
+                    </li>
+                </ul>
+            </div>
         </div>
     </header>
     <div id="loadingProject" class="text-center">
         <img src="/images/loading.svg">
     </div>
+    <div class="card card-body collapse multi-collapse" id="projectOverview">
+    <div class="row">
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary managedBy">Project managed by:</h6>
+                </div>
+                <div class="card-body">
+                    <p>
+                        The Project Manager takes care of the following things for you:
+                    </p>
+                    <div class="mb-2">
+                        <h5><code>Issue assignment</code></h5>
+                        <p>
+                            Whenever someone opens a new Issue in your repository, the PM will
+                            automatically register it as a task and will assign a contributor to work on it.
+                        </p>
+                        <p>
+                            If it turns out that the Issue is invalid, not applicable or simply not worth working on as a task,
+                            just label it <code>invalid</code>, <code>wont fix</code> or <code>rejected</code> and the PM will take
+                            it out of scope. No invoicing or payments will be performed.
+                        </p>
+                        <p>
+                            In the case of Pull Requests, the PM will look for contributors with role <code>REV</code> and assign
+                            them for code review.
+                        </p>
+                    </div>
+                    <div class="mb-2">
+                        <h5><code>Issue resignation</code></h5>
+                        <p>If the task's assignee does not close the Issue before the deadline arrives,
+                        the PM will resign them and look for another assignee.</p>
+                    </div>
+                    <div class="mb-2">
+                        <h5><code>Invoicing and Payments</code></h5>
+                        <p>
+                            After an Issue or PR is closed, the PM will add the task to the assignee's
+                            active Invoice.
+                        </p>
+                        <p>
+                            Invoices are paid out on the <code>1st of the month</code> or when they
+                            accumulate more than <code>$100</code>.
+                        </p>
+                    </div>
+                    <div class="mb-2">
+                        <h5><code>Commands</code></h5>
+                        <p>
+                            The Project Manager listens to certain commands given by users. For example,
+                            if the assignee cannot solve the task, they can say <code>resign</code> right
+                            in the Issue comments and the PM will look for someone else.
+                            <a href="#">Here</a> is guide on all possible commands and who can give them.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Wallet</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="chart-pie pt-4"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                        <canvas id="myPieChart" style="display: block; height: 253px; width: 331px;" width="662" height="506" class="chartjs-render-monitor"></canvas>
+                    </div>
+                    <hr>
+                    Styling for the donut chart can be found in the <code>/js/demo/chart-pie-demo.js</code> file.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    <div class="card card-body collapse multi-collapse" id="projectContracts">
+        Project Contracts Here.
+    </div>
     <div class="card card-body project-not-registered" style="display: none;">
         <div>
             <h3>This repository is not active</h3>
-            <p>Looks like this repository is not currently managed by Self. Go ahead and activate it!</p>
+            <p>Looks like this repository is not currently managed by Self. Go ahead and activate it.</p>
 
             <form id="activateRepoForm">
                 <input name="owner" type="hidden" th:value="${owner}">
@@ -43,4 +131,30 @@
 <footer th:replace="footer.html :: footer"></footer>
 </body>
 <script src="/js/getProject.js"></script>
+<script>
+    $(document).ready(
+        function () {
+            $("#projectOverviewButton").on(
+                "click",
+                function(){
+                    $(this).addClass("active");
+                    $("#projectOverview").addClass("show");
+
+                    $("#projectContractsButton").removeClass("active");
+                    $("#projectContracts").removeClass("show");
+                }
+            );
+            $("#projectContractsButton").on(
+                "click",
+                function(){
+                    $(this).addClass("active");
+                    $("#projectContracts").addClass("show");
+
+                    $("#projectOverviewButton").removeClass("active");
+                    $("#projectOverview").removeClass("show");
+                }
+            );
+        }
+    )
+</script>
 </html>

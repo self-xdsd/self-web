@@ -62,3 +62,8 @@ a.btn-outline-primary:hover {
     background: -ms-linear-gradient(top,#fff 0,#f4f4f4 100%);
     background: linear-gradient(to bottom,#fff 0,#f4f4f4 100%);
 }
+
+.card p{
+    text-align: justify;
+    text-justify: inter-word;
+}
