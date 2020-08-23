@@ -23,14 +23,13 @@
 package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.selfweb.api.output.JsonProject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.json.Json;
 
 /**
  * Projects.
@@ -76,13 +75,7 @@ public class ProjectsApi extends BaseApiController {
         if(found == null) {
             response = ResponseEntity.noContent().build();
         } else {
-            response = ResponseEntity.ok(
-                Json.createObjectBuilder()
-                    .add("repoFullName", found.repoFullName())
-                    .add("provider", found.provider())
-                    .build()
-                    .toString()
-            );
+            response = ResponseEntity.ok(new JsonProject(found).toString());
         }
         return response;
     }

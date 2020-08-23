@@ -24,6 +24,7 @@ package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.selfweb.api.input.PmInput;
+import com.selfxdsd.selfweb.api.output.JsonProjectManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -85,21 +86,7 @@ public class ProjectManagersApi extends BaseApiController {
             final JsonArrayBuilder builder = Json.createArrayBuilder();
             final ProjectManagers managers = this.core.projectManagers();
             for(final ProjectManager manager : managers) {
-                builder.add(
-                    Json.createObjectBuilder()
-                        .add("id", manager.id())
-                        .add("username", manager.username())
-                        .add("userId", manager.userId())
-                        .add("provider", manager.provider().name())
-                        .add(
-                            "commission",
-                            manager
-                                .commission()
-                                .divide(BigDecimal.valueOf(100))
-                                .doubleValue()
-                        )
-                        .build()
-                );
+                builder.add(new JsonProjectManager(manager));
             }
             final JsonArray array = builder.build();
             response = ResponseEntity.ok(array.toString());
@@ -133,20 +120,7 @@ public class ProjectManagersApi extends BaseApiController {
                     )
                 );
             response = ResponseEntity.ok(
-                Json.createObjectBuilder()
-                    .add("id", registered.id())
-                    .add("userId", registered.userId())
-                    .add("username", registered.username())
-                    .add("provider", registered.provider().name())
-                    .add(
-                        "commission",
-                        registered
-                            .commission()
-                            .divide(BigDecimal.valueOf(100))
-                            .doubleValue()
-                    )
-                    .build()
-                    .toString()
+                new JsonProjectManager(registered).toString()
             );
         }
         return response;
