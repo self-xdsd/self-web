@@ -23,13 +23,21 @@
 package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.core.managers.InvitePm;
+import com.selfxdsd.selfweb.api.input.PmInput;
+import com.selfxdsd.selfweb.api.input.RepoInput;
 import com.selfxdsd.selfweb.api.output.JsonProject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.json.Json;
+import javax.validation.Valid;
 
 /**
  * Projects.
@@ -80,4 +88,48 @@ public class ProjectsApi extends BaseApiController {
         return response;
     }
 
+    /**
+     * Register a new project in Self.
+     * @param repo Repo's data.
+     * @return JsonObject.
+     */
+    @PostMapping(
+        value = "/projects/new",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> activate(@Valid final RepoInput repo) {
+        final String username = this.user.username();
+        Repo found = null;
+        if(repo.getOwner().equalsIgnoreCase(username)) {
+            found = this.user.provider().repo(
+                repo.getOwner(),
+                repo.getName()
+            );
+        } else {
+            final Organizations orgs = this.user.provider().organizations();
+            for(final Organization org : orgs) {
+                for(final Repo orgRepo : org.repos()) {
+                    if(orgRepo.fullName().equalsIgnoreCase(repo.fullName())) {
+                        found = orgRepo;
+                        break;
+                    }
+                }
+                if(found != null) {
+                    break;
+                }
+            }
+        }
+        final ResponseEntity<String> resp;
+        if(found == null) {
+            resp = ResponseEntity
+                .status(HttpStatus.PRECONDITION_FAILED)
+                .build();
+        } else {
+            final Project activated = found.activate();
+            resp = ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new JsonProject(activated).toString());
+        }
+        return resp;
+    }
 }

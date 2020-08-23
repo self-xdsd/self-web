@@ -33,7 +33,7 @@
         <div class="col-xl-8 col-lg-7">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary managedBy">Project managed by:</h6>
+                    <h4 class="m-0 font-weight-bold text-primary managedBy">Project managed by:</h4>
                 </div>
                 <div class="card-body">
                     <p>
@@ -87,7 +87,7 @@
             <div class="card shadow mb-4">
                 <!-- Card Header - Dropdown -->
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Wallet</h6>
+                    <h4 class="m-0 font-weight-bold text-primary">Wallet</h4>
                 </div>
                 <!-- Card Body -->
                 <div class="card-body">
@@ -111,8 +111,8 @@
             <p>Looks like this repository is not currently managed by Self. Go ahead and activate it.</p>
 
             <form id="activateRepoForm">
-                <input name="owner" type="hidden" th:value="${owner}">
-                <input name="name" type="hidden" th:value="${name}">
+                <input class="required" name="owner" type="hidden" th:value="${owner}">
+                <input class="required" name="name" type="hidden" th:value="${name}">
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary" aria-describedby="activateHelp">Activate</button>
                     <small id="activateHelp" class="form-text text-muted">
@@ -123,6 +123,21 @@
                             <li>3. We will set up a Webhook in your repository so the PM is notified of certain events automatically.</li>
                         </ul>
                     </small>
+                    <div class="invalid-feedback browser-error">
+                        <small>
+                            Oops, your browser did something unexpected.
+                            Please refresh the page and try again.
+                        </small>
+                    </div>
+                    <div class="invalid-feedback owner-error">
+                        <small>Repo owner is mandatory.</small>
+                    </div>
+                    <div class="invalid-feedback name-error">
+                        <small>Repo name is mandatory.</small>
+                    </div>
+                    <div class="invalid-feedback repo-activated-error">
+                        <small>Repo is already active! You cannot activate it twice.</small>
+                    </div>
                 </div>
             </form>
         </div>
@@ -152,6 +167,73 @@
 
                     $("#projectOverviewButton").removeClass("active");
                     $("#projectOverview").removeClass("show");
+                }
+            );
+
+            $("#activateRepoForm").submit(
+                function(e) {
+                    e.preventDefault();
+                    var valid = true;
+                    $.each($("#activateRepoForm .required"), function(index, element) {
+                        if($(element).val() == '') {
+                            valid = valid && false;
+                        } else {
+                            valid = valid && true;
+                        }
+                    });
+                    if(valid) {
+                        $(".browser-error").hide();
+                        $(".repo-activated-error").hide();
+                        $(".name-error").hide();
+                        $(".owner-error").hide();
+                        $("#loadingProject").show();
+                        $(".project-not-registered").hide();
+                        var form = $(this);
+                        $.ajax(
+                            {
+                                type: "POST",
+                                url: "/api/projects/new",
+                                data: form.serialize(),
+                                success: function (project) {
+                                    $("#loadingProject").hide();
+                                    $(".managedBy").html(
+                                        "Project managed by: "
+                                    ).append(
+                                        $('<a></a>')
+                                            .attr("href","https://github.com/" + project.manager.username)
+                                            .attr("_target", "blank")
+                                            .html("@" + project.manager.username)
+                                    );
+                                    $("#projectOverview").addClass("show");
+                                    $(".project-buttons").show();
+                                },
+                                error: function(jqXHR, error, errorThrown) {
+                                    $("#loadingProject").hide();
+                                    $(".project-not-registered").show();
+                                    if(jqXHR.status && jqXHR.status == 400){
+                                        var errors = JSON.parse(jqXHR.responseText);
+                                        console.error("Backend validation errors: " + jqXHR.responseText);
+                                        Object.keys(errors).forEach(
+                                            function(field) {
+                                                $("." + field + "-error").show();
+                                            }
+                                        )
+                                    } else if(jqXHR.status == 412) {
+                                        $(".repo-activated-error").show();
+                                    } else {
+                                        console.log("Server error status: " + jqXHR.status);
+                                        console.log("Server error: " + jqXHR.responseText);
+                                        alert(
+                                            "Something went wrong (" + jqXHR.status + ")." +
+                                            "Please, try again later."
+                                        );
+                                    }
+                                }
+                            }
+                        );
+                    } else {
+                        $(".browser-error").show();
+                    }
                 }
             );
         }
