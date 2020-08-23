@@ -46,6 +46,9 @@ import javax.validation.Valid;
  *  administrators. Add the ``owned`` flag to JsonProject and modify
  *  the project(...) method to search in all of Self's projects, not
  *  only in the ones owned by the User.
+ * @todo #56:60min Implement and test the Contracts tab of the project
+ *  page. It should list all contributors/contracts and offer forms
+ *  to register a new contributor/contract.
  */
 @RestController
 public class ProjectsApi extends BaseApiController {

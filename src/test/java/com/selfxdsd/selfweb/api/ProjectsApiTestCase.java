@@ -35,6 +35,8 @@ import org.springframework.http.ResponseEntity;
 import javax.json.Json;
 import java.io.StringReader;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Unit tests for {@link ProjectsApi}.
@@ -50,7 +52,7 @@ public final class ProjectsApiTestCase {
     @Test
     public void activatesUserRepo() {
         final Project activated = this.mockActiveProject("mihai", "test");
-        
+
         final Repo repo = Mockito.mock(Repo.class);
         Mockito.when(repo.activate()).thenReturn(activated);
         final Provider provider = Mockito.mock(Provider.class);
@@ -72,6 +74,75 @@ public final class ProjectsApiTestCase {
         MatcherAssert.assertThat(
             Json.createReader(new StringReader(resp.getBody())).readObject(),
             Matchers.equalTo(new JsonProject(activated))
+        );
+    }
+
+    /**
+     * ProjectApi.activate(...) returns 412 PRECONDITION FAILED if the
+     * repo is not found.
+     */
+    @Test
+    public void activatesOrgRepo() {
+        final Project activated = this.mockActiveProject("self", "test");
+
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(repo.fullName()).thenReturn("self/test");
+        Mockito.when(repo.activate()).thenReturn(activated);
+
+        final Organizations orgs = Mockito.mock(Organizations.class);
+        final Organization self = Mockito.mock(Organization.class);
+        Mockito.when(self.repos()).thenReturn(
+            () -> Arrays.asList(repo).iterator()
+        );
+        Mockito.when(orgs.iterator())
+            .thenReturn(Arrays.asList(self).iterator());
+
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.organizations()).thenReturn(orgs);
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("mihai");
+        Mockito.when(user.provider()).thenReturn(provider);
+
+        final ProjectsApi projects = new ProjectsApi(user);
+        final RepoInput input = new RepoInput();
+        input.setOwner("self");
+        input.setName("test");
+
+        final ResponseEntity<String> resp = projects.activate(input);
+        MatcherAssert.assertThat(
+            resp.getStatusCode(),
+            Matchers.is(HttpStatus.CREATED)
+        );
+        MatcherAssert.assertThat(
+            Json.createReader(new StringReader(resp.getBody())).readObject(),
+            Matchers.equalTo(new JsonProject(activated))
+        );
+    }
+
+    /**
+     * ProjectApi.activate(...) returns 412 PRECONDITION FAILED if the
+     * repo is not found.
+     */
+    @Test
+    public void activatesNotFound() {
+        final Organizations orgs = Mockito.mock(Organizations.class);
+        Mockito.when(orgs.iterator())
+            .thenReturn(new ArrayList<Organization>().iterator());
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.organizations()).thenReturn(orgs);
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("mihai");
+        Mockito.when(user.provider()).thenReturn(provider);
+
+        final ProjectsApi projects = new ProjectsApi(user);
+        final RepoInput input = new RepoInput();
+        input.setOwner("self");
+        input.setName("notfound");
+
+        final ResponseEntity<String> resp = projects.activate(input);
+        MatcherAssert.assertThat(
+            resp.getStatusCode(),
+            Matchers.is(HttpStatus.PRECONDITION_FAILED)
         );
     }
 
