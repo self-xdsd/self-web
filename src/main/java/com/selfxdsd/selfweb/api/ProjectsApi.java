@@ -39,20 +39,20 @@ import javax.json.Json;
  * @since 0.0.1
  */
 @RestController
-public class Projects extends BaseApiController {
+public class ProjectsApi extends BaseApiController {
 
     /**
-     * Self's core.
+     * Authenticated user.
      */
-    private final Self core;
+    private final User user;
 
     /**
      * Ctor.
-     * @param core Self's core.
+     * @param user Authenticated user.
      */
     @Autowired
-    public Projects(final Self core) {
-        this.core = core;
+    public ProjectsApi(final User user) {
+        this.user = user;
     }
 
     /**
@@ -69,7 +69,7 @@ public class Projects extends BaseApiController {
         @PathVariable("owner") final String owner,
         @PathVariable("name") final String name
     ) {
-        final Project found = this.core.projects().getProjectById(
+        final Project found = this.user.projects().getProjectById(
             owner + "/" + name, Provider.Names.GITHUB
         );
         final ResponseEntity<String> response;

@@ -16,7 +16,7 @@
 
 	<properties>
 		<java.version>11</java.version>
-        <self.core.version>0.0.16</self.core.version>
+        <self.core.version>0.0.19</self.core.version>
         <self.storage.version>0.0.6</self.storage.version>
     </properties>
 

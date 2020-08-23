@@ -45,8 +45,6 @@ public class SelfWebApplication extends WebSecurityConfigurerAdapter {
         http.authorizeRequests(
             link -> link.antMatchers(
                 "/",
-                "/github/*/*",
-                "/api/projects/github/*/*",
                 "/images/*",
                 "/images/illustrations/*",
                 "/css/*",

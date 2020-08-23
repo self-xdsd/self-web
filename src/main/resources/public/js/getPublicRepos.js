@@ -20,7 +20,9 @@ function getPublicRepos() {
                         repos.forEach(
                             function (repo) {
                                 $("#repos").find("tbody").append(
-                                    "<tr><td>" + repo.full_name + "</td></tr>"
+                                    "<tr><td><a href='/github/" + repo.full_name + "'>" +
+                                        repo.full_name +
+                                    "</a></td></tr>"
                                 );
                             }
                         )
