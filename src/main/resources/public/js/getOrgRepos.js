@@ -12,7 +12,7 @@ function getOrgRepos() {
     $.get(
         "/api/repositories/orgs",
         function(repos) {
-            repos.sort(
+            (repos || []).sort(
                 function(one, other) {
                     if(one.fork == true) {
                         return 1
