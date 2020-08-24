@@ -209,16 +209,7 @@
                                 data: form.serialize(),
                                 success: function (project) {
                                     $("#loadingProject").hide();
-                                    $(".managedBy").html(
-                                        "Project managed by: "
-                                    ).append(
-                                        $('<a></a>')
-                                            .attr("href","https://github.com/" + project.manager.username)
-                                            .attr("_target", "blank")
-                                            .html("@" + project.manager.username)
-                                    );
-                                    $("#projectOverview").addClass("show");
-                                    $(".project-buttons").show();
+                                    displayProject(project.selfOwner, project);
                                 },
                                 error: function(jqXHR, error, errorThrown) {
                                     $("#loadingProject").hide();
