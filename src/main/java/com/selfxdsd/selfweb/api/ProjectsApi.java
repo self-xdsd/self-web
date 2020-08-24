@@ -41,11 +41,6 @@ import javax.validation.Valid;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #56:60min A project can be owned by a single Self user,
- *  but if the repo belongs to an Organization, it can have multiple
- *  administrators. Add the ``owned`` flag to JsonProject and modify
- *  the project(...) method to search in all of Self's projects, not
- *  only in the ones owned by the User.
  * @todo #56:60min Implement and test the Contracts tab of the project
  *  page. It should list all contributors/contracts and offer forms
  *  to register a new contributor/contract.
@@ -59,16 +54,28 @@ public class ProjectsApi extends BaseApiController {
     private final User user;
 
     /**
+     * Self's core.
+     */
+    private final Self self;
+
+    /**
      * Ctor.
      * @param user Authenticated user.
+     * @param self Self's core.
      */
     @Autowired
-    public ProjectsApi(final User user) {
+    public ProjectsApi(final User user, final Self self) {
         this.user = user;
+        this.self = self;
     }
 
     /**
-     * Get a Github project in JSON format.
+     * Get a Github project in JSON format.<br><br>
+     *
+     * If the Project owner does not match the authenticated User, we have
+     * to check the User's organizations to see if the project
+     * is part of an organization where the User has admin rights.
+     *
      * @param owner Owner of the repo (username or org name).
      * @param name Simple name of the repo.
      * @return Json response or NO CONTENT if the project is not found.
@@ -81,14 +88,32 @@ public class ProjectsApi extends BaseApiController {
         @PathVariable("owner") final String owner,
         @PathVariable("name") final String name
     ) {
-        final Project found = this.user.projects().getProjectById(
+        final Project found = this.self.projects().getProjectById(
             owner + "/" + name, Provider.Names.GITHUB
         );
-        final ResponseEntity<String> response;
-        if(found == null) {
-            response = ResponseEntity.noContent().build();
-        } else {
-            response = ResponseEntity.ok(new JsonProject(found).toString());
+        ResponseEntity<String> response = ResponseEntity.noContent().build();
+        if(found != null) {
+            if(owner.equalsIgnoreCase(this.user.username())) {
+                response = ResponseEntity.ok(
+                    new JsonProject(found).toString()
+                );
+            } else {
+                final Organizations orgs = this.user.provider()
+                    .organizations();
+                for(final Organization org : orgs) {
+                    for(final Repo repo : org.repos()) {
+                        if(repo.fullName().equals(found.repoFullName())) {
+                            response = ResponseEntity.ok(
+                                new JsonProject(found).toString()
+                            );
+                            break;
+                        }
+                    }
+                    if(response.getStatusCode().equals(HttpStatus.OK)) {
+                        break;
+                    }
+                }
+            }
         }
         return response;
     }

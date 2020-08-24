@@ -43,6 +43,7 @@ public final class JsonProject extends AbstractJsonObject {
             Json.createObjectBuilder()
                 .add("repoFullName", project.repoFullName())
                 .add("provider", project.provider())
+                .add("selfOwner", project.owner().username())
                 .add(
                     "manager",
                     new JsonProjectManager(project.projectManager())
