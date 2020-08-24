@@ -18,7 +18,7 @@
                     <li class="nav-item">
                         <button class="nav-link active" role="button" id="projectOverviewButton">Overview</button>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item project-owner-buttons">
                         <button class="nav-link" role="button" id="projectContractsButton">Contracts</button>
                     </li>
                 </ul>
@@ -84,7 +84,7 @@
             </div>
         </div>
         <div class="col-xl-4 col-lg-5">
-            <div class="card shadow mb-4">
+            <div id="walletCard" class="card shadow mb-4">
                 <!-- Card Header - Dropdown -->
                 <div class="card-header py-3">
                     <h4 class="m-0 font-weight-bold text-primary">Wallet</h4>
@@ -96,6 +96,19 @@
                     </div>
                     <hr>
                     Styling for the donut chart can be found in the <code>/js/demo/chart-pie-demo.js</code> file.
+                </div>
+            </div>
+            <div id="ownerCard" class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3">
+                    <h4 class="m-0 font-weight-bold text-primary">Ownership</h4>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <p>This project is owned by: @<b><span class="selfOwner"></span></b></p>
+                    <p>You can see this page because you are an admin in the Organization which
+                    owns the repository. However, in Self there is only one Project Owner, the one
+                    who activated the repository.</p>
                 </div>
             </div>
         </div>
