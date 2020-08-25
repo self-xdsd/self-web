@@ -67,7 +67,10 @@ public final class ProjectsApiTestCase {
         Mockito.when(core.projects()).thenReturn(all);
 
         final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
         Mockito.when(user.username()).thenReturn("mihai");
+        Mockito.when(user.provider()).thenReturn(provider);
 
         final ProjectsApi api = new ProjectsApi(
             user,
@@ -121,6 +124,7 @@ public final class ProjectsApiTestCase {
             .thenReturn(Arrays.asList(self).iterator());
 
         final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
         Mockito.when(provider.organizations()).thenReturn(orgs);
         final User user = Mockito.mock(User.class);
         Mockito.when(user.username()).thenReturn("mihai");
@@ -209,8 +213,13 @@ public final class ProjectsApiTestCase {
         final Self core = Mockito.mock(Self.class);
         Mockito.when(core.projects()).thenReturn(all);
 
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(user.username()).thenReturn("mihai");
+        Mockito.when(user.provider()).thenReturn(provider);
         final ProjectsApi api = new ProjectsApi(
-            Mockito.mock(User.class),
+            user,
             core
         );
         final ResponseEntity<String> resp = api.project("mihai", "test");

@@ -5,14 +5,15 @@ $(document).ready(
 );
 
 function getProject() {
-    var repoFullName = $("#repoFullName").text();
+    var owner =$("#owner").text();
+    var name =$("#name").text();
     $("#loadingProject").show();
     $.get(
         "/api/users/self",
         function(user) {
             console.log(user);
             $.get(
-                "/api/projects/github/" + repoFullName,
+                "/api/projects/"+owner+"/"+name,
                 function(project) {
                     $("#loadingProject").hide();
                     if(project === undefined) {

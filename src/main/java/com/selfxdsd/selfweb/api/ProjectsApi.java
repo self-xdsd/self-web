@@ -82,7 +82,7 @@ public class ProjectsApi extends BaseApiController {
      * @return Json response or NO CONTENT if the project is not found.
      */
     @GetMapping(
-        value = "/projects/github/{owner}/{name}",
+        value = "/projects/{owner}/{name}",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<String> project(
@@ -90,7 +90,7 @@ public class ProjectsApi extends BaseApiController {
         @PathVariable("name") final String name
     ) {
         final Project found = this.self.projects().getProjectById(
-            owner + "/" + name, Provider.Names.GITHUB
+            owner + "/" + name, user.provider().name()
         );
         ResponseEntity<String> response = ResponseEntity.noContent().build();
         if(found != null) {
