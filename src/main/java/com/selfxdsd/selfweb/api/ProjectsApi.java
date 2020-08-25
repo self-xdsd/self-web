@@ -42,9 +42,6 @@ import javax.validation.Valid;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #58:30min Unify the projects endpoint to work for all providers.
- *  Some small changes in method project(...), in Spring's routing and
- *  project.html are needed.
  * @todo #69:60min Implement and test the Contracts tab of the project
  *  page. Provide registration form endpoint for adding contributor contract to
  *  project.
