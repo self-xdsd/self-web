@@ -24,6 +24,7 @@ package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.selfweb.api.input.RepoInput;
+import com.selfxdsd.selfweb.api.output.JsonContracts;
 import com.selfxdsd.selfweb.api.output.JsonProject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,9 +45,9 @@ import javax.validation.Valid;
  * @todo #58:30min Unify the projects endpoint to work for all providers.
  *  Some small changes in method project(...), in Spring's routing and
  *  project.html are needed.
- * @todo #56:60min Implement and test the Contracts tab of the project
- *  page. It should list all contributors/contracts and offer forms
- *  to register a new contributor/contract.
+ * @todo #69:60min Implement and test the Contracts tab of the project
+ *  page. Provide registration form endpoint for adding contributor contract to
+ *  project.
  */
 @RestController
 public class ProjectsApi extends BaseApiController {
@@ -165,4 +166,72 @@ public class ProjectsApi extends BaseApiController {
         }
         return resp;
     }
+
+    /**
+     * Get contracts of a project in JSON format.<br><br>
+     *
+     * If the Project owner does not match the authenticated User, we have
+     * to check the User's organizations to see if the project
+     * is part of an organization where the User has admin rights.
+     *
+     * @param owner Owner of the project (username or org name).
+     * @param name Simple name of the project.
+     * @return JsonArray.
+     */
+    @GetMapping(
+        value = "/projects/contracts/{owner}/{name}",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> contracts(
+        @PathVariable("owner") final String owner,
+        @PathVariable("name") final String name) {
+        final Project project = this.findProject(owner, name,
+            this.user.provider().name());
+        final JsonContracts contracts;
+        if (project == null) {
+            contracts = new JsonContracts(new Contracts.Empty());
+        } else {
+            contracts = new JsonContracts(project.contracts());
+        }
+        return ResponseEntity.ok(contracts.toString());
+    }
+
+    /**
+     * Get an owned project.<br><br>
+     *
+     * If the Project owner does not match the authenticated User, we have
+     * to check the User's organizations to see if the project
+     * is part of an organization where the User has admin rights.
+     * @param owner Owner of the repo (username or org name)
+     * @param name Simple name of the repo.
+     * @param provider Provider name.
+     * @return Project or null if not found or owner has no admin rights.
+     */
+    private Project findProject(final String owner,
+                                final String name,
+                                final  String provider){
+        Project found = this.self.projects().getProjectById(
+            owner + "/" + name, provider
+        );
+        boolean hasRights = true;
+        if (found != null && !owner.equalsIgnoreCase(this.user.username())) {
+            hasRights = false;
+            final Organizations orgs = this.user.provider()
+                .organizations();
+            organizationsLoop:
+            for (final Organization org : orgs) {
+                for (final Repo repo : org.repos()) {
+                    if (repo.fullName().equals(found.repoFullName())) {
+                        hasRights = true;
+                        break organizationsLoop;
+                    }
+                }
+            }
+        }
+        if (!hasRights) {
+            found = null;
+        }
+        return found;
+    }
+
 }

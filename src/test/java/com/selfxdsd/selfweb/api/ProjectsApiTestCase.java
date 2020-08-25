@@ -33,11 +33,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Unit tests for {@link ProjectsApi}.
@@ -343,6 +346,250 @@ public final class ProjectsApiTestCase {
     }
 
     /**
+     * ProjectsApi.contracts(...) returns Project Contracts
+     * if Project is owned directly by the authenticated user (personal repo).
+     */
+    @Test
+    public void fetchesOwnedProjectContracts(){
+        final Project project = this.mockActiveProject(
+            "mihai", "mihai", "test"
+        );
+        final Projects projects = Mockito.mock(Projects.class);
+        Mockito.when(projects.getProjectById(
+            "mihai/test", "github"
+        )).thenReturn(project);
+
+        final Contracts contracts = this.mockContracts(
+            this.mockContract(
+                new Contract.Id("mihai/test",
+                    "vlad", "github", "DEV"),
+                project,
+                BigDecimal.TEN
+            )
+        );
+        Mockito.when(project.contracts()).thenReturn(contracts);
+
+        final Self core = Mockito.mock(Self.class);
+        Mockito.when(core.projects()).thenReturn(projects);
+
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("mihai");
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn("github");
+        Mockito.when(user.provider()).thenReturn(provider);
+
+        final ProjectsApi api = new ProjectsApi(
+            user,
+            core
+        );
+
+        ResponseEntity<String> resp = api.contracts("mihai", "test");
+        MatcherAssert.assertThat(
+            resp.getStatusCode(),
+            Matchers.is(HttpStatus.OK)
+        );
+        final JsonArray json = Json.createReader(
+            new StringReader(Objects.requireNonNull(resp.getBody()))
+        ).readArray();
+        MatcherAssert.assertThat(
+            json,
+            Matchers.equalTo(Json.createArrayBuilder()
+                .add(Json.createObjectBuilder()
+                    .add("id", Json.createObjectBuilder()
+                        .add("repoFullName", "mihai/test")
+                        .add("contributorUsername", "vlad")
+                        .add("provider", "github")
+                        .add("role", "DEV")
+                        .build())
+                    .add("project", Json.createObjectBuilder()
+                        .add("repoFullName", "mihai/test")
+                        .add("provider", "github")
+                        .add("selfOwner", "mihai")
+                        .add("manager", Json.createObjectBuilder()
+                            .add("id", 1)
+                            .add("userId", "123")
+                            .add("username", "zoeself")
+                            .add("provider", "github")
+                            .add("commission", 0.25)
+                            .build()))
+                    .add("value", "$10.00")
+                    .build())
+                .build())
+        );
+
+    }
+
+    /**
+     * Get Contracts, if the project is owned by an organization to which the
+     * User has admin rights (but not owned by the User in Self),
+     * it should be returned.
+     */
+    @Test
+    public void fetchesOrgOwnedProjectContracts(){
+
+        final Project project = this.mockActiveProject(
+            "vlad", "self", "test"
+        );
+        final Projects projects = Mockito.mock(Projects.class);
+        Mockito.when(projects.getProjectById(
+            "self/test", "github"
+        )).thenReturn(project);
+        final Contracts contracts = this.mockContracts(
+            this.mockContract(
+                new Contract.Id("self/test",
+                    "john", "github", "DEV"),
+                project,
+                BigDecimal.TEN
+            )
+        );
+        Mockito.when(project.contracts()).thenReturn(contracts);
+
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(repo.fullName()).thenReturn("self/test");
+        final Organizations orgs = Mockito.mock(Organizations.class);
+        final Organization org = Mockito.mock(Organization.class);
+        Mockito.when(org.repos()).thenReturn(() -> List.of(repo).iterator());
+        Mockito.when(orgs.iterator()).thenReturn(List.of(org).iterator());
+
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn("github");
+        Mockito.when(provider.organizations()).thenReturn(orgs);
+
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("vlad");
+        Mockito.when(user.provider()).thenReturn(provider);
+
+        final Self core = Mockito.mock(Self.class);
+        Mockito.when(core.projects()).thenReturn(projects);
+
+        final ProjectsApi api = new ProjectsApi(
+            user,
+            core
+        );
+
+        final ResponseEntity<String> resp = api.contracts("self", "test");
+
+        MatcherAssert.assertThat(
+            resp.getStatusCode(),
+            Matchers.is(HttpStatus.OK)
+        );
+        final JsonArray json = Json.createReader(
+            new StringReader(Objects.requireNonNull(resp.getBody()))
+        ).readArray();
+        MatcherAssert.assertThat(
+            json,
+            Matchers.equalTo(Json.createArrayBuilder()
+                .add(Json.createObjectBuilder()
+                    .add("id", Json.createObjectBuilder()
+                        .add("repoFullName", "self/test")
+                        .add("contributorUsername", "john")
+                        .add("provider", "github")
+                        .add("role", "DEV")
+                        .build())
+                    .add("project", Json.createObjectBuilder()
+                        .add("repoFullName", "self/test")
+                        .add("provider", "github")
+                        .add("selfOwner", "vlad")
+                        .add("manager", Json.createObjectBuilder()
+                            .add("id", 1)
+                            .add("userId", "123")
+                            .add("username", "zoeself")
+                            .add("provider", "github")
+                            .add("commission", 0.25)
+                            .build()))
+                    .add("value", "$10.00")
+                    .build())
+                .build())
+        );
+    }
+
+    /**
+     * Returns an empty json array if project not found.
+     */
+    @Test
+    public void fetchesEmptyContractsIfProjectNotFound(){
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("mihai");
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn("github");
+        Mockito.when(user.provider()).thenReturn(provider);
+
+        final Self core = Mockito.mock(Self.class);
+        Mockito.when(core.projects()).thenReturn(Mockito.mock(Projects.class));
+
+        final ProjectsApi api = new ProjectsApi(
+            user,
+            core
+        );
+
+        ResponseEntity<String> resp = api.contracts("mihai", "test");
+        MatcherAssert.assertThat(
+            resp.getStatusCode(),
+            Matchers.is(HttpStatus.OK)
+        );
+        final JsonArray json = Json.createReader(
+            new StringReader(Objects.requireNonNull(resp.getBody()))
+        ).readArray();
+        MatcherAssert.assertThat(
+            json,
+            Matchers.emptyIterable()
+        );
+    }
+
+    /**
+     * Returns an empty json array if was project was found in for an org repo
+     * but authenticated user has no admin rights for that org repo.
+     */
+    @Test
+    public void fetchesEmptyContractsIfProjectFoundButUserHasNoAdminRights(){
+
+        final Project project = this.mockActiveProject(
+            "mihai", "self", "test"
+        );
+        final Projects projects = Mockito.mock(Projects.class);
+        Mockito.when(projects.getProjectById(
+            "self/test", "github"
+        )).thenReturn(project);
+
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(repo.fullName()).thenReturn("self/test-other");
+        final Organizations orgs = Mockito.mock(Organizations.class);
+        final Organization org = Mockito.mock(Organization.class);
+        Mockito.when(org.repos()).thenReturn(() -> List.of(repo).iterator());
+        Mockito.when(orgs.iterator()).thenReturn(List.of(org).iterator());
+
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.username()).thenReturn("mihai");
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn("github");
+        Mockito.when(user.provider()).thenReturn(provider);
+        Mockito.when(provider.organizations()).thenReturn(orgs);
+
+        final Self core = Mockito.mock(Self.class);
+        Mockito.when(core.projects()).thenReturn(projects);
+
+        final ProjectsApi api = new ProjectsApi(
+            user,
+            core
+        );
+
+        ResponseEntity<String> resp = api.contracts("self", "test");
+        Mockito.verify(repo).fullName();
+
+        MatcherAssert.assertThat(
+            resp.getStatusCode(),
+            Matchers.is(HttpStatus.OK)
+        );
+        final JsonArray json = Json.createReader(
+            new StringReader(Objects.requireNonNull(resp.getBody()))
+        ).readArray();
+        MatcherAssert.assertThat(
+            json,
+            Matchers.emptyIterable()
+        );
+    }
+
+    /**
      * Mock an activated project.
      * @param selfOwner Owner username in Self.
      * @param repoOwner Owner username from the provider
@@ -376,6 +623,36 @@ public final class ProjectsApiTestCase {
         Mockito.when(project.owner()).thenReturn(user);
 
         return project;
+    }
+
+    /**
+     * Mock a Contract.
+     * @param id Contract.Id.
+     * @param project Project.
+     * @param value Value.
+     * @return Contract.
+     */
+    private Contract mockContract(
+        final Contract.Id id,
+        final Project project,
+        final BigDecimal value){
+        final Contract contract = Mockito.mock(Contract.class);
+        Mockito.when(contract.contractId()).thenReturn(id);
+        Mockito.when(contract.project()).thenReturn(project);
+        Mockito.when(contract.value()).thenReturn(value);
+        return contract;
+    }
+
+    /**
+     * Mocks Contracts.
+     * @param contract Contracts list.
+     * @return Contracts.
+     */
+    private Contracts mockContracts(final Contract... contract){
+        final Contracts contracts = Mockito.mock(Contracts.class);
+        Mockito.when(contracts.spliterator())
+            .thenReturn(Arrays.asList(contract).spliterator());
+        return contracts;
     }
 
 }
