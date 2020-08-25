@@ -3,6 +3,7 @@ package com.selfxdsd.selfweb.api.output;
 import com.selfxdsd.api.Contract;
 
 import javax.json.Json;
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -29,8 +30,12 @@ public final class JsonContract extends AbstractJsonObject{
                 .add("role", contract.contractId().getRole())
                 .build())
             .add("project", new JsonProject(contract.project()))
+            .add("hourlyRate", NumberFormat
+                .getCurrencyInstance(Locale.US)
+                .format(contract.hourlyRate().divide(BigDecimal.valueOf(100))))
             .add("value", NumberFormat
-                .getCurrencyInstance(Locale.US).format(contract.value()))
+                .getCurrencyInstance(Locale.US)
+                .format(contract.value().divide(BigDecimal.valueOf(100))))
             .build());
     }
 }

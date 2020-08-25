@@ -168,25 +168,21 @@ public class ProjectsApi extends BaseApiController {
     }
 
     /**
-     * Get contracts of a project in JSON format.<br><br>
-     *
-     * If the Project owner does not match the authenticated User, we have
-     * to check the User's organizations to see if the project
-     * is part of an organization where the User has admin rights.
-     *
+     * Get contracts of an owned project in JSON format.<br><br>
      * @param owner Owner of the project (username or org name).
      * @param name Simple name of the project.
      * @return JsonArray.
      */
     @GetMapping(
-        value = "/projects/contracts/{owner}/{name}",
+        value = "/projects/{owner}/{name}/contracts",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<String> contracts(
         @PathVariable("owner") final String owner,
         @PathVariable("name") final String name) {
-        final Project project = this.findProject(owner, name,
-            this.user.provider().name());
+        final Project project = this.user.projects().getProjectById(
+            owner + "/" + name, this.user.provider().name()
+        );
         final JsonContracts contracts;
         if (project == null) {
             contracts = new JsonContracts(new Contracts.Empty());
@@ -194,44 +190,6 @@ public class ProjectsApi extends BaseApiController {
             contracts = new JsonContracts(project.contracts());
         }
         return ResponseEntity.ok(contracts.toString());
-    }
-
-    /**
-     * Get an owned project.<br><br>
-     *
-     * If the Project owner does not match the authenticated User, we have
-     * to check the User's organizations to see if the project
-     * is part of an organization where the User has admin rights.
-     * @param owner Owner of the repo (username or org name)
-     * @param name Simple name of the repo.
-     * @param provider Provider name.
-     * @return Project or null if not found or owner has no admin rights.
-     */
-    private Project findProject(final String owner,
-                                final String name,
-                                final  String provider){
-        Project found = this.self.projects().getProjectById(
-            owner + "/" + name, provider
-        );
-        boolean hasRights = true;
-        if (found != null && !owner.equalsIgnoreCase(this.user.username())) {
-            hasRights = false;
-            final Organizations orgs = this.user.provider()
-                .organizations();
-            organizationsLoop:
-            for (final Organization org : orgs) {
-                for (final Repo repo : org.repos()) {
-                    if (repo.fullName().equals(found.repoFullName())) {
-                        hasRights = true;
-                        break organizationsLoop;
-                    }
-                }
-            }
-        }
-        if (!hasRights) {
-            found = null;
-        }
-        return found;
     }
 
 }
