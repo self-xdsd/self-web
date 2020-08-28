@@ -23,7 +23,9 @@
 package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.selfweb.api.input.ContractInput;
 import com.selfxdsd.selfweb.api.input.RepoInput;
+import com.selfxdsd.selfweb.api.output.JsonContract;
 import com.selfxdsd.selfweb.api.output.JsonContracts;
 import com.selfxdsd.selfweb.api.output.JsonProject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,16 +37,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.json.Json;
 import javax.validation.Valid;
+import java.math.BigDecimal;
 
 /**
  * Projects.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #69:60min Implement and test the Contracts tab of the project
- *  page. Provide registration form endpoint for adding contributor contract to
- *  project.
+ * @todo #70:60min Implement and test the Contracts tab of the project
+ *  page. Start implementing the JavaScript interactor withProjectsAPI
+ *  contracts endpoints GET and POST.
  */
 @RestController
 public class ProjectsApi extends BaseApiController {
@@ -187,6 +191,51 @@ public class ProjectsApi extends BaseApiController {
             contracts = new JsonContracts(project.contracts());
         }
         return ResponseEntity.ok(contracts.toString());
+    }
+
+    /**
+     * Add new contributor for project Contract in Self.<br><br>
+     * @param owner Owner of the project (username or org name).
+     * @param name Simple name of the project.
+     * @param input Contract form input.
+     * @return Created Contract as JSON.
+     */
+    @PostMapping(
+        value = "/projects/{owner}/{name}/contracts",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> contracts(
+        @PathVariable("owner") final String owner,
+        @PathVariable("name") final String name,
+        @Valid final ContractInput input){
+
+        final String repoFullName = owner + "/" + name;
+        final String provider = this.user.provider().name();
+        final BigDecimal hourlyRate = BigDecimal
+            .valueOf(input.getHourlyRate())
+            .multiply(BigDecimal.valueOf(100));
+
+        ResponseEntity<String> response;
+        try {
+            final Contract contract = this.user
+                .projects()
+                .getProjectById(repoFullName, provider)
+                .contracts()
+                .addContract(repoFullName, input.getUsername(),
+                    provider, hourlyRate, input.getRole());
+            response = ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new JsonContract(contract).toString());
+        } catch (final IllegalStateException exception) {
+            response = ResponseEntity
+                .status(HttpStatus.PRECONDITION_FAILED)
+                .body(Json.createObjectBuilder()
+                    .add("reason", exception.getMessage())
+                    .build()
+                    .toString());
+        }
+
+        return response;
     }
 
 }
