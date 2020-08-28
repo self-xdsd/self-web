@@ -91,6 +91,18 @@ public final class RoleValidatorTestCase {
     }
 
     /**
+     * Should pass if all roles are allowed.
+     */
+    @Test
+    public void shouldPassIfAllRolesAllowed(){
+        final Validator validator = Validation.buildDefaultValidatorFactory()
+            .getValidator();
+        final RoleAll formAll = new RoleAll("PM");
+        MatcherAssert.assertThat(validator
+            .validate(formAll), Matchers.emptyIterable());
+    }
+
+    /**
      * Throws IllegalArgumentException wrapped in a ValidationException
      * if one of the allowed roles doesn't exist.
      */
@@ -102,6 +114,7 @@ public final class RoleValidatorTestCase {
         Assertions.assertThrows(ValidationException.class,
             () -> validator.validate(form));
     }
+
 
     /**
      * Form that allows REV or DEV roles.
