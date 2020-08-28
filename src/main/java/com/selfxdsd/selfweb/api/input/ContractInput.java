@@ -22,10 +22,10 @@
  */
 package com.selfxdsd.selfweb.api.input;
 
-import com.selfxdsd.selfweb.api.input.validators.ValidRole;
+import com.selfxdsd.selfweb.api.input.validators.Role;
 
-import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 
 /**
  * Input for a Contract.
@@ -45,15 +45,13 @@ public final class ContractInput {
     /**
      * Contributor hourly rate in dollars.
      */
-    @DecimalMin(value = "0.0", inclusive = false,
-        message = "Hourly rate must not be $0!")
+    @Positive(message = "Hourly rate must be a positive number!")
     private double hourlyRate;
 
     /**
-     * Contributor's role.
+     * Contributor's role. Should be "DEV" or "REV".
      */
-    @NotBlank(message = "Contributor's role is mandatory!")
-    @ValidRole
+    @Role(oneOf = {"DEV", "REV"})
     private String role;
 
     /**
@@ -73,11 +71,11 @@ public final class ContractInput {
     }
 
     /**
-     * Set role.
+     * Set role. Should be "DEV" or "REV".
      * @param role Role.
      */
     public void setRole(final String role) {
-        this.role = role;
+        this.role = role.toUpperCase();
     }
 
     /**

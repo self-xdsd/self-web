@@ -217,20 +217,31 @@ public class ProjectsApi extends BaseApiController {
 
         ResponseEntity<String> response;
         try {
-            final Contract contract = this.user
+            final Project project = this.user
                 .projects()
-                .getProjectById(repoFullName, provider)
-                .contracts()
-                .addContract(repoFullName, input.getUsername(),
-                    provider, hourlyRate, input.getRole());
-            response = ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new JsonContract(contract).toString());
+                .getProjectById(repoFullName, provider);
+            if (project != null) {
+                final Contract contract = project
+                    .contracts()
+                    .addContract(repoFullName, input.getUsername(),
+                        provider, hourlyRate, input.getRole());
+                response = ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(new JsonContract(contract).toString());
+            } else {
+                response = ResponseEntity
+                    .status(HttpStatus.PRECONDITION_FAILED)
+                    .body(Json.createObjectBuilder()
+                        .add("reason", "Project '" + repoFullName
+                            + "(" + provider + ")' was not found.")
+                        .build()
+                        .toString());
+            }
         } catch (final IllegalStateException exception) {
             response = ResponseEntity
                 .status(HttpStatus.PRECONDITION_FAILED)
                 .body(Json.createObjectBuilder()
-                    .add("reason", exception.getMessage())
+                    .add("reason", "Something went wrong.")
                     .build()
                     .toString());
         }

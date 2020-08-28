@@ -24,8 +24,12 @@ package com.selfxdsd.selfweb.api.input.validators;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
+import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.FIELD;
 
 /**
  * Annotation for role input. The input must match existing Contract.Roles.
@@ -34,10 +38,24 @@ import java.lang.annotation.RetentionPolicy;
  * @since 0.0.1
  * @checkstyle JavadocMethod (200 lines)
  */
+@Documented
+@Target({ FIELD })
 @Constraint(validatedBy = RoleValidator.class)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidRole {
-    String message() default "Role doesn't exists!";
+public @interface Role {
+
+    String message() default "Role '${validatedValue}' doesn't exist or"
+        + " is not allowed!";
+    /**
+     * Specify an array Contract.Roles allowed for input.
+     * <br/>
+     * Note that if one of the roles is not part of Contract.Roles, it will
+     * throw IllegalArgumentException.
+     * <br/>
+     * Default assumes that all Contract.Roles are allowed.
+     * @return Array of roles.
+     */
+    String[] oneOf() default {};
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

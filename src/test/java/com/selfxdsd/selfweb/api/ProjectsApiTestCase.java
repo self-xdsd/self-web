@@ -558,6 +558,46 @@ public final class ProjectsApiTestCase {
     }
 
     /**
+     * Returns HttpStatus.PRECONDITION_FAILED if contract was not created
+     * due to project not found.
+     */
+    @Test
+    public void contractIsNotAddedIfProjectNotFound(){
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        final Projects projects = Mockito.mock(Projects.class);
+        final Contracts contracts = Mockito.mock(Contracts.class);
+
+        Mockito.when(user.username()).thenReturn("mihai");
+        Mockito.when(provider.name()).thenReturn("github");
+        Mockito.when(user.provider()).thenReturn(provider);
+        Mockito.when(user.projects()).thenReturn(projects);
+
+        Mockito.when(contracts.addContract(Mockito.anyString(),
+            Mockito.anyString(),
+            Mockito.anyString(),
+            Mockito.any(BigDecimal.class),
+            Mockito.anyString()))
+            .thenThrow(new IllegalStateException("Contract not created!"));
+
+        final ProjectsApi api = new ProjectsApi(
+            user,
+            Mockito.mock(Self.class)
+        );
+
+        final ContractInput input = new ContractInput();
+        input.setUsername("john");
+        input.setHourlyRate(10);
+        input.setRole(Contract.Roles.DEV);
+        MatcherAssert.assertThat(api
+                .contracts("mihai", "test", input).getStatusCode(),
+            Matchers.is(HttpStatus.PRECONDITION_FAILED));
+
+    }
+
+
+
+    /**
      * Mock an activated project.
      * @param selfOwner Owner username in Self.
      * @param repoOwner Owner username from the provider

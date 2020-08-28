@@ -26,22 +26,38 @@ import com.selfxdsd.api.Contract;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of a role validator. It checks
  * if input matches existing {@link Contract.Roles}.
+ *
  * @author criske
  * @version $Id$
  * @since 0.0.1
  */
 public final class RoleValidator implements
-    ConstraintValidator<ValidRole, String> {
+    ConstraintValidator<Role, String> {
 
-    @Override
-    public boolean isValid(final String role,
-                           final ConstraintValidatorContext context) {
-        return Arrays
+    /**
+     * Allowed {@link Contract.Roles}.
+     */
+    private final List<String> allowedRoles;
+
+    /**
+     * All {@link Contract.Roles}.
+     */
+    private final List<String> allRoles;
+
+    /**
+     * Constructor.
+     */
+    public RoleValidator() {
+        this.allowedRoles = new ArrayList<>();
+        this.allRoles = Arrays
             .stream(Contract.Roles.class.getDeclaredFields())
             .map(field -> {
                 try {
@@ -49,7 +65,31 @@ public final class RoleValidator implements
                 } catch (final IllegalAccessException exception) {
                     throw new RuntimeException(exception);
                 }
-            })
-            .anyMatch(role::equalsIgnoreCase);
+            }).collect(Collectors.toList());
     }
+
+    @Override
+    public void initialize(final Role constraintAnnotation) {
+        final String[] oneOf = constraintAnnotation.oneOf();
+        if (oneOf.length == 0) {
+            this.allowedRoles.addAll(allRoles);
+        } else {
+            for (final String role : oneOf) {
+                final String formattedRole = role.trim().toUpperCase();
+                if (this.allRoles.contains(formattedRole)) {
+                    this.allowedRoles.add(formattedRole);
+                } else {
+                    throw new IllegalArgumentException("The allowed role '"
+                        + formattedRole + "' does not exist!");
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean isValid(final String role,
+                           final ConstraintValidatorContext context) {
+        return allowedRoles.contains(role.trim().toUpperCase());
+    }
+
 }
