@@ -5,9 +5,7 @@ var contractsService = (function($) {
                     $.get({
                         url: "/api/projects/"+project.owner+"/"+project.name+"/contracts",
                         beforeSend: onWait,
-                        success: function(data){
-                            resolve(JSON.parse(data));
-                        },
+                        success: resolve,
                         error: function(jqXHR){
                              if(jqXHR.status === 412){
                                 var reason = JSON.parse(jqXHR.responseText).reason;
@@ -25,9 +23,7 @@ var contractsService = (function($) {
                         url: "/api/projects/"+project.owner+"/"+project.name+"/contracts",
                         beforeSend: onWait,
                         data: form,
-                        success: function(data){
-                            resolve(JSON.parse(data));
-                        },
+                        success: resolve,
                         error: function(jqXHR){
                             if(jqXHR.status === 400){
                                 var errors = JSON.parse(jqXHR.responseText);
