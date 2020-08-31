@@ -2,6 +2,7 @@
 
 body {
   font-family:"Roboto", "Times New Roman", serif;
+  height: 100%;
 }
 #header {
     border-bottom-style: solid;

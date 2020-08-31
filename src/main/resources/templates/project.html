@@ -115,8 +115,66 @@
     </div>
 
     </div>
-    <div class="card card-body collapse multi-collapse" id="projectContracts">
-        Project Contracts Here.
+    <div class="card card-body collapse multi-collapse" id="projectContracts" style="height:550px;">
+            <div class="card container-fluid d-flex h-100 flex-column" style="padding:0">
+                <div class="card-header text-muted" style="padding:0;">
+                    <table class="table">
+                        <tr>
+                            <th scope="col" width="25%">Username</th>
+                            <th scope="col" width="10%">Role</th>
+                            <th scope="col" width="15%">Hourly Rate</th>
+                            <th scope="col" width="15%">Value</th>
+                            <th scope="col" colspan="2">PM</th>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card-body overflow-auto" style="padding:0;flex:1">
+                    <table class="table" id="contracts" >
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer d-flex justify-content-between"
+                     style="height:100px">
+                    <div class="col-lg-8 align-self-center">
+                        <form id="addContractForm" class="form-inline"
+                              style="padding-bottom:10px;">
+                            <div class="form-group input-group-sm col-lg-4">
+                                <label for="username">Username:</label>
+                                <input type="text" class="form-control"
+                                       id="username" name="username">
+                                <div class="invalid-feedback username-error"></div>
+                            </div>
+                            <div class="form-group input-group-sm col-lg-4">
+                                <label for="hourlyRate">Hourly Rate:</label>
+                                <input type="number" class="form-control"
+                                       id="hourlyRate" name="hourlyRate">
+                                <div class="invalid-feedback hourlyRate-error"></div>
+                            </div>
+                            <div class="form-group input-group-sm col-lg-2">
+                                <label for="role">Role:</label>
+                                <select id="role" class="form-control"
+                                        name="role">
+                                    <option selected>DEV</option>
+                                    <option>REV</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-top:30px">
+                                <button type="submit" id="add"
+                                        class="btn btn-primary bg">Add
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div id="loadingContracts"
+                         class="bg-light align-self-center"
+                         style="margin-top:25px; margin-right:25px; display:none">
+                        <img src="/images/loading.svg" width="36"
+                             height="36">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="card card-body project-not-registered" style="display: none;">
         <div>
@@ -158,7 +216,11 @@
 </main>
 <footer th:replace="footer.html :: footer"></footer>
 </body>
+<script src="/js/jquery.mockjax.js"></script>
+<script src="/js/requestInterceptor.js"></script>
 <script src="/js/getProject.js"></script>
+<script src="/js/contractsService.js"></script>
+<script src="/js/getAndAddContracts.js"></script>
 <script>
     $(document).ready(
         function () {

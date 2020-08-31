@@ -46,9 +46,6 @@ import java.math.BigDecimal;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #70:60min Implement and test the Contracts tab of the project
- *  page. Start implementing the JavaScript interactor withProjectsAPI
- *  contracts endpoints GET and POST.
  */
 @RestController
 public class ProjectsApi extends BaseApiController {
