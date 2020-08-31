@@ -51,12 +51,15 @@
             searching: false,
             ordering:  false,
             ajax: function(data, callback, settings){
+                //save "data" in a closure achieved with a self invoked function.
+                //this will guarantee that "data.draw" is in sync for each request (regardless of spam)
+                //without having to send it to self-server and echo it back.
                 (function(_data){
+                    var draw = _data.draw;
                     var page = {
                         no: Math.floor(_data.start/_data.length) + 1,
                         size: _data.length
                     }
-                    var draw = _data.draw;
                     service
                         .getAll(project, page, function(){
                             $("#loadingContracts").show();
