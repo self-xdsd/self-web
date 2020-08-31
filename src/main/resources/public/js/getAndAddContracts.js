@@ -51,8 +51,9 @@
             searching: false,
             ordering:  false,
             ajax: function(data, callback, settings){
-                //save "data" in a closure achieved with a self invoked function.
-                //this will guarantee that "data.draw" is in sync for each request (regardless of spam)
+                //save "data" in a closure achieved with a self invoked function,
+                //until we have the remote response. This will guarantee that "data.draw" counter
+                //is in sync for each request,regardless of spam, and
                 //without having to send it to self-server and echo it back.
                 (function(_data){
                     var draw = _data.draw;
