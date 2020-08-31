@@ -1,10 +1,12 @@
 var contractsService = (function($) {
          return {
             getAll: function(project, onWait){
+                if(onWait){
+                    onWait();
+                }
                 return new Promise(function(resolve, reject){
                     $.get({
                         url: "/api/projects/"+project.owner+"/"+project.name+"/contracts",
-                        beforeSend: onWait,
                         success: resolve,
                         error: function(jqXHR){
                              if(jqXHR.status === 412){
@@ -18,10 +20,12 @@ var contractsService = (function($) {
                 });
             },
             add: function(project, form, onWait){
+                if(onWait){
+                    onWait();
+                }
                 return new Promise(function(resolve, reject){
                     $.post({
                         url: "/api/projects/"+project.owner+"/"+project.name+"/contracts",
-                        beforeSend: onWait,
                         data: form,
                         success: resolve,
                         error: function(jqXHR){
