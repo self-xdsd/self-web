@@ -46,18 +46,49 @@
         //while there is still something loading, keep showing the loading animation.
         var loadingQueue = 0;
 
-        service
-            .getAll(project, function(){
-                $("#loadingContracts").show();
-                loadingQueue++;
-            })
-            .then(function(contracts){ contracts.forEach(addContractToTable); })
-            .catch(handleError)
-            .finally(function(){
-                if(--loadingQueue === 0){
-                     $("#loadingContracts").hide();
-                };
-            });
+        $("#contracts").DataTable({
+            serverSide: true,
+            searching: false,
+            ordering:  false,
+            ajax: function(data, callback, settings){
+                (function(_data){
+                    var page = {
+                        no: Math.floor(_data.start/_data.length) + 1,
+                        size: _data.length
+                    }
+                    var draw = _data.draw;
+                    service
+                        .getAll(project, page, function(){
+                            $("#loadingContracts").show();
+                            loadingQueue++;
+                        })
+                        .then(function(contracts){
+                            var dataTablePage = {
+                                draw: draw,
+                                recordsTotal: contracts.page.totalRecords,
+                                recordsFiltered: contracts.page.totalRecords,
+                                data: contracts.data.map(function(c){
+                                    return [
+                                        c.id.contributorUsername,
+                                        c.id.role,
+                                        c.hourlyRate,
+                                        c.value,
+                                        c.project.manager.username
+                                    ];
+                                })
+                            };
+                            callback(dataTablePage);
+                         })
+                        .catch(handleError)
+                        .finally(function(){
+                            if(--loadingQueue === 0){
+                                 $("#loadingContracts").hide();
+                            };
+                        });
+                })(data);
+            }
+        });
+
 
         $("#addContractForm").submit(function(e){
             e.preventDefault();

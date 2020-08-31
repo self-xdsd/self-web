@@ -1,12 +1,11 @@
 var contractsService = (function($) {
          return {
-            getAll: function(project, onWait){
-                if(onWait){
-                    onWait();
-                }
+            getAll: function(project, page, onWait){
                 return new Promise(function(resolve, reject){
+                    if(onWait){ onWait();}
                     $.get({
-                        url: "/api/projects/"+project.owner+"/"+project.name+"/contracts",
+                        url: "/api/projects/"+project.owner+"/"+project.name
+                            +"/contracts/"+page.no+"/"+page.size,
                         success: resolve,
                         error: function(jqXHR){
                              if(jqXHR.status === 412){
@@ -20,10 +19,8 @@ var contractsService = (function($) {
                 });
             },
             add: function(project, form, onWait){
-                if(onWait){
-                    onWait();
-                }
                 return new Promise(function(resolve, reject){
+                    if(onWait){ onWait();}
                     $.post({
                         url: "/api/projects/"+project.owner+"/"+project.name+"/contracts",
                         data: form,
