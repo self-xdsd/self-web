@@ -1,3 +1,17 @@
+/**
+* The module of "getAndAddContracts".
+
+* This pattern - self invoked function - ensure the function is called
+* with the "jQuery" global and "contractsService" global module right after added the file to <script>.
+* This is equivalent of manually:
+* var module = function($, service){}
+* module(jQuery,contractsService);
+*
+* Whe could have used "$" alias of jQuery global variable without injecting it,
+* but this a good practice since "$" is not "reserved" to jQuery.
+* Now "$" is just a function argument name and not the jQuery
+* alias anymore. It could named "foo" fo ex, thus making a call like foo("#contracts") valid.
+*/
 (function getAndAddContracts($, service){
 
     function addContractToTable(contract){
@@ -6,8 +20,6 @@
                     +"<td width='10%'>"+contract.id.role+"</td>"
                     +"<td width='15%'>"+contract.hourlyRate+"</td>"
                     +"<td width='15%'>"+contract.value+"</td>"
-                    +"<td>"+contract.project.manager.username+"</td>"
-                    +"<td width='7%' style='text-align:center'>"+contract.project.manager.commission+"</td>"
                   +"</tr>";
         $("#contracts").find("tbody").append(row);
     }
@@ -44,52 +56,58 @@
          }
 
         //while there is still something loading, keep showing the loading animation.
+        //increments when there is a remote request ongoing (fetch a page, submit new contract)
+        //decrements when a request is done (even with an error).
+        //if reaches '0' the loading indicator will hide.
         var loadingQueue = 0;
 
         $("#contracts").DataTable({
-            serverSide: true,
-            searching: false,
-            ordering:  false,
+            //setup
+            serverSide:  true,
+            searching:   false,//searching not possible yet on server
+            ordering:    false,//same for ordering
+            fixedHeader: true,
+            scrollY:    '50vh',
+            //adapt DataTable request to Self-Paged API specification.
             ajax: function(data, callback, settings){
-                //save "data" in a closure achieved with a self invoked function,
-                //until we have the remote response. This will guarantee that "data.draw" counter
-                //is in sync for each request,regardless of spam, and
-                //without having to send it to self-server and echo it back.
-                (function(_data){
-                    var draw = _data.draw;
-                    var page = {
-                        no: Math.floor(_data.start/_data.length) + 1,
-                        size: _data.length
-                    }
-                    service
-                        .getAll(project, page, function(){
+                var draw = data.draw; // draw counter that ensure the page draw ordering is respected
+                var page = {
+                    no: Math.ceil(data.start/data.length) + 1,
+                    size: data.length
+                }
+                //fetch the page from server
+                service
+                    .getAll(project, page, function(){
+                        //if there is no loading on screen, show it
+                        if(loadingQueue++ === 0){
                             $("#loadingContracts").show();
-                            loadingQueue++;
-                        })
-                        .then(function(contracts){
-                            var dataTablePage = {
-                                draw: draw,
-                                recordsTotal: contracts.page.totalRecords,
-                                recordsFiltered: contracts.page.totalRecords,
-                                data: contracts.data.map(function(c){
-                                    return [
-                                        c.id.contributorUsername,
-                                        c.id.role,
-                                        c.hourlyRate,
-                                        c.value,
-                                        c.project.manager.username
-                                    ];
-                                })
-                            };
-                            callback(dataTablePage);
-                         })
-                        .catch(handleError)
-                        .finally(function(){
-                            if(--loadingQueue === 0){
-                                 $("#loadingContracts").hide();
-                            };
-                        });
-                })(data);
+                        }
+                    })
+                    .then(function(contracts){
+                        //convert contracts page to DataTable "page" specification
+                        var total = contracts.paged.totalPages * contracts.paged.current.size;
+                        var dataTablePage = {
+                            draw: draw,
+                            recordsTotal: total,
+                            recordsFiltered: total,
+                            data: contracts.data.map(function(c){
+                                return [
+                                    c.id.contributorUsername,
+                                    c.id.role,
+                                    c.hourlyRate,
+                                    c.value
+                                ];
+                            })
+                        };
+                        //send page to DataTable to be rendered
+                        callback(dataTablePage);
+                     })
+                    .catch(handleError)
+                    .finally(function(){
+                        if(--loadingQueue === 0){
+                             $("#loadingContracts").hide();
+                        };
+                    });
             }
         });
 
@@ -99,14 +117,22 @@
             var form = $(this);
             service
                 .add(project, form.serialize(), function(){
-                    $("#loadingContracts").show();
+                    if(loadingQueue++ === 0){
+                       $("#loadingContracts").show();
+                    }
                     clearFormErrors();
                     disableForm(true);
-                    loadingQueue++;
                 })
                 .then(function(contract){
                     form.trigger('reset');
-                    addContractToTable(contract);
+                    //we check the current page displayed in table.
+                    //if is last page, we're adding the contract to table.
+                    //since it's the latest contract created.
+                    var pageInfo = table.page.info();
+                    if(pageInfo.page === info.pages){
+                        addContractToTable(contract);
+                    }
+
                 })
                 .catch(handleError)
                 .finally(function(){
@@ -115,6 +141,6 @@
                       $("#loadingContracts").hide();
                    }
                 });
-        })
+        });
     });
 })(jQuery, contractsService)
