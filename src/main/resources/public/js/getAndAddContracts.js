@@ -16,10 +16,10 @@
 
     function addContractToTable(contract){
         var row = "<tr>"
-                    +"<td width='25%'>"+contract.id.contributorUsername+"</td>"
-                    +"<td width='10%'>"+contract.id.role+"</td>"
-                    +"<td width='15%'>"+contract.hourlyRate+"</td>"
-                    +"<td width='15%'>"+contract.value+"</td>"
+                    +"<td  width='50%'>"+contract.id.contributorUsername+"</td>"
+                    +"<td>"+contract.id.role+"</td>"
+                    +"<td>"+contract.hourlyRate+"</td>"
+                    +"<td>"+contract.value+"</td>"
                   +"</tr>";
         $("#contracts").find("tbody").append(row);
     }
@@ -61,7 +61,7 @@
         //if reaches '0' the loading indicator will hide.
         var loadingQueue = 0;
 
-        $("#contracts").DataTable({
+        var table = $("#contracts").DataTable({
             //setup
             serverSide:  true,
             searching:   false,//searching not possible yet on server
@@ -125,11 +125,11 @@
                 })
                 .then(function(contract){
                     form.trigger('reset');
-                    //we check the current page displayed in table.
+                    //we check the current page (0 based) displayed in table.
                     //if is last page, we're adding the contract to table.
                     //since it's the latest contract created.
                     var pageInfo = table.page.info();
-                    if(pageInfo.page === info.pages){
+                    if((pageInfo.page + 1) === pageInfo.pages){
                         addContractToTable(contract);
                     }
 
