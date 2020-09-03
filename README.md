@@ -24,6 +24,29 @@ you're following our code style and guidelines.
 
 It's better to make changes on a separate branch (derived from ``master``), so you won't have to cherry pick commits in case your PR is rejected.
 
+## Maven Settings
+
+This project depends on jars from Self's Github Packages server. This server
+requires authentication so, in order for Maven to be able to fetch dependencies,
+you need to specify your credentials in Maven's ``settings.xml``:
+
+```xml
+<settings>
+    ...
+    <servers>
+        <server>
+            <id>github</id>
+            <username>yourGithubUsername</username>
+            <password>your_github_token</password>
+        </server>
+    </servers>
+</settings>
+```
+
+Make sure you [generate](https://github.com/settings/tokens) a token with the appropriate
+permissions. The ``settings.xml`` file usually resides on your computer at ``${user.home}/.m2/settings.xml``.
+If the file is not there, you can create it.
+
 ## Cash Bounties
 
 Some of the tickets have a cash bounty assigned to them. If you want to solve a ticket and get the bounty, tell me and I'll assign it to you. You will have 10 days to provide a PR and close the ticket. Pay attention: if the 10 days pass, I **might** take it away from you and give it to someone else -- if this happens, you won't get any cash. 
