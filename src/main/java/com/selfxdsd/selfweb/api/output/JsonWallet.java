@@ -22,34 +22,33 @@
  */
 package com.selfxdsd.selfweb.api.output;
 
-import com.selfxdsd.api.Project;
+import com.selfxdsd.api.Wallet;
 
-import javax.json.*;
+import javax.json.Json;
+import java.math.BigDecimal;
 
 /**
- * Self Project as JsonObject.
+ * Wallet in JSON.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-public final class JsonProject extends AbstractJsonObject {
+public final class JsonWallet extends AbstractJsonObject {
 
     /**
      * Ctor.
-     * @param project Project to convert to JSON.
+     * @param wallet Wallet to be converted to JSON..
      */
-    public JsonProject(final Project project) {
+    public JsonWallet(final Wallet wallet) {
         super(
             Json.createObjectBuilder()
-                .add("repoFullName", project.repoFullName())
-                .add("provider", project.provider())
-                .add("selfOwner", project.owner().username())
+                .add("type", wallet.type())
+                .add("cash", wallet.cash().divide(BigDecimal.valueOf(100)))
+                .add("debt", wallet.debt().divide(BigDecimal.valueOf(100)))
                 .add(
-                    "manager",
-                    new JsonProjectManager(project.projectManager())
-                )
-                .add("wallet", new JsonWallet(project.wallet()))
-                .build()
+                    "available",
+                    wallet.available().divide(BigDecimal.valueOf(100))
+                ).build()
         );
     }
 }
