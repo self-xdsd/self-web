@@ -87,15 +87,47 @@
             <div id="walletCard" class="card shadow mb-4">
                 <!-- Card Header - Dropdown -->
                 <div class="card-header py-3">
-                    <h4 class="m-0 font-weight-bold text-primary">Wallet</h4>
+                    <h4 class="m-0 font-weight-bold text-primary">
+                        Wallet
+                        <i
+                            class="fa fa-question-circle-o fa-lg fakeWalletInfo"
+                            style="display: none;"
+                            aria-hidden="true"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="We assigned you a fake wallet with $10M. You can work with it
+                            until you decide to register a real wallet. The business flow is the same,
+                            except the payments are fictive.">
+                        </i>
+                    </h4>
                 </div>
                 <!-- Card Body -->
                 <div class="card-body">
-                    <div class="chart-pie pt-4"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-                        <canvas id="myPieChart" style="display: block; height: 253px; width: 331px;" width="662" height="506" class="chartjs-render-monitor"></canvas>
+                    <div class="chart-pie pt-4">
+                        <canvas
+                            id="walletPieChart"
+                            style="display: block; height: 253px; width: 290px;"
+                            class="chartjs-render-monitor"
+                        >
+                        </canvas>
                     </div>
                     <hr>
-                    Styling for the donut chart can be found in the <code>/js/demo/chart-pie-demo.js</code> file.
+                    <span>
+                        Approximate Total: <span class="font-weight-bold" id="walletCash"></span>
+                    </span><br>
+                    <span>
+                        Debt: <span class="font-weight-bold" id="walletDebt"></span>
+                        <i
+                            class="fa fa-question-circle-o fa-lg fakeWalletInfo"
+                            style="display: none;"
+                            aria-hidden="true"
+                            data-toggle="tooltip"
+                            data-placement="right"
+                            title="Total cost of all currently assigned tasks, active invoices and PM commission.">
+                        </i>
+                    </span><br>
+                    <span>Available: <span class="font-weight-bold" id="walletAvailable"></span>
+                    </span>
                 </div>
             </div>
             <div id="ownerCard" class="card shadow mb-4">
@@ -215,6 +247,7 @@
 <script src="/js/getProject.js"></script>
 <script src="/js/contractsService.js"></script>
 <script src="/js/getAndAddContracts.js"></script>
+<script src="/js/chart.js/Chart.min.js"></script>
 <script>
     $(document).ready(
         function () {

@@ -47,7 +47,7 @@ import java.util.Objects;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @checkstyle ExecutableStatementCount (500 lines)
+ * @checkstyle ExecutableStatementCount (1000 lines)
  */
 public final class ProjectsApiTestCase {
 
@@ -420,7 +420,14 @@ public final class ProjectsApiTestCase {
                             .add("username", "zoeself")
                             .add("provider", "github")
                             .add("commission", 0.25)
-                            .build()))
+                            .build())
+                        .add("wallet", Json.createObjectBuilder()
+                            .add("type", "fake")
+                            .add("cash", 12)
+                            .add("debt", 2)
+                            .add("available", 10)
+                            .build()
+                        ))
                     .add("hourlyRate", "$5.00")
                     .add("value", "$100.00")
                     .build())
@@ -629,6 +636,13 @@ public final class ProjectsApiTestCase {
         final User user = Mockito.mock(User.class);
         Mockito.when(user.username()).thenReturn(selfOwner);
         Mockito.when(project.owner()).thenReturn(user);
+
+        final Wallet wallet = Mockito.mock(Wallet.class);
+        Mockito.when(wallet.available()).thenReturn(BigDecimal.valueOf(1000));
+        Mockito.when(wallet.cash()).thenReturn(BigDecimal.valueOf(1200));
+        Mockito.when(wallet.debt()).thenReturn(BigDecimal.valueOf(200));
+        Mockito.when(wallet.type()).thenReturn("fake");
+        Mockito.when(project.wallet()).thenReturn(wallet);
 
         return project;
     }

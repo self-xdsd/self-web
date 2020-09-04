@@ -46,6 +46,9 @@ import java.math.BigDecimal;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #73:30min Let's move the /contracts methods to their
+ *  own API class, called ContractsApi. The method paths should
+ *  remain the same.
  */
 @RestController
 public class ProjectsApi extends BaseApiController {
