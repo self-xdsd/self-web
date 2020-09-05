@@ -23,10 +23,7 @@
 package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.*;
-import com.selfxdsd.selfweb.api.input.ContractInput;
 import com.selfxdsd.selfweb.api.input.RepoInput;
-import com.selfxdsd.selfweb.api.output.JsonContract;
-import com.selfxdsd.selfweb.api.output.JsonContracts;
 import com.selfxdsd.selfweb.api.output.JsonProject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,18 +34,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.json.Json;
 import javax.validation.Valid;
-import java.math.BigDecimal;
 
 /**
  * Projects.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #73:30min Let's move the /contracts methods to their
- *  own API class, called ContractsApi. The method paths should
- *  remain the same.
  */
 @RestController
 public class ProjectsApi extends BaseApiController {
@@ -166,87 +158,6 @@ public class ProjectsApi extends BaseApiController {
                 .body(new JsonProject(activated).toString());
         }
         return resp;
-    }
-
-    /**
-     * Get contracts of an owned project in JSON format.<br><br>
-     * @param owner Owner of the project (username or org name).
-     * @param name Simple name of the project.
-     * @return JsonArray.
-     */
-    @GetMapping(
-        value = "/projects/{owner}/{name}/contracts",
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<String> contracts(
-        @PathVariable("owner") final String owner,
-        @PathVariable("name") final String name) {
-        final Project project = this.user.projects().getProjectById(
-            owner + "/" + name, this.user.provider().name()
-        );
-        final JsonContracts contracts;
-        if (project == null) {
-            contracts = new JsonContracts(new Contracts.Empty());
-        } else {
-            contracts = new JsonContracts(project.contracts());
-        }
-        return ResponseEntity.ok(contracts.toString());
-    }
-
-    /**
-     * Add new contributor for project Contract in Self.<br><br>
-     * @param owner Owner of the project (username or org name).
-     * @param name Simple name of the project.
-     * @param input Contract form input.
-     * @return Created Contract as JSON.
-     */
-    @PostMapping(
-        value = "/projects/{owner}/{name}/contracts",
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<String> contracts(
-        @PathVariable("owner") final String owner,
-        @PathVariable("name") final String name,
-        @Valid final ContractInput input){
-
-        final String repoFullName = owner + "/" + name;
-        final String provider = this.user.provider().name();
-        final BigDecimal hourlyRate = BigDecimal
-            .valueOf(input.getHourlyRate())
-            .multiply(BigDecimal.valueOf(100));
-
-        ResponseEntity<String> response;
-        try {
-            final Project project = this.user
-                .projects()
-                .getProjectById(repoFullName, provider);
-            if (project != null) {
-                final Contract contract = project
-                    .contracts()
-                    .addContract(repoFullName, input.getUsername(),
-                        provider, hourlyRate, input.getRole());
-                response = ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(new JsonContract(contract).toString());
-            } else {
-                response = ResponseEntity
-                    .status(HttpStatus.PRECONDITION_FAILED)
-                    .body(Json.createObjectBuilder()
-                        .add("reason", "Project '" + repoFullName
-                            + "(" + provider + ")' was not found.")
-                        .build()
-                        .toString());
-            }
-        } catch (final IllegalStateException exception) {
-            response = ResponseEntity
-                .status(HttpStatus.PRECONDITION_FAILED)
-                .body(Json.createObjectBuilder()
-                    .add("reason", "Something went wrong.")
-                    .build()
-                    .toString());
-        }
-
-        return response;
     }
 
 }

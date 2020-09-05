@@ -23,7 +23,6 @@
 package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.*;
-import com.selfxdsd.selfweb.api.input.ContractInput;
 import com.selfxdsd.selfweb.api.input.RepoInput;
 import com.selfxdsd.selfweb.api.output.JsonProject;
 import org.hamcrest.MatcherAssert;
@@ -34,13 +33,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonObject;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * Unit tests for {@link ProjectsApi}.
@@ -355,256 +352,6 @@ public final class ProjectsApiTestCase {
     }
 
     /**
-     * ProjectsApi.contracts(...) returns Project Contracts
-     * if Project is owned directly by the authenticated user (personal repo).
-     */
-    @Test
-    public void fetchesOwnedProjectContracts(){
-        final Project project = this.mockActiveProject(
-            "mihai", "mihai", "test"
-        );
-        final Projects projects = Mockito.mock(Projects.class);
-        Mockito.when(projects.getProjectById(
-            "mihai/test", "github"
-        )).thenReturn(project);
-
-        final Contracts contracts = this.mockContracts(
-            this.mockContract(
-                new Contract.Id("mihai/test",
-                    "vlad", "github", "DEV"),
-                project,
-                BigDecimal.valueOf(500),
-                BigDecimal.valueOf(10000)
-            )
-        );
-        Mockito.when(project.contracts()).thenReturn(contracts);
-
-        final User user = Mockito.mock(User.class);
-
-        Mockito.when(user.username()).thenReturn("mihai");
-        final Provider provider = Mockito.mock(Provider.class);
-        Mockito.when(provider.name()).thenReturn("github");
-        Mockito.when(user.provider()).thenReturn(provider);
-        Mockito.when(user.projects()).thenReturn(projects);
-
-        final ProjectsApi api = new ProjectsApi(
-            user,
-            Mockito.mock(Self.class)
-        );
-
-        ResponseEntity<String> resp = api.contracts("mihai", "test");
-        MatcherAssert.assertThat(
-            resp.getStatusCode(),
-            Matchers.is(HttpStatus.OK)
-        );
-        final JsonArray json = Json.createReader(
-            new StringReader(Objects.requireNonNull(resp.getBody()))
-        ).readArray();
-        MatcherAssert.assertThat(
-            json,
-            Matchers.equalTo(Json.createArrayBuilder()
-                .add(Json.createObjectBuilder()
-                    .add("id", Json.createObjectBuilder()
-                        .add("repoFullName", "mihai/test")
-                        .add("contributorUsername", "vlad")
-                        .add("provider", "github")
-                        .add("role", "DEV")
-                        .build())
-                    .add("project", Json.createObjectBuilder()
-                        .add("repoFullName", "mihai/test")
-                        .add("provider", "github")
-                        .add("selfOwner", "mihai")
-                        .add("manager", Json.createObjectBuilder()
-                            .add("id", 1)
-                            .add("userId", "123")
-                            .add("username", "zoeself")
-                            .add("provider", "github")
-                            .add("commission", 0.25)
-                            .build())
-                        .add("wallet", Json.createObjectBuilder()
-                            .add("type", "fake")
-                            .add("cash", 12)
-                            .add("debt", 2)
-                            .add("available", 10)
-                            .build()
-                        ))
-                    .add("hourlyRate", "$5.00")
-                    .add("value", "$100.00")
-                    .build())
-                .build())
-        );
-
-    }
-
-    /**
-     * Returns an empty json array if project not found.
-     */
-    @Test
-    public void fetchesEmptyContractsIfProjectNotFound(){
-        final User user = Mockito.mock(User.class);
-        Mockito.when(user.username()).thenReturn("mihai");
-        final Provider provider = Mockito.mock(Provider.class);
-        Mockito.when(provider.name()).thenReturn("github");
-        Mockito.when(user.provider()).thenReturn(provider);
-        Mockito.when(user.projects()).thenReturn(Mockito.mock(Projects.class));
-
-        final ProjectsApi api = new ProjectsApi(
-            user,
-            Mockito.mock(Self.class)
-        );
-
-        ResponseEntity<String> resp = api.contracts("mihai", "test");
-        MatcherAssert.assertThat(
-            resp.getStatusCode(),
-            Matchers.is(HttpStatus.OK)
-        );
-        final JsonArray json = Json.createReader(
-            new StringReader(Objects.requireNonNull(resp.getBody()))
-        ).readArray();
-        MatcherAssert.assertThat(
-            json,
-            Matchers.emptyIterable()
-        );
-    }
-
-    /**
-     * Adds a new Contributor Contract.
-     */
-    @Test
-    public void addsNewContributorContract(){
-        final User user = Mockito.mock(User.class);
-        final Provider provider = Mockito.mock(Provider.class);
-        final Projects projects = Mockito.mock(Projects.class);
-        final Project project = this.mockActiveProject("mihai",
-            "mihai", "test");
-        final Contracts contracts = Mockito.mock(Contracts.class);
-
-        Mockito.when(user.username()).thenReturn("mihai");
-        Mockito.when(provider.name()).thenReturn("github");
-        Mockito.when(user.provider()).thenReturn(provider);
-        Mockito.when(user.projects()).thenReturn(projects);
-        Mockito.when(projects
-            .getProjectById(Mockito.anyString(), Mockito.anyString()))
-            .thenReturn(project);
-        Mockito.when(project.contracts()).thenReturn(contracts);
-        Mockito.when(contracts.addContract(Mockito.anyString(),
-            Mockito.anyString(),
-            Mockito.anyString(),
-            Mockito.any(BigDecimal.class),
-            Mockito.anyString()))
-            .thenAnswer(inv -> {
-                final String role = inv.getArgument(4);
-                final Contract.Id id = new Contract.Id(
-                    inv.getArgument(0),
-                    inv.getArgument(1),
-                    inv.getArgument(2),
-                    role
-                );
-                final BigDecimal hourlyRate = inv.getArgument(3);
-                return this.mockContract(id, project, hourlyRate,
-                    BigDecimal.valueOf(25));
-            });
-
-        final ProjectsApi api = new ProjectsApi(
-            user,
-            Mockito.mock(Self.class)
-        );
-
-        final ContractInput input = new ContractInput();
-        input.setUsername("john");
-        input.setHourlyRate(10);
-        input.setRole(Contract.Roles.DEV);
-
-        MatcherAssert.assertThat(api
-                .contracts("mihai", "test", input).getStatusCode(),
-            Matchers.is(HttpStatus.CREATED));
-        Mockito.verify(contracts).addContract("mihai/test",
-            "john", "github", BigDecimal.valueOf(10.0 * 100), "DEV");
-    }
-
-    /**
-     * Returns HttpStatus.PRECONDITION_FAILED if contract was not created.
-     */
-    @Test
-    public void contractIsNotAdded(){
-        final User user = Mockito.mock(User.class);
-        final Provider provider = Mockito.mock(Provider.class);
-        final Projects projects = Mockito.mock(Projects.class);
-        final Project project = this.mockActiveProject("mihai",
-            "mihai", "test");
-        final Contracts contracts = Mockito.mock(Contracts.class);
-
-        Mockito.when(user.username()).thenReturn("mihai");
-        Mockito.when(provider.name()).thenReturn("github");
-        Mockito.when(user.provider()).thenReturn(provider);
-        Mockito.when(user.projects()).thenReturn(projects);
-        Mockito.when(projects
-            .getProjectById(Mockito.anyString(), Mockito.anyString()))
-            .thenReturn(project);
-        Mockito.when(project.contracts()).thenReturn(contracts);
-        Mockito.when(contracts.addContract(Mockito.anyString(),
-            Mockito.anyString(),
-            Mockito.anyString(),
-            Mockito.any(BigDecimal.class),
-            Mockito.anyString()))
-            .thenThrow(new IllegalStateException("Contract not created!"));
-
-        final ProjectsApi api = new ProjectsApi(
-            user,
-            Mockito.mock(Self.class)
-        );
-
-        final ContractInput input = new ContractInput();
-        input.setUsername("john");
-        input.setHourlyRate(10);
-        input.setRole(Contract.Roles.DEV);
-        MatcherAssert.assertThat(api
-                .contracts("mihai", "test", input).getStatusCode(),
-            Matchers.is(HttpStatus.PRECONDITION_FAILED));
-
-    }
-
-    /**
-     * Returns HttpStatus.PRECONDITION_FAILED if contract was not created
-     * due to project not found.
-     */
-    @Test
-    public void contractIsNotAddedIfProjectNotFound(){
-        final User user = Mockito.mock(User.class);
-        final Provider provider = Mockito.mock(Provider.class);
-        final Projects projects = Mockito.mock(Projects.class);
-        final Contracts contracts = Mockito.mock(Contracts.class);
-
-        Mockito.when(user.username()).thenReturn("mihai");
-        Mockito.when(provider.name()).thenReturn("github");
-        Mockito.when(user.provider()).thenReturn(provider);
-        Mockito.when(user.projects()).thenReturn(projects);
-
-        Mockito.when(contracts.addContract(Mockito.anyString(),
-            Mockito.anyString(),
-            Mockito.anyString(),
-            Mockito.any(BigDecimal.class),
-            Mockito.anyString()))
-            .thenThrow(new IllegalStateException("Contract not created!"));
-
-        final ProjectsApi api = new ProjectsApi(
-            user,
-            Mockito.mock(Self.class)
-        );
-
-        final ContractInput input = new ContractInput();
-        input.setUsername("john");
-        input.setHourlyRate(10);
-        input.setRole(Contract.Roles.DEV);
-        MatcherAssert.assertThat(api
-                .contracts("mihai", "test", input).getStatusCode(),
-            Matchers.is(HttpStatus.PRECONDITION_FAILED));
-
-    }
-
-
-
-    /**
      * Mock an activated project.
      * @param selfOwner Owner username in Self.
      * @param repoOwner Owner username from the provider
@@ -645,40 +392,6 @@ public final class ProjectsApiTestCase {
         Mockito.when(project.wallet()).thenReturn(wallet);
 
         return project;
-    }
-
-    /**
-     * Mock a Contract.
-     * @param id Contract.Id.
-     * @param project Project.
-     * @param hourlyRate Hourly Rate.
-     * @param value Value.
-     * @return Contract.
-     * @checkstyle ParameterNumber (10 lines).
-     */
-    private Contract mockContract(
-        final Contract.Id id,
-        final Project project,
-        final BigDecimal hourlyRate,
-        final BigDecimal value){
-        final Contract contract = Mockito.mock(Contract.class);
-        Mockito.when(contract.contractId()).thenReturn(id);
-        Mockito.when(contract.project()).thenReturn(project);
-        Mockito.when(contract.hourlyRate()).thenReturn(hourlyRate);
-        Mockito.when(contract.value()).thenReturn(value);
-        return contract;
-    }
-
-    /**
-     * Mocks Contracts.
-     * @param contract Contracts list.
-     * @return Contracts.
-     */
-    private Contracts mockContracts(final Contract... contract){
-        final Contracts contracts = Mockito.mock(Contracts.class);
-        Mockito.when(contracts.spliterator())
-            .thenReturn(Arrays.asList(contract).spliterator());
-        return contracts;
     }
 
 }
