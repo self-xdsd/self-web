@@ -111,36 +111,55 @@
             }
         });
 
-
-        $("#addContractForm").submit(function(e){
-            e.preventDefault();
-            var form = $(this);
-            service
-                .add(project, form.serialize().replace("hourlyRate=&","hourlyRate=0.0&"), function(){
-                    if(loadingQueue++ === 0){
-                       $("#loadingContracts").show();
-                    }
-                    clearFormErrors();
-                    disableForm(true);
-                })
-                .then(function(contract){
-                    form.trigger('reset');
-                    //we check the current page (0 based) displayed in table.
-                    //if is last page, we're adding the contract to table.
-                    //since it's the latest contract created.
-                    var pageInfo = table.page.info();
-                    if((pageInfo.page + 1) === pageInfo.pages){
-                        addContractToTable(contract);
-                    }
-
-                })
-                .catch(handleError)
-                .finally(function(){
-                   disableForm(false);
-                   if(--loadingQueue === 0){
-                      $("#loadingContracts").hide();
-                   }
-                });
+        $.validator.setDefaults({
+            errorElement: "div",
+            errorClass: "invalid-feedback"
         });
+        $("#addContractForm").validate({
+            rules: {
+                username: "required",
+                hourlyRate: {
+                    required: true,
+                    min: 0.01
+                }
+            },
+            messages: {
+                username: "Contributor's username is mandatory!",
+                hourlyRate: {
+                    required: "Hourly rate is mandatory!",
+                    min: "Hourly rate must be a positive number!"
+                }
+            },
+            submitHandler: function(form){
+                service
+                    .add(project, $(form).serialize(), function(){
+                                if(loadingQueue++ === 0){
+                                   $("#loadingContracts").show();
+                                }
+                                clearFormErrors();
+                                disableForm(true);
+                            })
+                    .then(function(contract){
+                                $(form).trigger('reset');
+                                //we check the current page (0 based) displayed in table.
+                                //if is last page, we're adding the contract to table.
+                                //since it's the latest contract created.
+                                var pageInfo = table.page.info();
+                                if((pageInfo.page + 1) === pageInfo.pages){
+                                    addContractToTable(contract);
+                                }
+
+                            })
+                    .catch(handleError)
+                    .finally(function(){
+                               disableForm(false);
+                               if(--loadingQueue === 0){
+                                  $("#loadingContracts").hide();
+                               }
+                            });
+                return false;
+            }
+        });
+
     });
 })(jQuery, contractsService)
