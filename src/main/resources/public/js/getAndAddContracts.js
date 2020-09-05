@@ -116,7 +116,7 @@
             e.preventDefault();
             var form = $(this);
             service
-                .add(project, form.serialize(), function(){
+                .add(project, form.serialize().replace("hourlyRate=&","hourlyRate=0.0&"), function(){
                     if(loadingQueue++ === 0){
                        $("#loadingContracts").show();
                     }
