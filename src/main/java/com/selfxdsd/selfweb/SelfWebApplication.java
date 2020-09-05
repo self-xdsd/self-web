@@ -28,7 +28,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  * Spring Boot entry point.
@@ -54,17 +56,20 @@ public class SelfWebApplication extends WebSecurityConfigurerAdapter {
             .permitAll()
             .anyRequest()
             .authenticated()
-        ).exceptionHandling(
-            error -> error.authenticationEntryPoint(
-                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
-            )
         ).logout(
             user -> user.logoutSuccessUrl("/").permitAll()
         ).csrf(
             c -> c.csrfTokenRepository(
                 CookieCsrfTokenRepository.withHttpOnlyFalse()
             )
-        ) .oauth2Login();
+        ).oauth2Login().and().exceptionHandling()
+            .defaultAuthenticationEntryPointFor(
+                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+                new AntPathRequestMatcher("/api/**")
+            ).defaultAuthenticationEntryPointFor(
+                new LoginUrlAuthenticationEntryPoint("/"),
+                new AntPathRequestMatcher("/**")
+            );
     }
 
     /**
