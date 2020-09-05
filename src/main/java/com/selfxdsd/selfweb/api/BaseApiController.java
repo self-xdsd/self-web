@@ -60,4 +60,17 @@ public class BaseApiController {
         );
         return errors;
     }
+
+    /**
+     * Custom exception message for internal server errors (500) to prevent
+     * leaking to frontend exception messages that might contain sensitive
+     * information (like database internals).
+     * @return String.
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public String handleInternalSeverExceptions(){
+        return "Something went wrong while executing this request.";
+    }
+
 }
