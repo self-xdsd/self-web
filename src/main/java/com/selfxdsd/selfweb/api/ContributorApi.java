@@ -24,6 +24,7 @@ package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.User;
+import com.selfxdsd.selfweb.api.output.JsonContributor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,11 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #89:60min Implement the Contributor Dashboard HTML page.
+ *  If the /contributor endpoint returns NO CONTENT, we should simply
+ *  display a message saying "You are not a contributor in any project...".
+ *  If the /contributor returns data, we should display the Contracts,
+ *  links to the Tasks etc.
  */
 @RestController
 public class ContributorApi extends BaseApiController {
@@ -67,7 +73,9 @@ public class ContributorApi extends BaseApiController {
         if(contributor == null) {
             resp = ResponseEntity.noContent().build();
         } else {
-            resp = ResponseEntity.ok().build();
+            resp = ResponseEntity.ok(
+                new JsonContributor(contributor).toString()
+            );
         }
         return resp;
     }

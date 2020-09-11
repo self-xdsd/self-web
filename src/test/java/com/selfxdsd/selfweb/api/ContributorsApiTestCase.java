@@ -22,13 +22,19 @@
  */
 package com.selfxdsd.selfweb.api;
 
+import com.selfxdsd.api.Contracts;
 import com.selfxdsd.api.Contributor;
+import com.selfxdsd.api.Provider;
 import com.selfxdsd.api.User;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import javax.json.Json;
+import java.io.StringReader;
 
 /**
  * Unit tests for {@link ContributorApi}.
@@ -59,14 +65,34 @@ public final class ContributorsApiTestCase {
      */
     @Test
     public void returnsOkOnFoundContributor() {
+        final Contributor contributor = Mockito.mock(Contributor.class);
+        Mockito.when(contributor.username()).thenReturn("mihai");
+        Mockito.when(contributor.provider()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(contributor.contracts()).thenReturn(
+            new Contracts.Empty()
+        );
+
         final User authenticated = Mockito.mock(User.class);
         Mockito.when(authenticated.asContributor()).thenReturn(
-            Mockito.mock(Contributor.class)
+            contributor
         );
         final ContributorApi api = new ContributorApi(authenticated);
+        final ResponseEntity<String> resp = api.contributor();
         MatcherAssert.assertThat(
-            api.contributor().getStatusCode(),
+            resp.getStatusCode(),
             Matchers.equalTo(HttpStatus.OK)
+        );
+        MatcherAssert.assertThat(
+            Json.createReader(
+                new StringReader(resp.getBody())
+            ).readObject(),
+            Matchers.equalTo(
+                Json.createObjectBuilder()
+                    .add("username", "mihai")
+                    .add("provider", Provider.Names.GITHUB)
+                    .add("contracts", Json.createArrayBuilder())
+                    .build()
+            )
         );
     }
 }
