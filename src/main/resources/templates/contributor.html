@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="head.html :: head"></head>
+<body>
+<header th:replace="header.html :: header"></header>
+
+<article class="container" role="main">
+    <header class="profile-header">
+        <div class="card">
+            <div class="card-user-header card-body">
+                <div class="row">
+                    <div class="gravatar ml-3 mr-2">
+                        <img class="user_avatar" src="/images/user_avatar.jpg" alt="Card image cap">
+                    </div>
+                    <div class="mt-2">
+                        <h4 class="user_name"></h4>
+                        <span class="text-muted user_login"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div>
+        Contributor Dashboard here...
+    </div>
+</article>
+<footer th:replace="footer.html :: footer"></footer>
+</body>
+<script>
+    $(document).ready(
+        function () {
+            $("#contributorHeaderLink").addClass("active");
+        }
+    )
+</script>
+</html>
