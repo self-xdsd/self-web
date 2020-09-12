@@ -10,6 +10,7 @@ function getContributor() {
         statusCode: {
             200: function (contributor) {
                 $("#loadingContributor").hide();
+                $("#contributorCardFooter").show();
                 $("#contributorDashboard").show();
                 contributor.contracts.forEach(
                     function(contract){
@@ -23,7 +24,7 @@ function getContributor() {
             },
             204: function (data) {
                 $("#loadingContributor").hide();
-                $("#notContributor").show();
+                $("#notContributorCardFooter").show();
             },
 
         }
