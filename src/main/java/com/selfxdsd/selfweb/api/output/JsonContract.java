@@ -35,7 +35,6 @@ public final class JsonContract extends AbstractJsonObject{
                 .add("provider", contract.contractId().getProvider())
                 .add("role", contract.contractId().getRole())
                 .build())
-            .add("project", new JsonProject(contract.project()))
             .add("hourlyRate", NumberFormat
                 .getCurrencyInstance(Locale.US)
                 .format(contract.hourlyRate().divide(BigDecimal.valueOf(100))))
