@@ -12,12 +12,6 @@ import java.util.Locale;
  * @author criske
  * @version $Id$
  * @since 0.0.1
- * @todo #89:30min Remove the project attribute from the JsonContract.
- *  When we are displaying a Contract we are either on the Project Overview
- *  page of the PO or on the Contributor Dashboard of the Contributor.
- *  The PO already has the wallet and all the project info on their page and
- *  the Contributor should not see more info other than the Project name which
- *  is already on the Contract.
  */
 public final class JsonContract extends AbstractJsonObject{
 
