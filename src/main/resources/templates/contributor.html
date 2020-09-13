@@ -18,14 +18,115 @@
                     </div>
                 </div>
             </div>
+            <div class="card-footer" id="contributorCardFooter" style="display: none;">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                        <button class="nav-link active" role="button" id="contractsButton">Contracts</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" role="button" id="payoutMethodsButton">Payout Methods</button>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-footer text-center" id="notContributorCardFooter" style="display: none;">
+                It seems that you are not contributing to any projects managed
+                by Self.<br>
+                If someone from your organization told you that they registered the project in Self,
+                ask them to register a contract for you.
+            </div>
         </div>
     </header>
     <div>
-        Contributor Dashboard here...
+        <div id="loadingContributor" class="text-center">
+            <img src="/images/loading.svg">
+        </div>
+        <div id="contributorDashboard" style="display: none;">
+            <div class="mt-4" id="contractsDivTable">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h4 class="m-0 font-weight-bold card-title">Contracts</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <div id="contractsTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                <table id="contractsTable" class="display">
+                                    <thead>
+                                    <tr>
+                                        <th>Project</th>
+                                        <th>Role</th>
+                                        <th>Hourly Rate</th>
+                                        <th>Value</th>
+                                        <th>Agenda</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-lg-6" id="tasksDivTable">
+                    <div class="card shadow">
+                        <div class="card-header py-3">
+                            <h4 class="m-0 font-weight-bold card-title">Tasks</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <div id="tasksTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                    <table id="tasksTable" class="display">
+                                        <thead>
+                                        <tr>
+                                            <th>Project</th>
+                                            <th>Role</th>
+                                            <th>Hourly Rate</th>
+                                            <th>Value</th>
+                                            <th>Agenda</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6" id="invoicesDivTable">
+                    <div class="card shadow">
+                        <div class="card-header py-3">
+                            <h4 class="m-0 font-weight-bold card-title">Invoices</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <div id="invoicesTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                    <table id="invoicesTable" class="display">
+                                        <thead>
+                                        <tr>
+                                            <th>Project</th>
+                                            <th>Role</th>
+                                            <th>Hourly Rate</th>
+                                            <th>Value</th>
+                                            <th>Agenda</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </article>
 <footer th:replace="footer.html :: footer"></footer>
 </body>
+<script src="/js/getContributor.js"></script>
 <script>
     $(document).ready(
         function () {

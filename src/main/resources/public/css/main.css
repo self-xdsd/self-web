@@ -10,6 +10,10 @@ body {
     border-bottom-color: #701516;
 }
 
+.card-title {
+    color: #701516 !important;
+}
+
 footer {
     border-top-style: solid;
     border-top-width: 1px;
