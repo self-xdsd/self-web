@@ -22,14 +22,15 @@
  */
 package com.selfxdsd.selfweb.api;
 
+import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.User;
 import com.selfxdsd.selfweb.api.output.JsonContributor;
+import com.selfxdsd.selfweb.api.output.JsonTasks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * A Contributor.
@@ -43,6 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
  *  links to the Tasks etc.
  */
 @RestController
+@RequestMapping("/contributor")
 public class ContributorApi extends BaseApiController {
 
     /**
@@ -64,7 +66,7 @@ public class ContributorApi extends BaseApiController {
      * @return String JSON.
      */
     @GetMapping(
-        value = "/contributor",
+        value = "/",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<String> contributor() {
@@ -76,6 +78,43 @@ public class ContributorApi extends BaseApiController {
             resp = ResponseEntity.ok(
                 new JsonContributor(contributor).toString()
             );
+        }
+        return resp;
+    }
+
+    /**
+     * Get the authenticated Contributor's Tasks from a given Contract.
+     * @param owner Repo owner.
+     * @param name Repo name.
+     * @param role Contributor role (DEV, REV etc).
+     * @return String JSON.
+     */
+    @GetMapping(
+        value = "/contracts/{owner}/{name}/tasks",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> tasks(
+        @PathVariable final String owner,
+        @PathVariable final String name,
+        @RequestParam("role") final String role
+    ) {
+        final ResponseEntity<String> resp;
+        final Contributor contributor = this.user.asContributor();
+        if(contributor == null) {
+            resp = ResponseEntity.noContent().build();
+        } else {
+            final Contract contract = contributor.contract(
+                owner + "/" + name,
+                this.user.provider().name(),
+                role
+            );
+            if(contract == null) {
+                resp = ResponseEntity.badRequest().build();
+            } else {
+                resp = ResponseEntity.ok(
+                    new JsonTasks(contract.tasks()).toString()
+                );
+            }
         }
         return resp;
     }
