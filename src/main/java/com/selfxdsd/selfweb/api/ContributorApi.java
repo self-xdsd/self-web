@@ -26,6 +26,7 @@ import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.User;
 import com.selfxdsd.selfweb.api.output.JsonContributor;
+import com.selfxdsd.selfweb.api.output.JsonInvoices;
 import com.selfxdsd.selfweb.api.output.JsonTasks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -112,6 +113,43 @@ public class ContributorApi extends BaseApiController {
             } else {
                 resp = ResponseEntity.ok(
                     new JsonTasks(contract.tasks()).toString()
+                );
+            }
+        }
+        return resp;
+    }
+
+    /**
+     * Get the authenticated Contributor's Invoices from a given Contract.
+     * @param owner Repo owner.
+     * @param name Repo name.
+     * @param role Contributor role (DEV, REV etc).
+     * @return String JSON.
+     */
+    @GetMapping(
+        value = "/contributor/contracts/{owner}/{name}/invoices",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> invoices(
+        @PathVariable final String owner,
+        @PathVariable final String name,
+        @RequestParam("role") final String role
+    ) {
+        final ResponseEntity<String> resp;
+        final Contributor contributor = this.user.asContributor();
+        if(contributor == null) {
+            resp = ResponseEntity.noContent().build();
+        } else {
+            final Contract contract = contributor.contract(
+                owner + "/" + name,
+                this.user.provider().name(),
+                role
+            );
+            if(contract == null) {
+                resp = ResponseEntity.badRequest().build();
+            } else {
+                resp = ResponseEntity.ok(
+                    new JsonInvoices(contract.invoices()).toString()
                 );
             }
         }
