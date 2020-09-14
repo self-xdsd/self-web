@@ -69,6 +69,7 @@ function contractAsTableRow(contract) {
  * @param contract Contract.
  */
 function getTasksOfContract(contract) {
+    $("#tasksTable").dataTable().fnDestroy();
     $("#tasksTable").find("tbody").html('');
     $("#tasksTitle").html(
         " Tasks in " + contract.id.repoFullName + " (" + contract.id.role + ")"
