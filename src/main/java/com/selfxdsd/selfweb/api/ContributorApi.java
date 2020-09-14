@@ -44,7 +44,6 @@ import org.springframework.web.bind.annotation.*;
  *  links to the Tasks etc.
  */
 @RestController
-@RequestMapping("/contributor")
 public class ContributorApi extends BaseApiController {
 
     /**
@@ -66,7 +65,7 @@ public class ContributorApi extends BaseApiController {
      * @return String JSON.
      */
     @GetMapping(
-        value = "/",
+        value = "/contributor",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<String> contributor() {
@@ -90,7 +89,7 @@ public class ContributorApi extends BaseApiController {
      * @return String JSON.
      */
     @GetMapping(
-        value = "/contracts/{owner}/{name}/tasks",
+        value = "/contributor/contracts/{owner}/{name}/tasks",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<String> tasks(
