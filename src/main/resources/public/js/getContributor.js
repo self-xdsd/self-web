@@ -11,7 +11,8 @@ function getContributor() {
             200: function (contributor) {
                 $("#loadingContributor").hide();
                 $("#contributorCardFooter").show();
-                $("#contributorDashboard").show();
+                $("#contributorDashboard").removeClass("d-none");
+                $("#contributorDashboard").addClass("show");
                 contributor.contracts.forEach(
                     function(contract){
                         $("#contractsTable").find("tbody").append(

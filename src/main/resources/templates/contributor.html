@@ -40,7 +40,7 @@
         <div id="loadingContributor" class="text-center">
             <img src="/images/loading.svg">
         </div>
-        <div id="contributorDashboard" style="display: none;">
+        <div id="contributorDashboard" class="d-none">
             <div class="mt-4" id="contractsDivTable">
                 <div class="card shadow">
                     <div class="card-header py-3">
@@ -127,6 +127,9 @@
                 </div>
             </div>
         </div>
+        <div id="payoutMethodsDashboard" class="d-none">
+            PAYOUT METHODS HERE!
+        </div>
     </div>
 </article>
 <footer th:replace="footer.html :: footer"></footer>
@@ -136,6 +139,34 @@
     $(document).ready(
         function () {
             $("#contributorHeaderLink").addClass("active");
+
+            $("#contractsButton").on(
+                "click",
+                function(){
+                    $(this).addClass("active");
+                    $("#payoutMethodsButton").removeClass("active");
+
+                    $("#contributorDashboard").removeClass("d-none");
+                    $("#contributorDashboard").addClass("show");
+
+                    $("#payoutMethodsDashboard").removeClass("show");
+                    $("#payoutMethodsDashboard").addClass("d-none");
+                }
+            );
+
+            $("#payoutMethodsButton").on(
+                "click",
+                function(){
+                    $(this).addClass("active");
+                    $("#contractsButton").removeClass("active");
+
+                    $("#payoutMethodsDashboard").removeClass("d-none");
+                    $("#payoutMethodsDashboard").addClass("show");
+
+                    $("#contributorDashboard").removeClass("show");
+                    $("#contributorDashboard").addClass("d-none");
+                }
+            );
         }
     )
 </script>
