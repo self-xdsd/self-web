@@ -21,6 +21,7 @@ function getContributor() {
                             "click",
                             function(event) {
                                 getTasksOfContract(contract);
+                                getInvoicesOfContract(contract);
                             }
                         );
                     }
@@ -28,6 +29,8 @@ function getContributor() {
                 if(contributor.contracts.length > 0) {
                     $("#tasks").show();
                     getTasksOfContract(contributor.contracts[0]);
+                    $("#invoices").show();
+                    getInvoicesOfContract(contributor.contracts[0]);
                 }
                 $("#contractsTable").dataTable();
                 console.log(contributor);
@@ -130,5 +133,80 @@ function taskAsTableRow(contract, task) {
         "<td>" + task.assignmentDate + "</td>"  +
         "<td>" + task.deadline + "</td>" +
         "<td>" + task.estimation + "min</td>" +
+        "</tr>"
+}
+
+/**
+ * Get a Contract's Invoices.
+ * @param contract Contract.
+ */
+function getInvoicesOfContract(contract) {
+    $("#invoicesTable").dataTable().fnDestroy();
+    $("#invoicesTable").find("tbody").html('');
+    $("#invoicesTitle").html(
+        "Invoices of " + contract.id.repoFullName + " (" + contract.id.role + ")"
+    )
+    $("#loadingInvoices").show();
+    $.ajax( //API call to get the Tasks.
+        "/api/contributor/contracts/"
+        + contract.id.repoFullName
+        + "/invoices?role=" + contract.id.role,
+        {
+            type: "GET",
+            statusCode: {
+                200: function (invoices) {
+                    $("#loadingInvoices").hide();
+                    var nr = 0;
+                    invoices.forEach(
+                        function(invoice) {
+                            nr++;
+                            $("#invoicesTable").find("tbody").append(
+                                invoiceAsTableRow(contract, invoice, nr)
+                            );
+                        }
+                    );
+                    $("#invoicesTable").dataTable();
+                    $("#invoicesBody").show();
+                    console.log(invoices);
+                },
+                204: function (data) {
+                    $("#loadingInvoices").hide();
+                    $("#invoicesTable").dataTable();
+                },
+
+            }
+        }
+    );
+}
+
+/**
+ * Turn an Invoice into a table row.
+ * @param invoice Invoice.
+ */
+function invoiceAsTableRow(contract, invoice, number) {
+    var paymentTimestamp;
+    if(invoice.paymentTime == "null") {
+        paymentTimestamp = "-";
+    } else {
+        paymentTimestamp = invoice.paymentTime;
+    }
+    var transactionId;
+    if(invoice.transactionId == "null") {
+        transactionId = "-";
+    } else {
+        transactionId = invoice.transactionId;
+    }
+    var status;
+    if(transactionId == "-") {
+        status = "Active";
+    } else {
+        status = "Paid";
+    }
+    return "<tr>" +
+        "<td>#" + number + "</td>" +
+        "<td>" + invoice.createdAt + "</td>"  +
+        "<td>$" + invoice.totalAmount + "</td>" +
+        "<td>" + status + "</td>" +
+        "<td><a href='#' class='downloadInvoice'>" + "<i class='fa fa-file-pdf-o fa-lg'></i>" + "</a></td>" +
         "</tr>"
 }

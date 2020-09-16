@@ -96,22 +96,25 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6" id="invoicesDivTable">
+                <div class="col-lg-6" id="invoices" style="display: none;">
                     <div class="card shadow">
                         <div class="card-header py-3">
-                            <h4 class="m-0 font-weight-bold card-title">Invoices</h4>
+                            <h4 class="m-0 font-weight-bold card-title" id="invoicesTitle">Invoices</h4>
                         </div>
-                        <div class="card-body">
+                        <div id="loadingInvoices" class="text-center" style="display: none;">
+                            <img src="/images/loading.svg">
+                        </div>
+                        <div class="card-body" id="invoicesBody" style="display: none;">
                             <div class="table-responsive">
                                 <div id="invoicesTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
                                     <table id="invoicesTable" class="display">
                                         <thead>
                                         <tr>
-                                            <th>Project</th>
-                                            <th>Role</th>
-                                            <th>Hourly Rate</th>
-                                            <th>Value</th>
-                                            <th>Agenda</th>
+                                            <th>Nr.</th>
+                                            <th>Created</th>
+                                            <th>Total Amount</th>
+                                            <th>Status</th>
+                                            <th></th>
                                         </tr>
                                         </thead>
                                         <tbody>
