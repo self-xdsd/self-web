@@ -24,8 +24,10 @@ package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Contributor;
+import com.selfxdsd.api.Invoice;
 import com.selfxdsd.api.User;
 import com.selfxdsd.selfweb.api.output.JsonContributor;
+import com.selfxdsd.selfweb.api.output.JsonInvoice;
 import com.selfxdsd.selfweb.api.output.JsonInvoices;
 import com.selfxdsd.selfweb.api.output.JsonTasks;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,4 +158,48 @@ public class ContributorApi extends BaseApiController {
         return resp;
     }
 
+    /**
+     * Get one of the authenticated Contributor's invoices.
+     * @param owner Repo owner.
+     * @param name Repo name.
+     * @param invoiceId Invoice ID.
+     * @param role Contributor role (DEV, REV etc).
+     * @return String JSON.
+     * @checkstyle ParameterNumber (20 lines)
+     */
+    @GetMapping(
+        value = "/contributor/contracts/{owner}/{name}/invoices/{invoiceId}",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> invoice(
+        @PathVariable final String owner,
+        @PathVariable final String name,
+        @PathVariable final int invoiceId,
+        @RequestParam("role") final String role
+    ) {
+        final ResponseEntity<String> resp;
+        final Contributor contributor = this.user.asContributor();
+        if(contributor == null) {
+            resp = ResponseEntity.noContent().build();
+        } else {
+            final Contract contract = contributor.contract(
+                owner + "/" + name,
+                this.user.provider().name(),
+                role
+            );
+            if(contract == null) {
+                resp = ResponseEntity.badRequest().build();
+            } else {
+                final Invoice found = contract.invoices().getById(invoiceId);
+                if(found == null){
+                    resp = ResponseEntity.badRequest().build();
+                } else {
+                    resp = ResponseEntity.ok(
+                        new JsonInvoice(found, true).toString()
+                    );
+                }
+            }
+        }
+        return resp;
+    }
 }
