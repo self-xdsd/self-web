@@ -20,60 +20,36 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.selfweb;
+package com.selfxdsd.selfweb.api.output;
 
-import com.selfxdsd.api.*;
-import com.selfxdsd.core.SelfCore;
-import com.selfxdsd.storage.MySql;
-import com.selfxdsd.storage.SelfJooq;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.SessionScope;
+import com.selfxdsd.api.PayoutMethods;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import java.util.stream.StreamSupport;
 
 /**
- * Self Core component.
+ * PayoutMethods in JSON.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-@Component
-@SessionScope
-public class SelfCoreComponent implements Self {
+public final class JsonPayoutMethods extends AbstractJsonArray {
 
     /**
-     * Self's core.
+     * Ctor.
+     * @param payoutMethods PayoutMethods to represent as JsonArray.
      */
-    private final Self core = new SelfCore(
-        new SelfJooq(
-            new MySql(
-                System.getenv("db.url"),
-                System.getenv("db.user"),
-                System.getenv("db.password")
-            )
-        )
-    );
-
-    @Override
-    public User login(final Login login) {
-        return this.core.login(login);
-    }
-
-    @Override
-    public ProjectManagers projectManagers() {
-        return this.core.projectManagers();
-    }
-
-    @Override
-    public Projects projects() {
-        return this.core.projects();
-    }
-
-    @Override
-    public Contributors contributors() {
-        return this.core.contributors();
-    }
-
-    @Override
-    public void close() throws Exception {
-        this.core.close();
+    public JsonPayoutMethods(final PayoutMethods payoutMethods) {
+        super(
+            StreamSupport
+                .stream(payoutMethods.spliterator(), false)
+                .map(JsonPayoutMethod::new)
+                .reduce(
+                    Json.createArrayBuilder(),
+                    JsonArrayBuilder::add,
+                    (comb, curr) -> comb
+                ).build()
+        );
     }
 }

@@ -319,3 +319,24 @@ function invoiceToPdf(invoice, contract) {
     );
 
 }
+
+/**
+ * Get the Contributor's Payout methods.
+ */
+function getPayoutMethods() {
+    $("#loadingPayoutMethods").show();
+    $.ajax(
+        "/api/contributor/payoutmethods/",
+        {
+            type: "GET",
+            statusCode: {
+                200: function (payoutMethods) {
+                    $("#loadingPayoutMethods").hide();
+                    if(payoutMethods.length == 0) {
+                        $(".no-payout-methods").show();
+                    }
+                }
+            }
+        }
+    );
+}

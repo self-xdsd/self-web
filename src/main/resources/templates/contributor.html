@@ -137,7 +137,14 @@
             </div>
         </div>
         <div id="payoutMethodsDashboard" class="d-none">
-            PAYOUT METHODS HERE!
+            <div id="loadingPayoutMethods" class="text-center" style="display: none;">
+                <img src="/images/loading.svg">
+            </div>
+            <div class="card-body no-payout-methods" style="display: none;">
+                <h3>You have no payout methods yet.</h3>
+                <p>Payout methods are ways for you to be paid.<br>
+                You will want to set up a payout method as soon as one of the projects you're working for decides to use a real wallet.</p>
+            </div>
         </div>
     </div>
 </article>
@@ -175,6 +182,8 @@
 
                     $("#contributorDashboard").removeClass("show");
                     $("#contributorDashboard").addClass("d-none");
+
+                    getPayoutMethods();
                 }
             );
         }

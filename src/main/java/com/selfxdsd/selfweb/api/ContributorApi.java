@@ -26,10 +26,7 @@ import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.Invoice;
 import com.selfxdsd.api.User;
-import com.selfxdsd.selfweb.api.output.JsonContributor;
-import com.selfxdsd.selfweb.api.output.JsonInvoice;
-import com.selfxdsd.selfweb.api.output.JsonInvoices;
-import com.selfxdsd.selfweb.api.output.JsonTasks;
+import com.selfxdsd.selfweb.api.output.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -202,4 +199,28 @@ public class ContributorApi extends BaseApiController {
         }
         return resp;
     }
+
+    /**
+     * Get the authenticated Contributor's PayoutMethods.
+     * @return String JSON.
+     */
+    @GetMapping(
+        value = "/contributor/payoutmethods",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> payoutMethods() {
+        final ResponseEntity<String> resp;
+        final Contributor contributor = this.user.asContributor();
+        if(contributor == null) {
+            resp = ResponseEntity.badRequest().build();
+        } else {
+            resp = ResponseEntity.ok(
+                new JsonPayoutMethods(
+                    contributor.payoutMethods()
+                ).toString()
+            );
+        }
+        return resp;
+    }
+
 }
