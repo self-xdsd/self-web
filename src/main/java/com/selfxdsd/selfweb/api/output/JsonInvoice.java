@@ -24,6 +24,7 @@ package com.selfxdsd.selfweb.api.output;
 
 import com.selfxdsd.api.Invoice;
 import javax.json.Json;
+import javax.json.JsonObject;
 import java.math.BigDecimal;
 
 /**
@@ -33,23 +34,56 @@ import java.math.BigDecimal;
  * @since 0.0.1
  */
 public final class JsonInvoice extends AbstractJsonObject {
+
     /**
      * Ctor.
      * @param invoice Invoice to be converted to JsonObject.
      */
     public JsonInvoice(final Invoice invoice) {
-        super(
-            Json.createObjectBuilder()
-                .add("id", invoice.invoiceId())
-                .add("createdAt", String.valueOf(invoice.createdAt()))
-                .add("isPaid", invoice.isPaid())
-                .add(
-                    "totalAmount",
-                    invoice.totalAmount().divide(BigDecimal.valueOf(100))
-                )
-                .add("paymentTime", String.valueOf(invoice.paymentTime()))
-                .add("transactionId", String.valueOf(invoice.transactionId()))
-                .build()
-        );
+        this(invoice, false);
+    }
+
+    /**
+     * Ctor.
+     * @param invoice Invoice to be converted to JsonObject.
+     * @param full Get the full Invoice or just the overview?
+     */
+    public JsonInvoice(final Invoice invoice, final boolean full) {
+        super(() -> {
+            final JsonObject json;
+            if(!full) {
+                json = Json.createObjectBuilder()
+                    .add("id", invoice.invoiceId())
+                    .add("createdAt", String.valueOf(invoice.createdAt()))
+                    .add("isPaid", invoice.isPaid())
+                    .add(
+                        "totalAmount",
+                        invoice.totalAmount().divide(BigDecimal.valueOf(100))
+                    ).add(
+                        "paymentTime",
+                        String.valueOf(invoice.paymentTime())
+                    ).add(
+                        "transactionId",
+                        String.valueOf(invoice.transactionId())
+                    ).build();
+            } else {
+                json = Json.createObjectBuilder()
+                    .add("id", invoice.invoiceId())
+                    .add("createdAt", String.valueOf(invoice.createdAt()))
+                    .add("isPaid", invoice.isPaid())
+                    .add("tasks", new JsonInvoicedTasks(invoice.tasks()))
+                    .add(
+                        "totalAmount",
+                        invoice.totalAmount().divide(BigDecimal.valueOf(100))
+                    ).add(
+                        "paymentTime",
+                        String.valueOf(invoice.paymentTime())
+                    ).add(
+                        "transactionId",
+                        String.valueOf(invoice.transactionId())
+                    ).build();
+            }
+            return json;
+        });
     }
 }

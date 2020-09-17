@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Abstract JsonObject which can be extended to create JsonObject
@@ -46,6 +47,14 @@ public abstract class AbstractJsonObject implements JsonObject {
      * Delegate JsonObject.
      */
     private final JsonObject delegate;
+
+    /**
+     * Ctor.
+     * @param delegate Delegate.
+     */
+    public AbstractJsonObject(final Supplier<JsonObject> delegate) {
+        this(delegate.get());
+    }
 
     /**
      * Ctor.
