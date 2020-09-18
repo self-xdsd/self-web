@@ -38,13 +38,12 @@ public final class JsonPayoutMethod extends AbstractJsonObject {
      * @param payoutMethod PayoutMethod to be converted to JsonObject.
      */
     public JsonPayoutMethod(final PayoutMethod payoutMethod) {
-        super(
-            () -> Json.createObjectBuilder()
-                .add("type", payoutMethod.type())
-                .add("active", payoutMethod.active())
-                .add("identifier", payoutMethod.identifier())
-                .add("account", payoutMethod.json())
-                .build()
+        super(() -> Json.createObjectBuilder()
+            .add("type", payoutMethod.type())
+            .add("active", payoutMethod.active())
+            .add("identifier", payoutMethod.identifier())
+            .add("account", payoutMethod.json())
+            .build()
         );
     }
 }

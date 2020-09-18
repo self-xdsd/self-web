@@ -25,8 +25,10 @@ package com.selfxdsd.selfweb.api;
 import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.PayoutMethod;
 import com.selfxdsd.api.User;
-import com.selfxdsd.selfweb.api.output.JsonPayoutMethod;
 import com.selfxdsd.selfweb.api.output.JsonPayoutMethods;
+import com.stripe.exception.StripeException;
+import com.stripe.model.AccountLink;
+import com.stripe.param.AccountLinkCreateParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.json.Json;
+import javax.json.JsonObject;
 
 /**
  * The authenticated Contributor's PayoutMethods API.
@@ -104,10 +109,18 @@ public final class PayoutMethodsApi extends BaseApiController {
             resp = ResponseEntity.badRequest().build();
         } else {
             try {
+                final PayoutMethod created = contributor.createStripeAccount();
                 resp = ResponseEntity.ok(
-                    new JsonPayoutMethod(
-                        contributor.createStripeAccount()
-                    ).toString()
+                    Json.createObjectBuilder()
+                        .add(
+                            "stripeOnboardingLink",
+                            this.createStripeOnboardingLink(
+                                contributor
+                                    .payoutMethods()
+                                    .activate(created)
+                                    .json()
+                            )
+                        ).build().toString()
                 );
             } catch (final IllegalStateException ex) {
                 LOG.error(
@@ -135,8 +148,8 @@ public final class PayoutMethodsApi extends BaseApiController {
      * and complete the process.
      * @return String.
      */
-    @PostMapping(
-        value = "/contributor/payoutmethods/stripe",
+    @GetMapping(
+        value = "/contributor/payoutmethods/stripe/onboarding",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<String> stripeConnectOnboardingLink() {
@@ -155,13 +168,51 @@ public final class PayoutMethodsApi extends BaseApiController {
             if(stripe == null) {
                 resp = ResponseEntity.badRequest().build();
             } else {
-                if(stripe.json().getString("") == null) {
-                    resp = ResponseEntity.ok().build();
+                final JsonObject account = stripe.json();
+                if(!account.getBoolean("details_submitted")) {
+                    resp = ResponseEntity
+                        .ok(
+                            Json.createObjectBuilder()
+                                .add(
+                                    "stripeOnboardingLink",
+                                    this.createStripeOnboardingLink(account)
+                                ).build().toString()
+                        );
                 } else {
                     resp = ResponseEntity.badRequest().build();
                 }
             }
         }
         return resp;
+    }
+
+    /**
+     * Create an onboarding link for the given Stripe account.
+     * @param account Stripe account in Json.
+     * @return String.
+     * @todo #91:30min The Stripe refreshUrl and returnUrl are hardcoded
+     *  to localhost at the moment. They should be configurable via environment
+     *  variables stripe.refresh.url and stripe.return.url respectively.
+     */
+    private String createStripeOnboardingLink(final JsonObject account) {
+        try {
+            return AccountLink.create(
+                AccountLinkCreateParams.builder()
+                    .setAccount(account.getString("id"))
+                    .setRefreshUrl(
+                        "http://localhost:8080/contributor"
+                        + "?stripeOnboarding=aborted"
+                    ).setReturnUrl(
+                        "http://localhost:8080/contributor"
+                        + "?stripeOnboarding=finished"
+                    ).setType(AccountLinkCreateParams.Type.ACCOUNT_ONBOARDING)
+                    .build()
+            ).getUrl();
+        } catch (final StripeException ex) {
+            throw new IllegalStateException(
+                "Stripe threw an exception while trying to get "
+                + "the Onboarding Link for Account " + account.getString("id")
+            );
+        }
     }
 }

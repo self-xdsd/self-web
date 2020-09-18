@@ -146,9 +146,12 @@
                 You will want to set up a payout method as soon as one of the projects you're working for decides to use a real wallet and make real payments.</p>
                 <form id="createStripeConnectAccountForm">
                     <div class="form-group">
-                        <button type="submit" class="btn btn-primary" aria-describedby="stripeConnectHelp">
+                        <button id="createStripeConnectAccountButton" type="submit" class="btn btn-primary" aria-describedby="stripeConnectHelp">
                             Create Stripe Account
                         </button>
+                        <span id="loadingCreateStripeAccount" class="text-center" style="display: none;">
+                            <img height="40" width="40" src="/images/loading.svg">
+                        </span>
                         <small id="stripeConnectHelp" class="form-text text-muted">
                             <p>
                                 You will be redirected to <a href="https://stripe.com/docs/connect" target="_blank">Stripe Connect</a>
@@ -213,6 +216,8 @@
             $("#createStripeConnectAccountForm").submit(
                 function(e) {
                     e.preventDefault();
+                    $("#createStripeConnectAccountButton").addClass("disabled");
+                    $("#loadingCreateStripeAccount").show();
                     var form = $(this);
                     $.ajax(
                         {
@@ -220,9 +225,12 @@
                             url: "/api/contributor/payoutmethods/stripe",
                             data: form.serialize(),
                             success: function (payoutMethod) {
-                                console.log(payoutMethod)
+                                console.log("Redirecting to SCA Onboarding page: " + payoutMethod.stripeOnboardingLink)
+                                window.location.replace(payoutMethod.stripeOnboardingLink);
                             },
                             error: function(jqXHR, error, errorThrown) {
+                                $("#createStripeConnectAccountButton").removeClass("disabled");
+                                $("#loadingCreateStripeAccount").hide();
                                 $("#loadingProject").hide();
                                 $(".project-not-registered").show();
                                 if(jqXHR.status && jqXHR.status == 400){
