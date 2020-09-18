@@ -23,6 +23,7 @@
 package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.Contributor;
+import com.selfxdsd.api.PayoutMethod;
 import com.selfxdsd.api.User;
 import com.selfxdsd.selfweb.api.output.JsonPayoutMethod;
 import com.selfxdsd.selfweb.api.output.JsonPayoutMethods;
@@ -117,6 +118,48 @@ public final class PayoutMethodsApi extends BaseApiController {
                     ex
                 );
                 resp = ResponseEntity.badRequest().build();
+            }
+        }
+        return resp;
+    }
+
+    /**
+     * Get the SCA Onboarding link.<br><br>
+     *
+     * After the contributor creates their account, they are redirected
+     * to Stripe, where they have to complete an Onboarding process (provide
+     * personal information, bank account etc).<br><br>
+     *
+     * However, the contributor might fail to complete it, so we have to
+     * verify the account's status and display a link where they can go
+     * and complete the process.
+     * @return String.
+     */
+    @PostMapping(
+        value = "/contributor/payoutmethods/stripe",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> stripeConnectOnboardingLink() {
+        ResponseEntity<String> resp;
+        final Contributor contributor = this.user.asContributor();
+        if(contributor == null) {
+            resp = ResponseEntity.badRequest().build();
+        } else {
+            PayoutMethod stripe = null;
+            for(final PayoutMethod method : contributor.payoutMethods()){
+                if(PayoutMethod.Type.STRIPE.equalsIgnoreCase(method.type())) {
+                    stripe = method;
+                    break;
+                }
+            }
+            if(stripe == null) {
+                resp = ResponseEntity.badRequest().build();
+            } else {
+                if(stripe.json().getString("") == null) {
+                    resp = ResponseEntity.ok().build();
+                } else {
+                    resp = ResponseEntity.badRequest().build();
+                }
             }
         }
         return resp;
