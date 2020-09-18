@@ -38,7 +38,7 @@
         </div>
     </header>
     <div>
-        <div id="loadingContributor" class="text-center">
+        <div id="loadingContributor" class="text-center" style="display:none;">
             <img src="/images/loading.svg">
         </div>
         <div id="contributorDashboard" class="d-none">
@@ -200,6 +200,7 @@
             $("#payoutMethodsButton").on(
                 "click",
                 function(){
+                    console.log("CLICK HAPPENED! YAY!");
                     $(this).addClass("active");
                     $("#contractsButton").removeClass("active");
 
@@ -249,6 +250,7 @@
                     );
                 }
             );
+            getContributorDashboard();
         }
     )
 </script>

@@ -1,9 +1,4 @@
-$(document).ready(
-    function () {
-        getContributor();
-    }
-);
-function getContributor() {
+function getContributorDashboard() {
     $("#loadingContributor").show();
     $.ajax("/api/contributor", {
         type: "GET",
@@ -34,7 +29,11 @@ function getContributor() {
                     getInvoicesOfContract(contributor.contracts[0]);
                 }
                 $("#contractsTable").dataTable();
-                console.log(contributor);
+
+                //if the user is redirected by Stripe, we should display the "Payout Methods" tab
+                if(getUrlVars().includes("stripeOnboarding")) {
+                    $("#payoutMethodsButton").trigger("click");
+                }
             },
             204: function (data) {
                 $("#loadingContributor").hide();
