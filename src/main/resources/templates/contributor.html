@@ -143,7 +143,30 @@
             <div class="card-body no-payout-methods" style="display: none;">
                 <h3>You have no payout methods yet.</h3>
                 <p>Payout methods are ways for you to be paid.<br>
-                You will want to set up a payout method as soon as one of the projects you're working for decides to use a real wallet.</p>
+                You will want to set up a payout method as soon as one of the projects you're working for decides to use a real wallet and make real payments.</p>
+                <form id="createStripeConnectAccountForm">
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary" aria-describedby="stripeConnectHelp">
+                            Create Stripe Account
+                        </button>
+                        <small id="stripeConnectHelp" class="form-text text-muted">
+                            <p>
+                                You will be redirected to <a href="https://stripe.com/docs/connect" target="_blank">Stripe Connect</a>
+                                where you will set up a Stripe Connect Account which is linked to Self XDSD's Platform Account.<br>
+                                Then, we will be able to wire you money for the work you do in projects that use a real wallet.
+                            </p>
+                            <p>
+                                You will see your Stripe Connect Account overview right here, once it is created.
+                            </p>
+                        </small>
+                        <div class="invalid-feedback browser-error">
+                            <small>
+                                Oops, your browser did something unexpected.
+                                Please refresh the page and try again.
+                            </small>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -184,6 +207,38 @@
                     $("#contributorDashboard").addClass("d-none");
 
                     getPayoutMethods();
+                }
+            );
+
+            $("#createStripeConnectAccountForm").submit(
+                function(e) {
+                    e.preventDefault();
+                    var form = $(this);
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: "/api/contributor/payoutmethods/stripe",
+                            data: form.serialize(),
+                            success: function (payoutMethod) {
+                                console.log(payoutMethod)
+                            },
+                            error: function(jqXHR, error, errorThrown) {
+                                $("#loadingProject").hide();
+                                $(".project-not-registered").show();
+                                if(jqXHR.status && jqXHR.status == 400){
+                                    console.error("Bad Request: " + jqXHR.responseText);
+                                    $(".browser-error").show();
+                                } else {
+                                    console.log("Server error status: " + jqXHR.status);
+                                    console.log("Server error: " + jqXHR.responseText);
+                                    alert(
+                                        "Something went wrong (" + jqXHR.status + ")." +
+                                        "Please, try again later."
+                                    );
+                                }
+                            }
+                        }
+                    );
                 }
             );
         }

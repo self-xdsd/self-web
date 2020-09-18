@@ -199,28 +199,4 @@ public class ContributorApi extends BaseApiController {
         }
         return resp;
     }
-
-    /**
-     * Get the authenticated Contributor's PayoutMethods.
-     * @return String JSON.
-     */
-    @GetMapping(
-        value = "/contributor/payoutmethods",
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<String> payoutMethods() {
-        final ResponseEntity<String> resp;
-        final Contributor contributor = this.user.asContributor();
-        if(contributor == null) {
-            resp = ResponseEntity.badRequest().build();
-        } else {
-            resp = ResponseEntity.ok(
-                new JsonPayoutMethods(
-                    contributor.payoutMethods()
-                ).toString()
-            );
-        }
-        return resp;
-    }
-
 }
