@@ -28,6 +28,8 @@ import com.selfxdsd.api.User;
 import com.selfxdsd.selfweb.api.output.JsonPayoutMethods;
 import com.stripe.exception.StripeException;
 import com.stripe.model.AccountLink;
+import com.stripe.model.LoginLink;
+import com.stripe.net.RequestOptions;
 import com.stripe.param.AccountLinkCreateParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import java.util.HashMap;
 
 /**
  * The authenticated Contributor's PayoutMethods API.
@@ -148,7 +151,7 @@ public final class PayoutMethodsApi extends BaseApiController {
      * and complete the process.
      * @return String.
      */
-    @GetMapping(
+    @PostMapping(
         value = "/contributor/payoutmethods/stripe/onboarding",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -187,6 +190,48 @@ public final class PayoutMethodsApi extends BaseApiController {
     }
 
     /**
+     * Get the Contributor's SCA login link.
+     * @return String.
+     */
+    @PostMapping(
+        value = "/contributor/payoutmethods/stripe/login",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> stripeConnectLoginLink() {
+        ResponseEntity<String> resp;
+        final Contributor contributor = this.user.asContributor();
+        if(contributor == null) {
+            resp = ResponseEntity.badRequest().build();
+        } else {
+            PayoutMethod stripe = null;
+            for(final PayoutMethod method : contributor.payoutMethods()){
+                if(PayoutMethod.Type.STRIPE.equalsIgnoreCase(method.type())) {
+                    stripe = method;
+                    break;
+                }
+            }
+            if(stripe == null) {
+                resp = ResponseEntity.badRequest().build();
+            } else {
+                final JsonObject account = stripe.json();
+                if(account.getBoolean("details_submitted")) {
+                    resp = ResponseEntity
+                        .ok(
+                            Json.createObjectBuilder()
+                                .add(
+                                    "stripeLoginLink",
+                                    this.createStripeLoginLink(account)
+                                ).build().toString()
+                        );
+                } else {
+                    resp = ResponseEntity.badRequest().build();
+                }
+            }
+        }
+        return resp;
+    }
+
+    /**
      * Create an onboarding link for the given Stripe account.
      * @param account Stripe account in Json.
      * @return String.
@@ -201,17 +246,47 @@ public final class PayoutMethodsApi extends BaseApiController {
                     .setAccount(account.getString("id"))
                     .setRefreshUrl(
                         "http://localhost:8080/contributor"
-                        + "?stripeOnboarding=aborted"
+                        + "?stripe=aborted"
                     ).setReturnUrl(
                         "http://localhost:8080/contributor"
-                        + "?stripeOnboarding=finished"
+                        + "?stripe=finished"
                     ).setType(AccountLinkCreateParams.Type.ACCOUNT_ONBOARDING)
                     .build()
             ).getUrl();
         } catch (final StripeException ex) {
+            LOG.error(
+                "Stripe threw an exception while trying to get "
+                + "the Onboarding Link for Account " + account.getString("id"),
+                ex
+            );
             throw new IllegalStateException(
                 "Stripe threw an exception while trying to get "
                 + "the Onboarding Link for Account " + account.getString("id")
+            );
+        }
+    }
+
+    /**
+     * Get the Login link for the specified SCA account.
+     * @param account SCA account in JSON.
+     * @return String.
+     */
+    private String createStripeLoginLink(final JsonObject account) {
+        try {
+            return LoginLink.createOnAccount(
+                account.getString("id"),
+                new HashMap<>(),
+                RequestOptions.getDefault()
+            ).getUrl();
+        } catch (final StripeException ex) {
+            LOG.error(
+                "Stripe threw an exception while trying to get "
+                + "the Login Link for Account " + account.getString("id"),
+                ex
+            );
+            throw new IllegalStateException(
+                "Stripe threw an exception while trying to get "
+                + "the Login Link for Account " + account.getString("id")
             );
         }
     }

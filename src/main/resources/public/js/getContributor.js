@@ -31,7 +31,7 @@ function getContributorDashboard() {
                 $("#contractsTable").dataTable();
 
                 //if the user is redirected by Stripe, we should display the "Payout Methods" tab
-                if(getUrlVars().includes("stripeOnboarding")) {
+                if(getUrlVars().includes("stripe")) {
                     $("#payoutMethodsButton").trigger("click");
                 }
             },
@@ -333,6 +333,33 @@ function getPayoutMethods() {
                     $("#loadingPayoutMethods").hide();
                     if(payoutMethods.length == 0) {
                         $(".no-payout-methods").show();
+                    } else {
+                        var method = payoutMethods[0];
+                        $("#accountId").html(method.identifier);
+                        var requirements = method.account.requirements.currently_due;
+                        if(method.account.details_submitted && requirements.length == 0) {
+                            $("#stripeActive").show();
+                            $("#stripeDashboardFormDiv").show();
+                            $("#onboardingNeeded").hide();
+                            $("#stripeRequirements").hide();
+                            $("#accountBadge").addClass("badge-success")
+                            $("#accountBadge").html("active")
+                        } else {
+                            $("#accountBadge").addClass("badge-danger")
+                            $("#accountBadge").html("action required")
+                            if(method.account.details_submitted == false) {
+                                $("#onboardingNeeded").show();
+                                $("#stripeRequirements").hide();
+                                $("#stripeActive").hide();
+                                $("#stripeDashboardFormDiv").hide()
+                            } else {
+                                $("#onboardingNeeded").hide();
+                                $("#stripeActive").hide();
+                                $("#stripeRequirements").show();
+                                $("#stripeDashboardFormDiv").show()
+                            }
+                        }
+                        $(".payout-methods").show();
                     }
                 }
             }

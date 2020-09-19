@@ -72,3 +72,7 @@ a.btn-outline-primary:hover {
     text-align: justify;
     text-justify: inter-word;
 }
+
+#createStripeConnectAccountButton, #completeOnboardingProcessButton, #stripeDashboardButton {
+    background-color: #5469D4;
+}
