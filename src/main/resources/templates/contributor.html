@@ -38,7 +38,7 @@
         </div>
     </header>
     <div>
-        <div id="loadingContributor" class="text-center">
+        <div id="loadingContributor" class="text-center" style="display:none;">
             <img src="/images/loading.svg">
         </div>
         <div id="contributorDashboard" class="d-none">
@@ -56,7 +56,15 @@
                                         <th>Project</th>
                                         <th>Role</th>
                                         <th>Hourly Rate</th>
-                                        <th>Value</th>
+                                        <th>
+                                            Value
+                                            <i class="fa fa-question-circle-o fa-lg fakeWalletInfo"
+                                               aria-hidden="true"
+                                               data-toggle="tooltip"
+                                               data-placement="top"
+                                               title="Total value of your assigned tasks, active Invoice and PM commission.">
+                                            </i>
+                                        </th>
                                         <th>Agenda</th>
                                     </tr>
                                     </thead>
@@ -129,7 +137,110 @@
             </div>
         </div>
         <div id="payoutMethodsDashboard" class="d-none">
-            PAYOUT METHODS HERE!
+            <div id="loadingPayoutMethods" class="text-center" style="display: none;">
+                <img src="/images/loading.svg">
+            </div>
+            <div class="card-body no-payout-methods" style="display: none;">
+                <h3>You have no payout methods yet.</h3>
+                <p>Payout methods are ways for you to be paid.<br>
+                You will want to set up a payout method as soon as one of the projects you're working for decides to use a real wallet and make real payments.</p>
+                <form id="createStripeConnectAccountForm">
+                    <div class="form-group">
+                        <button id="createStripeConnectAccountButton" type="submit" class="btn btn-primary" aria-describedby="stripeConnectHelp">
+                            Create Stripe Account
+                        </button>
+                        <span id="loadingCreateStripeAccount" class="text-center" style="display: none;">
+                            <img height="40" width="40" src="/images/loading.svg">
+                        </span>
+                        <small id="stripeConnectHelp" class="form-text text-muted">
+                            <p>
+                                You will be redirected to <a href="https://stripe.com/docs/connect" target="_blank">Stripe Connect</a>
+                                where you will set up a Stripe Connect Account which is linked to Self XDSD's Platform Account.<br>
+                                Then, we will be able to wire you money for the work you do in projects that use a real wallet.
+                            </p>
+                            <p>
+                                You will see your Stripe Connect Account overview right here, once it is created.
+                            </p>
+                        </small>
+                        <div class="invalid-feedback browser-error">
+                            <small>
+                                Oops, your browser did something unexpected.
+                                Please refresh the page and try again.
+                            </small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="payout-methods mt-4" style="display: none;">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h4 class="m-0 font-weight-bold card-title">Stripe Connect Account <span id="accountBadge" class="badge"></span></h4>
+                    </div>
+                    <div class="card-body">
+                        <h4>Account ID: <span id="accountId"></span></h4>
+                        <div id="onboardingNeeded" class="mt-2" style="display: none;">
+                            <p>
+                                Your Stripe Connect account has been created, but you have to complete the Onboarding Process before it becomes active.
+                            </p>
+                            <form id="completeOnboardingProcessForm">
+                                <div class="form-group">
+                                    <button id="completeOnboardingProcessButton" type="submit" class="btn btn-primary" aria-describedby="completeOnboardingHelp">
+                                        Complete Onboarding Process
+                                    </button>
+                                    <span id="loadingCompleteOnboardingProcess" class="text-center" style="display: none;">
+                                        <img height="40" width="40" src="/images/loading.svg">
+                                    </span>
+                                    <small id="completeOnboardingHelp" class="form-text text-muted">
+                                        <p>
+                                            You will be redirected to <a href="https://stripe.com/docs/connect" target="_blank">Stripe Connect</a>
+                                            where you should fill out all required information in order to complete the Onboarding Process.
+                                        </p>
+                                    </small>
+                                    <div class="invalid-feedback browser-error">
+                                        <small>
+                                            Something went wrong. Please refresh the page and try again.<br>
+                                            If the error persists, please open an Issue <a href="https://github.com/self-xdsd/self-web/issues" target="_blank">here</a>.
+                                        </small>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="stripeRequirements" class="mt-2" style="display: none;">
+                            <p>
+                                Stripe reported some actions that you need to take regarding your account.<br>
+                                Please go to your Stripe Dashboard and complete all the requirements.
+                            </p>
+                        </div>
+                        <div id="stripeActive" class="mt-2" style="display: none;">
+                            <p>
+                                Your Stripe account is fully set up and active.<br>
+                                We will wire money to it for your work in projects which are using real wallets.
+                            </p>
+                            <p>
+                                Use the button bellow anytime, to review your account and see your cash balance.
+                            </p>
+                        </div>
+                        <div id="stripeDashboardFormDiv" style="display: none">
+                            <form id="stripeDashboardForm">
+                                <div class="form-group">
+                                    <button id="stripeDashboardButton" type="submit" class="btn btn-primary">
+                                        Stripe Dashboard
+                                    </button>
+                                    <span id="loadingStripeDashboardForm" class="text-center" style="display: none;">
+                                        <img height="40" width="40" src="/images/loading.svg">
+                                    </span>
+                                    <div class="invalid-feedback browser-error">
+                                        <small>
+                                            Something went wrong. Please refresh the page and try again.<br>
+                                            If the error persists, please open an Issue <a href="https://github.com/self-xdsd/self-web/issues" target="_blank">here</a>.
+                                        </small>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </article>
@@ -153,12 +264,16 @@
 
                     $("#payoutMethodsDashboard").removeClass("show");
                     $("#payoutMethodsDashboard").addClass("d-none");
+
+                    $(".no-payout-methods").hide();
+                    $(".payout-methods").hide();
                 }
             );
 
             $("#payoutMethodsButton").on(
                 "click",
                 function(){
+                    console.log("CLICK HAPPENED! YAY!");
                     $(this).addClass("active");
                     $("#contractsButton").removeClass("active");
 
@@ -167,8 +282,114 @@
 
                     $("#contributorDashboard").removeClass("show");
                     $("#contributorDashboard").addClass("d-none");
+
+                    getPayoutMethods();
                 }
             );
+
+            $("#createStripeConnectAccountForm").submit(
+                function(e) {
+                    e.preventDefault();
+                    $("#createStripeConnectAccountButton").addClass("disabled");
+                    $("#loadingCreateStripeAccount").show();
+                    var form = $(this);
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: "/api/contributor/payoutmethods/stripe",
+                            data: form.serialize(),
+                            success: function (payoutMethod) {
+                                console.log("Redirecting to SCA Onboarding page: " + payoutMethod.stripeOnboardingLink)
+                                window.location.replace(payoutMethod.stripeOnboardingLink);
+                            },
+                            error: function(jqXHR, error, errorThrown) {
+                                $("#createStripeConnectAccountButton").removeClass("disabled");
+                                $("#loadingCreateStripeAccount").hide();
+                                if(jqXHR.status && jqXHR.status == 400){
+                                    console.error("Bad Request: " + jqXHR.responseText);
+                                    $(".browser-error").show();
+                                } else {
+                                    console.log("Server error status: " + jqXHR.status);
+                                    console.log("Server error: " + jqXHR.responseText);
+                                    alert(
+                                        "Something went wrong (" + jqXHR.status + ")." +
+                                        "Please, try again later."
+                                    );
+                                }
+                            }
+                        }
+                    );
+                }
+            );
+            $("#completeOnboardingProcessForm").submit(
+                function(e) {
+                    e.preventDefault();
+                    $("#completeOnboardingProcessButton").addClass("disabled");
+                    $("#loadingCompleteOnboardingProcess").show();
+                    var form = $(this);
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: "/api/contributor/payoutmethods/stripe/onboarding",
+                            data: form.serialize(),
+                            success: function (payoutMethod) {
+                                console.log("Redirecting to SCA Onboarding page: " + payoutMethod.stripeOnboardingLink)
+                                window.location.replace(payoutMethod.stripeOnboardingLink);
+                            },
+                            error: function(jqXHR, error, errorThrown) {
+                                $("#completeOnboardingProcessButton").removeClass("disabled");
+                                $("#loadingCompleteOnboardingProcess").hide();
+                                if(jqXHR.status && jqXHR.status == 400){
+                                    console.error("Bad Request: " + jqXHR.responseText);
+                                    $(".browser-error").show();
+                                } else {
+                                    console.log("Server error status: " + jqXHR.status);
+                                    console.log("Server error: " + jqXHR.responseText);
+                                    alert(
+                                        "Something went wrong (" + jqXHR.status + ")." +
+                                        "Please, try again later."
+                                    );
+                                }
+                            }
+                        }
+                    );
+                }
+            );
+            $("#stripeDashboardForm").submit(
+                function(e) {
+                    e.preventDefault();
+                    $("#stripeDashboardButton").addClass("disabled");
+                    $("#loadingStripeDashboardForm").show();
+                    var form = $(this);
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: "/api/contributor/payoutmethods/stripe/login",
+                            data: form.serialize(),
+                            success: function (payoutMethod) {
+                                console.log("Opening SCA Dashboard page: " + payoutMethod.stripeLoginLink)
+                                window.location.replace(payoutMethod.stripeLoginLink);
+                            },
+                            error: function(jqXHR, error, errorThrown) {
+                                $("#stripeDashboardButton").removeClass("disabled");
+                                $("#loadingStripeDashboardForm").hide();
+                                if(jqXHR.status && jqXHR.status == 400){
+                                    console.error("Bad Request: " + jqXHR.responseText);
+                                    $(".browser-error").show();
+                                } else {
+                                    console.log("Server error status: " + jqXHR.status);
+                                    console.log("Server error: " + jqXHR.responseText);
+                                    alert(
+                                        "Something went wrong (" + jqXHR.status + ")." +
+                                        "Please, try again later."
+                                    );
+                                }
+                            }
+                        }
+                    );
+                }
+            );
+            getContributorDashboard();
         }
     )
 </script>
