@@ -235,9 +235,6 @@ public final class PayoutMethodsApi extends BaseApiController {
      * Create an onboarding link for the given Stripe account.
      * @param account Stripe account in Json.
      * @return String.
-     * @todo #91:30min The Stripe refreshUrl and returnUrl are hardcoded
-     *  to localhost at the moment. They should be configurable via environment
-     *  variables stripe.refresh.url and stripe.return.url respectively.
      */
     private String createStripeOnboardingLink(final JsonObject account) {
         try {
@@ -245,11 +242,11 @@ public final class PayoutMethodsApi extends BaseApiController {
                 AccountLinkCreateParams.builder()
                     .setAccount(account.getString("id"))
                     .setRefreshUrl(
-                        "http://localhost:8080/contributor"
-                        + "?stripe=aborted"
+                        System.getenv("self.xdsd.base.url")
+                            +"/contributor?stripe=aborted"
                     ).setReturnUrl(
-                        "http://localhost:8080/contributor"
-                        + "?stripe=finished"
+                        System.getenv("self.xdsd.base.url")
+                        + "/contributor?stripe=finished"
                     ).setType(AccountLinkCreateParams.Type.ACCOUNT_ONBOARDING)
                     .build()
             ).getUrl();
