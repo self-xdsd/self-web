@@ -242,10 +242,10 @@ public final class PayoutMethodsApi extends BaseApiController {
                 AccountLinkCreateParams.builder()
                     .setAccount(account.getString("id"))
                     .setRefreshUrl(
-                        System.getenv("self.xdsd.base.url")
+                        System.getenv("self_xdsd_base_url")
                             +"/contributor?stripe=aborted"
                     ).setReturnUrl(
-                        System.getenv("self.xdsd.base.url")
+                        System.getenv("self_xdsd_base_url")
                         + "/contributor?stripe=finished"
                     ).setType(AccountLinkCreateParams.Type.ACCOUNT_ONBOARDING)
                     .build()
