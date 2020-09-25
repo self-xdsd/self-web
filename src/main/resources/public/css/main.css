@@ -10,6 +10,15 @@ body {
     border-bottom-color: #701516;
 }
 
+/*by setting pseudo elem border to 0 it removes dropdown arrow (a border itself) */
+.dropdown-menu::before {
+  border: 0 !important
+}
+
+.dropdown-menu::after {
+  border: 0 !important
+}
+
 .card-title {
     color: #701516 !important;
 }
