@@ -51,8 +51,10 @@ public class SelfWebApplication extends WebSecurityConfigurerAdapter {
                 "/images/illustrations/*",
                 "/css/*",
                 "/error",
-                "/webjars/**"
-            )
+                "/webjars/**",
+                "/p/**",
+                "/b/**"
+                )
             .permitAll()
             .anyRequest()
             .authenticated()
