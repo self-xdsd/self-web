@@ -20,6 +20,10 @@ function getProject() {
                         $(".project-not-registered").show();
                     } else {
                         displayProject(user.login, project);
+                        $(".badge-project-url").text(
+                            "https://self-xdsd.com/p/" + owner + "/" + name
+                            + "?provider=" + project.provider
+                        )
                     }
                 }
             );
