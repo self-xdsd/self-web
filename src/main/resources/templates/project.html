@@ -4,11 +4,6 @@
 <body>
 <header th:replace="header.html :: header">
 </header>
-<!--
-@todo #85:30min Implement a "Swag" card on the Project Overview tab,
- to give the user various options of displaying the Self badge (HTML,
- Markdown etc).
--->
 <main class="container" role="main">
     <header class="profile-header">
         <div class="card">
@@ -34,123 +29,149 @@
         <img src="/images/loading.svg">
     </div>
     <div class="card card-body collapse multi-collapse" id="projectOverview">
-    <div class="row">
-        <div class="col-xl-8 col-lg-7">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h4 class="m-0 font-weight-bold card-title managedBy">Project managed by:</h4>
+        <div class="row">
+            <div class="col-xl-8 col-lg-7">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h4 class="m-0 font-weight-bold card-title managedBy">Project managed by:</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>
+                            The Project Manager takes care of the following things for you:
+                        </p>
+                        <div class="mb-2">
+                            <h5><code>Issue assignment</code></h5>
+                            <p>
+                                Whenever someone opens a new Issue in your repository, the PM will
+                                automatically register it as a task and will assign a contributor to work on it.
+                            </p>
+                            <p>
+                                If it turns out that the Issue is invalid, not applicable or simply not worth working on as a task,
+                                just label it <code>invalid</code>, <code>wont fix</code> or <code>rejected</code> and the PM will take
+                                it out of scope. No invoicing or payments will be performed.
+                            </p>
+                            <p>
+                                In the case of Pull Requests, the PM will look for contributors with role <code>REV</code> and assign
+                                them for code review.
+                            </p>
+                        </div>
+                        <div class="mb-2">
+                            <h5><code>Issue resignation</code></h5>
+                            <p>If the task's assignee does not close the Issue before the deadline arrives,
+                            the PM will resign them and look for another assignee.</p>
+                        </div>
+                        <div class="mb-2">
+                            <h5><code>Invoicing and Payments</code></h5>
+                            <p>
+                                After an Issue or PR is closed, the PM will add the task to the assignee's
+                                active Invoice.
+                            </p>
+                            <p>
+                                Invoices are paid out on the <code>1st of the month</code> or when they
+                                accumulate more than <code>$100</code>.
+                            </p>
+                        </div>
+                        <div class="mb-2">
+                            <h5><code>Commands</code></h5>
+                            <p>
+                                The Project Manager listens to certain commands given by users. For example,
+                                if the assignee cannot solve the task, they can say <code>resign</code> right
+                                in the Issue comments and the PM will look for someone else.
+                                <a href="#">Here</a> is guide on all possible commands and who can give them.
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <p>
-                        The Project Manager takes care of the following things for you:
-                    </p>
-                    <div class="mb-2">
-                        <h5><code>Issue assignment</code></h5>
-                        <p>
-                            Whenever someone opens a new Issue in your repository, the PM will
-                            automatically register it as a task and will assign a contributor to work on it.
-                        </p>
-                        <p>
-                            If it turns out that the Issue is invalid, not applicable or simply not worth working on as a task,
-                            just label it <code>invalid</code>, <code>wont fix</code> or <code>rejected</code> and the PM will take
-                            it out of scope. No invoicing or payments will be performed.
-                        </p>
-                        <p>
-                            In the case of Pull Requests, the PM will look for contributors with role <code>REV</code> and assign
-                            them for code review.
-                        </p>
+            </div>
+            <div class="col-xl-4 col-lg-5">
+                <div id="walletCard" class="card shadow mb-4">
+                    <!-- Card Header - Dropdown -->
+                    <div class="card-header py-3">
+                        <h4 class="m-0 font-weight-bold card-title">
+                            Wallet
+                            <i
+                                class="fa fa-question-circle-o fa-lg fakeWalletInfo"
+                                style="display: none;"
+                                aria-hidden="true"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="We assigned you a fake wallet with $10M. You can work with it
+                                until you decide to register a real wallet. The business flow is the same,
+                                except the payments are fictive.">
+                            </i>
+                        </h4>
                     </div>
-                    <div class="mb-2">
-                        <h5><code>Issue resignation</code></h5>
-                        <p>If the task's assignee does not close the Issue before the deadline arrives,
-                        the PM will resign them and look for another assignee.</p>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <div class="chart-pie pt-4">
+                            <canvas
+                                id="walletPieChart"
+                                style="display: block; height: 253px; width: 290px;"
+                                class="chartjs-render-monitor"
+                            >
+                            </canvas>
+                        </div>
+                        <hr>
+                        <span>
+                            Approximate Total: <span class="font-weight-bold" id="walletCash"></span>
+                        </span><br>
+                        <span>
+                            Debt: <span class="font-weight-bold" id="walletDebt"></span>
+                            <i
+                                class="fa fa-question-circle-o fa-lg fakeWalletInfo"
+                                style="display: none;"
+                                aria-hidden="true"
+                                data-toggle="tooltip"
+                                data-placement="right"
+                                title="Total cost of all currently assigned tasks, active invoices and PM commission.">
+                            </i>
+                        </span><br>
+                        <span>Available: <span class="font-weight-bold" id="walletAvailable"></span>
+                        </span>
                     </div>
-                    <div class="mb-2">
-                        <h5><code>Invoicing and Payments</code></h5>
-                        <p>
-                            After an Issue or PR is closed, the PM will add the task to the assignee's
-                            active Invoice.
-                        </p>
-                        <p>
-                            Invoices are paid out on the <code>1st of the month</code> or when they
-                            accumulate more than <code>$100</code>.
-                        </p>
+                </div>
+                <div id="ownerCard" class="card shadow mb-4">
+                    <!-- Card Header - Dropdown -->
+                    <div class="card-header py-3">
+                        <h4 class="m-0 font-weight-bold text-primary">Ownership</h4>
                     </div>
-                    <div class="mb-2">
-                        <h5><code>Commands</code></h5>
-                        <p>
-                            The Project Manager listens to certain commands given by users. For example,
-                            if the assignee cannot solve the task, they can say <code>resign</code> right
-                            in the Issue comments and the PM will look for someone else.
-                            <a href="#">Here</a> is guide on all possible commands and who can give them.
-                        </p>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <p>This project is owned by: @<b><span class="selfOwner"></span></b></p>
+                        <p>You can see this page because you are an admin in the Organization which
+                        owns the repository. However, in Self there is only one Project Owner, the one
+                        who activated the repository.</p>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-4 col-lg-5">
-            <div id="walletCard" class="card shadow mb-4">
-                <!-- Card Header - Dropdown -->
-                <div class="card-header py-3">
-                    <h4 class="m-0 font-weight-bold card-title">
-                        Wallet
-                        <i
-                            class="fa fa-question-circle-o fa-lg fakeWalletInfo"
-                            style="display: none;"
-                            aria-hidden="true"
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="We assigned you a fake wallet with $10M. You can work with it
-                            until you decide to register a real wallet. The business flow is the same,
-                            except the payments are fictive.">
-                        </i>
-                    </h4>
-                </div>
-                <!-- Card Body -->
-                <div class="card-body">
-                    <div class="chart-pie pt-4">
-                        <canvas
-                            id="walletPieChart"
-                            style="display: block; height: 253px; width: 290px;"
-                            class="chartjs-render-monitor"
-                        >
-                        </canvas>
-                    </div>
-                    <hr>
-                    <span>
-                        Approximate Total: <span class="font-weight-bold" id="walletCash"></span>
-                    </span><br>
-                    <span>
-                        Debt: <span class="font-weight-bold" id="walletDebt"></span>
-                        <i
-                            class="fa fa-question-circle-o fa-lg fakeWalletInfo"
-                            style="display: none;"
-                            aria-hidden="true"
-                            data-toggle="tooltip"
-                            data-placement="right"
-                            title="Total cost of all currently assigned tasks, active invoices and PM commission.">
-                        </i>
-                    </span><br>
-                    <span>Available: <span class="font-weight-bold" id="walletAvailable"></span>
-                    </span>
-                </div>
+        <div class="card shadow mt-2">
+            <div class="card-header py-3">
+                <h4 class="m-0 font-weight-bold card-title">Badge for your repo: <img src="/b/mbself.svg"></h4>
             </div>
-            <div id="ownerCard" class="card shadow mb-4">
-                <!-- Card Header - Dropdown -->
-                <div class="card-header py-3">
-                    <h4 class="m-0 font-weight-bold text-primary">Ownership</h4>
+            <div class="card-footer project-buttons" style="">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                        <button class="nav-link active" role="button" id="markdownBadge">Markdown</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" role="button" id="htmlBadge">HTML</button>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div id="markdownBadgeCode">
+                    <code>[![Managed By Self XDSD](https://self-xdsd.com/b/mbself.svg)](<span class="badge-project-url"></span>)</code>
                 </div>
-                <!-- Card Body -->
-                <div class="card-body">
-                    <p>This project is owned by: @<b><span class="selfOwner"></span></b></p>
-                    <p>You can see this page because you are an admin in the Organization which
-                    owns the repository. However, in Self there is only one Project Owner, the one
-                    who activated the repository.</p>
+                <div id="htmlBadgeCode" style="display: none;">
+                    <code>
+                        &lt;a href='<span class="badge-project-url"></span>'&gt;
+                            &lt;img src='https://self-xdsd.com/b/mbself.svg' alt='Managed by Self XDSD'&gt;
+                        &lt;/a&gt;
+                    </code>
                 </div>
             </div>
         </div>
-    </div>
-
     </div>
     <div class="card card-body collapse multi-collapse" id="projectContracts" style="height:600px;">
         <div class="card container-fluid d-flex h-100 flex-column" style="padding:0">
@@ -337,6 +358,25 @@
                     }
                 }
             );
+
+            $("#markdownBadge").on(
+                "click",
+                function() {
+                    $("#markdownBadge").addClass("active");
+                    $("#htmlBadge").removeClass("active");
+                    $("#markdownBadgeCode").show();
+                    $("#htmlBadgeCode").hide();
+                }
+            )
+            $("#htmlBadge").on(
+                "click",
+                function() {
+                    $("#htmlBadge").addClass("active");
+                    $("#markdownBadge").removeClass("active");
+                    $("#htmlBadgeCode").show();
+                    $("#markdownBadgeCode").hide();
+                }
+            )
         }
     )
 </script>
