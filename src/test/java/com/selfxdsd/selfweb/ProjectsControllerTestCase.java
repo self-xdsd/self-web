@@ -22,10 +22,110 @@
  */
 package com.selfxdsd.selfweb;
 
+import com.selfxdsd.api.Project;
+import com.selfxdsd.api.Projects;
+import com.selfxdsd.api.Self;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
+
 /**
+ * Unit tests for {@link ProjectsController}.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since
+ * @since 0.0.2
  */
-public class ProjectsControllerTestCase {
+public final class ProjectsControllerTestCase {
+
+    /**
+     * It sets the "managed" Model flag to false if the
+     * given Project is not managed by Self.
+     */
+    @Test
+    public void badgePageNotManaged() {
+        final Projects all = Mockito.mock(Projects.class);
+        Mockito.when(
+            all.getProjectById("mihai/test", "gitlab")
+        ).thenReturn(null);
+        final Self self = Mockito.mock(Self.class);
+        Mockito.when(self.projects()).thenReturn(all);
+
+        final ProjectsController controller = new ProjectsController(self);
+        final Model model = new ExtendedModelMap();
+        final String page = controller.badgePage(
+            "mihai", "test", "gitlab", model
+        );
+
+        MatcherAssert.assertThat(
+            page,
+            Matchers.equalTo("badge.html")
+        );
+        MatcherAssert.assertThat(
+            model.getAttribute("managed"),
+            Matchers.is(Boolean.FALSE)
+        );
+    }
+
+    /**
+     * It sets the "managed" Model flag to true if the
+     * given Project is managed by Self.
+     */
+    @Test
+    public void badgePageManaged() {
+        final Projects all = Mockito.mock(Projects.class);
+        Mockito.when(
+            all.getProjectById("mihai/test", "gitlab")
+        ).thenReturn(Mockito.mock(Project.class));
+        final Self self = Mockito.mock(Self.class);
+        Mockito.when(self.projects()).thenReturn(all);
+
+        final ProjectsController controller = new ProjectsController(self);
+        final Model model = new ExtendedModelMap();
+        final String page = controller.badgePage(
+            "mihai", "test", "gitlab", model
+        );
+
+        MatcherAssert.assertThat(
+            page,
+            Matchers.equalTo("badge.html")
+        );
+        MatcherAssert.assertThat(
+            model.getAttribute("managed"),
+            Matchers.is(Boolean.TRUE)
+        );
+    }
+
+    /**
+     * The default provider (if none is given) should be "github".
+     *
+     * It sets the "managed" Model flag to true if the
+     * given Project is managed by Self.
+     */
+    @Test
+    public void badgePageManagedDefaultProviderGithub() {
+        final Projects all = Mockito.mock(Projects.class);
+        Mockito.when(
+            all.getProjectById("mihai/test", "github")
+        ).thenReturn(Mockito.mock(Project.class));
+        final Self self = Mockito.mock(Self.class);
+        Mockito.when(self.projects()).thenReturn(all);
+
+        final ProjectsController controller = new ProjectsController(self);
+        final Model model = new ExtendedModelMap();
+        final String page = controller.badgePage(
+            "mihai", "test", null, model
+        );
+
+        MatcherAssert.assertThat(
+            page,
+            Matchers.equalTo("badge.html")
+        );
+        MatcherAssert.assertThat(
+            model.getAttribute("managed"),
+            Matchers.is(Boolean.TRUE)
+        );
+    }
 }
