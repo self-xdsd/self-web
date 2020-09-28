@@ -11,11 +11,8 @@
 * but this a good practice since "$" is not "reserved" to jQuery.
 * Now "$" is just a function argument name and not the jQuery
 * alias anymore. It could named "foo" fo ex, thus making a call like foo("#contracts") valid.
-* @todo #103:30min. Provide autocomplete feature for username field by using
-*  Github api username search and a jquery-autocomplete plugin (or other) for
-*  rendering.
 */
-(function getAndAddContracts($, service){
+(function getAndAddContracts($, contractsService, usersService){
 
     function addContractToTable(contract){
         var row = "<tr>"
@@ -63,6 +60,16 @@
         //decrements when a request is done (even with an error).
         //if reaches '0' the loading indicator will hide.
         var loadingQueue = 0;
+        function showLoading(){
+            if(loadingQueue++ === 0){
+                $("#loadingContracts").show();
+            }
+        }
+        function hideLoading(){
+            if(--loadingQueue === 0){
+                 $("#loadingContracts").hide();
+            }
+        }
 
         var table = $("#contracts").DataTable({
             //setup
@@ -79,13 +86,8 @@
                     size: data.length
                 }
                 //fetch the page from server
-                service
-                    .getAll(project, page, function(){
-                        //if there is no loading on screen, show it
-                        if(loadingQueue++ === 0){
-                            $("#loadingContracts").show();
-                        }
-                    })
+                contractsService
+                    .getAll(project, page, showLoading)
                     .then(function(contracts){
                         //convert contracts page to DataTable "page" specification
                         var total = contracts.paged.totalPages * contracts.paged.current.size;
@@ -106,11 +108,7 @@
                         callback(dataTablePage);
                      })
                     .catch(handleError)
-                    .finally(function(){
-                        if(--loadingQueue === 0){
-                             $("#loadingContracts").hide();
-                        };
-                    });
+                    .finally(hideLoading);
             }
         });
 
@@ -134,35 +132,65 @@
                 }
             },
             submitHandler: function(form){
-                service
-                    .add(project, $(form).serialize(), function(){
-                                if(loadingQueue++ === 0){
-                                   $("#loadingContracts").show();
-                                }
-                                clearFormErrors();
-                                disableForm(true);
-                            })
+                var formData = $(form).serialize();
+                //check if username exists before submit
+                usersService.exists($("#username").val(), "github", function(){
+                        showLoading();
+                        clearFormErrors();
+                        disableForm(true);
+                    })
+                    .then(function(){
+                        return contractsService.add(project, formData)
+                    })
                     .then(function(contract){
-                                $(form).trigger('reset');
-                                //we check the current page (0 based) displayed in table.
-                                //if is last page, we're adding the contract to table.
-                                //since it's the latest contract created.
-                                var pageInfo = table.page.info();
-                                if((pageInfo.page + 1) === pageInfo.pages){
-                                    addContractToTable(contract);
-                                }
+                        $(form).trigger('reset');
+                           //we check the current page (0 based) displayed in table.
+                           //if is last page, we're adding the contract to table.
+                           //since it's the latest contract created.
+                           var pageInfo = table.page.info();
+                           if((pageInfo.page + 1) === pageInfo.pages){
+                               addContractToTable(contract);
+                           }
 
-                            })
+                        })
                     .catch(handleError)
                     .finally(function(){
-                               disableForm(false);
-                               if(--loadingQueue === 0){
-                                  $("#loadingContracts").hide();
-                               }
-                            });
+                        disableForm(false);
+                        hideLoading();
+                    });
                 return false;
             }
         });
 
+        //autocomplete
+        var debounce = null;
+        $("#username").autocomplete({
+            minChars: 3,
+            triggerSelectOnValidInput: false,
+            orientation: top,
+            maxHeight: 100,
+            lookup: function(query, done){
+                 console.log(query)
+                 clearTimeout(debounce);
+                 debounce = setTimeout(function() {
+                    usersService
+                        .findUsers(query, "github", showLoading)
+                        .then(function(users){
+                            done({
+                                suggestions: users.map(function(user){
+                                    return {value: user, data: user };
+                                })
+                            });
+                        })
+                        .catch(handleError)
+                        .finally(hideLoading);
+                 }, 500)
+            },
+            onSelect: function(suggestion){
+                $("#username").val(suggestion.value)
+            }
+        });
+
     });
-})(jQuery, contractsService)
+
+})(jQuery, contractsService, usersService)

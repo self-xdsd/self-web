@@ -85,3 +85,9 @@ a.btn-outline-primary:hover {
 #createStripeConnectAccountButton, #completeOnboardingProcessButton, #stripeDashboardButton {
     background-color: #5469D4;
 }
+
+.autocomplete-suggestions {
+    overflow: auto;
+    border: 1px solid #CBD3DD;
+    background: #FFF;
+}
