@@ -29,7 +29,8 @@ import java.io.IOException;
 
 /**
  * Will set a variable so we know if we are in Test Environment or not.
- * Based on this variable we will display a red banner on every page, if we are in Test.
+ * Based on this variable we will display a red banner on every page,
+ * if we are in Test.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
@@ -43,7 +44,7 @@ public class TestEnvFilter implements Filter {
         final FilterChain filterChain
     ) throws IOException, ServletException {
         if("true".equalsIgnoreCase(System.getenv("self_test_env"))) {
-            servletRequest.setAttribute("testEnvironment", "passValue");
+            servletRequest.setAttribute("testEnvironment", "true");
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }
