@@ -110,55 +110,56 @@
             }
         });
 
-        $.validator.setDefaults({
-            errorElement: "small",
-            errorClass: "invalid-feedback"
-        });
-        $("#addContractForm").validate({
-            rules: {
-                username: "required",
-                hourlyRate: {
-                    required: true,
-                    min: 0.01
+        $("#addContractForm").submit(
+            function(e) {
+                e.preventDefault();
+                var valid = true;
+                $.each($("#addContractForm .required"), function(index, element) {
+                    if($(element).val() == '') {
+                        $(element).addClass("is-invalid");
+                        valid = valid && false;
+                    } else {
+                        $(element).removeClass("is-invalid");
+                        valid = valid && true;
+                    }
+                });
+                if(valid) {
+                    var formData = $(this).serialize();
+                    //check if username exists before submit
+                    usersService.exists(
+                        $("#username").val(),
+                        "github",
+                        function(){
+                            showLoading();
+                            clearFormErrors();
+                            disableForm(true);
+                            }
+                        ).then(
+                            function(){
+                                return contractsService.add(project, formData)
+                            }
+                        ).then(
+                            function(contract){
+                                $("#addContractForm input").val('');
+                                $('#addContractForm option:first').prop('selected',true);
+                                //we check the current page (0 based) displayed in table.
+                                //if is last page, we're adding the contract to table.
+                                //since it's the latest contract created.
+                                var pageInfo = table.page.info();
+                                if((pageInfo.page + 1) === pageInfo.pages){
+                                    addContractToTable(contract);
+                                }
+                             }
+                        ).catch(handleError)
+                        .finally(
+                            function(){
+                            disableForm(false);
+                            hideLoading();
+                        });
+                    return false;
                 }
-            },
-            messages: {
-                username: "Contributor's username is mandatory.",
-                hourlyRate: {
-                    required: "Hourly rate is mandatory.",
-                    min: "Hourly rate must be a positive number."
-                }
-            },
-            submitHandler: function(form){
-                var formData = $(form).serialize();
-                //check if username exists before submit
-                usersService.exists($("#username").val(), "github", function(){
-                        showLoading();
-                        clearFormErrors();
-                        disableForm(true);
-                    })
-                    .then(function(){
-                        return contractsService.add(project, formData)
-                    })
-                    .then(function(contract){
-                        $(form).trigger('reset');
-                           //we check the current page (0 based) displayed in table.
-                           //if is last page, we're adding the contract to table.
-                           //since it's the latest contract created.
-                           var pageInfo = table.page.info();
-                           if((pageInfo.page + 1) === pageInfo.pages){
-                               addContractToTable(contract);
-                           }
-
-                        })
-                    .catch(handleError)
-                    .finally(function(){
-                        disableForm(false);
-                        hideLoading();
-                    });
-                return false;
             }
-        });
+        );
 
         //autocomplete
         var debounce = null;

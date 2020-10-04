@@ -25,7 +25,7 @@ var usersService = (function ($){
                     if(jqXHR.status === 404){
                         reject({
                             validation: {
-                                username: "Username doesn't exist!"
+                                username: "This doesn't seem to be a Github user."
                             }
                         })
                     }else{
