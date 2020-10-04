@@ -16,7 +16,7 @@
 
     function addContractToTable(contract){
         var row = "<tr>"
-                    +"<td  width='50%'>"+contract.id.contributorUsername+"</td>"
+                    +"<td>"+contract.id.contributorUsername+"</td>"
                     +"<td>"+contract.id.role+"</td>"
                     +"<td>"+contract.hourlyRate+"</td>"
                     +"<td>"+contract.value+"</td>"
@@ -76,10 +76,8 @@
             serverSide:  true,
             searching:   false,//searching not possible yet on server
             ordering:    false,//same for ordering
-            fixedHeader: true,
-            scrollY:    '50vh',
             //adapt DataTable request to Self-Paged API specification.
-            ajax: function(data, callback, settings){
+            ajax: function(data, callback){
                 var draw = data.draw; // draw counter that ensure the page draw ordering is respected
                 var page = {
                     no: Math.ceil(data.start/data.length) + 1,

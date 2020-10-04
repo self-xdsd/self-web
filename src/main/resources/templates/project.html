@@ -173,24 +173,41 @@
             </div>
         </div>
     </div>
-    <div class="card card-body collapse multi-collapse" id="projectContracts" style="height:600px;">
-        <div class="card container-fluid d-flex h-100 flex-column" style="padding:0">
-            <div class="table-responsive" style="width:100%;flex:1">
-                <table class="table table-striped table-bordered dt-responsive nowrap" id="contracts"  style="width:100%" >
-                    <thead>
-                    <tr>
-                        <th scope="col" width="50%">Username</th>
-                        <th scope="col">Role</th>
-                        <th scope="col">Hourly Rate</th>
-                        <th scope="col">Value</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+    <div class="collapse multi-collapse" id="projectContracts">
+        <div class="mt-4" id="contractsDivTable">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h4 class="m-0 font-weight-bold card-title">Contracts</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <div id="contractsTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                            <table id="contracts" class="display" style="width:100%">
+                                <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Role</th>
+                                    <th>Hourly Rate</th>
+                                    <th>
+                                        Value
+                                        <i class="fa fa-question-circle-o fa-lg fakeWalletInfo"
+                                           aria-hidden="true"
+                                           data-toggle="tooltip"
+                                           data-placement="top"
+                                           title="Total value of the currently assigned tasks, active Invoice and PM commission.">
+                                        </i>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card-footer d-flex justify-content-between"
-                 style="height:100px">
+        </div>
+        <div class="card-footer">
                 <div class="col-lg-8 align-self-center">
                     <form id="addContractForm" class="form-inline"
                           style="padding-bottom:10px;">
@@ -228,7 +245,6 @@
                          height="36">
                 </div>
             </div>
-        </div>
     </div>
     <div class="card card-body project-not-registered" style="display: none;">
         <div>
