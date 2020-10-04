@@ -140,7 +140,8 @@
                             }
                         ).then(
                             function(contract){
-                                $(form).trigger('reset');
+                                $("#addContractForm input").val('');
+                                $('#addContractForm option:first').prop('selected',true);
                                 //we check the current page (0 based) displayed in table.
                                 //if is last page, we're adding the contract to table.
                                 //since it's the latest contract created.
