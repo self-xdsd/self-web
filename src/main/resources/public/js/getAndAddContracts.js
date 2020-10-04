@@ -111,7 +111,7 @@
         });
 
         $.validator.setDefaults({
-            errorElement: "div",
+            errorElement: "small",
             errorClass: "invalid-feedback"
         });
         $("#addContractForm").validate({
@@ -123,10 +123,10 @@
                 }
             },
             messages: {
-                username: "Contributor's username is mandatory!",
+                username: "Contributor's username is mandatory.",
                 hourlyRate: {
-                    required: "Hourly rate is mandatory!",
-                    min: "Hourly rate must be a positive number!"
+                    required: "Hourly rate is mandatory.",
+                    min: "Hourly rate must be a positive number."
                 }
             },
             submitHandler: function(form){

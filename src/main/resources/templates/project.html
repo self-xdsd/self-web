@@ -174,77 +174,89 @@
         </div>
     </div>
     <div class="collapse multi-collapse" id="projectContracts">
-        <div class="mt-4" id="contractsDivTable">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h4 class="m-0 font-weight-bold card-title">Contracts</h4>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <div id="contractsTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
-                            <table id="contracts" class="display" style="width:100%">
-                                <thead>
-                                <tr>
-                                    <th>Username</th>
-                                    <th>Role</th>
-                                    <th>Hourly Rate</th>
-                                    <th>
-                                        Value
-                                        <i class="fa fa-question-circle-o fa-lg fakeWalletInfo"
-                                           aria-hidden="true"
-                                           data-toggle="tooltip"
-                                           data-placement="top"
-                                           title="Total value of the currently assigned tasks, active Invoice and PM commission.">
-                                        </i>
-                                    </th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
+        <div class="row">
+            <div class="mt-4 col-lg-8" id="contractsDivTable">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h4 class="m-0 font-weight-bold card-title">Contracts</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <div id="contractsTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                <table id="contracts" class="display" style="width:100%">
+                                    <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Role</th>
+                                        <th>Hourly Rate</th>
+                                        <th>
+                                            Value
+                                            <i class="fa fa-question-circle-o fa-lg fakeWalletInfo"
+                                               aria-hidden="true"
+                                               data-toggle="tooltip"
+                                               data-placement="top"
+                                               title="Total value of the currently assigned tasks, active Invoice and PM commission.">
+                                            </i>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="card-footer">
-                <div class="col-lg-8 align-self-center">
-                    <form id="addContractForm" class="form-inline"
-                          style="padding-bottom:10px;">
-                        <div class="form-group input-group-sm col-lg-4">
-                            <label for="username">Username:</label>
-                            <input type="text" class="form-control"
-                                   id="username" name="username">
-                            <div class="invalid-feedback username-error"></div>
-                        </div>
-                        <div class="form-group input-group-sm col-lg-4">
-                            <label for="hourlyRate">Hourly Rate:</label>
-                            <input type="number" class="form-control" value="0.0"
-                                   id="hourlyRate" name="hourlyRate">
-                            <div class="invalid-feedback hourlyRate-error"></div>
-                        </div>
-                        <div class="form-group input-group-sm col-lg-2">
-                            <label for="role">Role:</label>
-                            <select id="role" class="form-control"
-                                    name="role">
-                                <option selected>DEV</option>
-                                <option>REV</option>
-                            </select>
-                        </div>
-                        <div class="form-group" style="margin-top:30px">
-                            <button type="submit" id="add"
-                                    class="btn btn-primary bg">Add
-                            </button>
-                        </div>
-                    </form>
-                </div>
-                <div id="loadingContracts"
-                     class="bg-light align-self-center"
-                     style="margin-top:25px; margin-right:25px; display:none">
-                    <img src="/images/loading.svg" width="36"
-                         height="36">
+            <div class="mt-4 col-lg-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h4 class="m-0 font-weight-bold card-title">
+                            New Contract
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form id="addContractForm">
+                            <div class="form-group input-group-sm">
+                                <label for="username">Username:</label>
+                                <input type="text" class="form-control"
+                                       id="username" name="username"
+                                       placeholder="Username (e.g. johndoe)"
+                                >
+                                <div class="invalid-feedback username-error"></div>
+                            </div>
+                            <div class="form-group input-group-sm">
+                                <label for="hourlyRate">Hourly Rate:</label>
+                                <input type="number" class="form-control" value="0.0"
+                                       id="hourlyRate" name="hourlyRate">
+                                <div class="invalid-feedback hourlyRate-error"></div>
+                            </div>
+                            <div class="form-group input-group-sm">
+                                <label for="role">Role:</label>
+                                <select id="role" class="form-control"
+                                        name="role">
+                                    <option selected>DEV</option>
+                                    <option>REV</option>
+                                    <option>PO</option>
+                                    <option>ARCH</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" id="add"
+                                        class="btn btn-primary bg">Add
+                                </button>
+                                <span id="loadingContracts"
+                                     class="bg-light align-self-center"
+                                     style="margin-top:25px; margin-right:25px; display:none">
+                                    <img src="/images/loading.svg" width="36"
+                                         height="36">
+                                </span>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
+        </div>
     </div>
     <div class="card card-body project-not-registered" style="display: none;">
         <div>
