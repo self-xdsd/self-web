@@ -49,9 +49,9 @@ public final class ContractInput {
     private double hourlyRate;
 
     /**
-     * Contributor's role. Should be "DEV" or "REV".
+     * Contributor's role.
      */
-    @Role(oneOf = {"DEV", "REV"})
+    @Role(oneOf = {"DEV", "REV", "PO", "ARCH"})
     private String role;
 
     /**
