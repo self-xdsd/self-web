@@ -89,9 +89,20 @@
                     +"<td>"+contract.id.role+"</td>"
                     +"<td>"+contract.hourlyRate+"</td>"
                     +"<td>"+contract.value+"</td>"
-                    +"<td><a href='#tasks' class='contractAgenda'>"
+                    +"<td>"
+                    +  "<a href='#tasks' title='See Tasks' class='contractAgenda'>"
                     +     "<i class='fa fa-laptop fa-lg'></i>"
-                    + "</a></td>"
+                    +  "</a>  "
+                    +  "<a href='#' title='Download Invoice' class='downloadInvoice'>"
+                    +    "<i class='fa fa-file-pdf-o fa-lg'></i>"
+                    +  "</a>  "
+                    +  "<a href='#' title='Edit Contract' class='editContract'>"
+                    +    "<i class='fa fa-edit fa-lg'></i>"
+                    +  "</a>  "
+                    +  "<a href='#' title='Remove Contract' class='removeContract'>"
+                    +    "<i class='fa fa-trash fa-lg'></i>"
+                    +  "</a>"
+                    +"</td>"
                     +"</tr>";
         $("#contracts").find("tbody").append(row);
         $($(".contractAgenda")[$(".contractAgenda").length -1]).on(
@@ -177,8 +188,17 @@
                                     c.id.role,
                                     c.hourlyRate,
                                     c.value,
-                                    "<a href='#tasks' class='contractAgenda'>"
+                                    "<a href='#tasks' title='See Tasks' class='contractAgenda'>"
                                     +"<i class='fa fa-laptop fa-lg'></i>"
+                                    +"</a>  "
+                                    + "<a href='#' title='Download Invoice' class='downloadInvoice'>"
+                                    +"<i class='fa fa-file-pdf-o fa-lg'></i>"
+                                    +"</a>  "
+                                    +"<a href='#' title='Edit Contract' class='editContract'>"
+                                    +"<i class='fa fa-edit fa-lg'></i>"
+                                    +"</a>  "
+                                    +"<a href='#' title='Remove Contract' class='removeContract'>"
+                                    +"<i class='fa fa-trash fa-lg'></i>"
                                     +"</a>"
                                 ];
                             })

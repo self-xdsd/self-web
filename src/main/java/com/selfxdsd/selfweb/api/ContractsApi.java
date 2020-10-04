@@ -101,6 +101,7 @@ public class ContractsApi extends BaseApiController {
      * @param username Contributor's username.
      * @param role Contributor's role.
      * @return JsonArray.
+     * @checkstyle ParameterNumber (10 lines)
      */
     @GetMapping(
         value = "/projects/{owner}/{name}/contracts/{username}/tasks",
