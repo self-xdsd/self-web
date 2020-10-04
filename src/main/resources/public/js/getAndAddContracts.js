@@ -83,6 +83,115 @@
             "</tr>"
     }
 
+    function activeInvoiceToPdf(contract) {
+        $.ajax( //API call to get the active Invoice.
+            "/api/projects/"
+            + contract.id.repoFullName
+            + "/contracts/" + contract.id.contributorUsername + "/invoice?role=" + contract.id.role,
+            {
+                type: "GET",
+                statusCode: {
+                    200: function (fullInvoice) {
+                        console.log("INVOICE: ");
+                        console.log(fullInvoice);
+                        window.jsPDF = window.jspdf.jsPDF; // add this line of code
+
+                        const doc = new jsPDF();
+
+                        doc.addImage("/images/self-xdsd.png", "png", 170, 10, 20, 20);
+                        doc.text("Invoice", 105, 20, null, null, "center");
+                        doc.text("Invoice #" + fullInvoice.id + " from " + fullInvoice.createdAt, 20, 35);
+                        doc.text("Contributor: " + contract.id.contributorUsername, 20, 42);
+                        doc.text("Project: " + contract.id.repoFullName + " at " + contract.id.provider, 20, 49);
+                        doc.text("Role: " + contract.id.role, 20, 56);
+                        doc.text("Hourly Rate: " + contract.hourlyRate, 20, 63);
+                        doc.text("______________________________", 20, 67);
+
+                        doc.text("Total Due: $" + fullInvoice.totalAmount, 20, 74);
+                        var toContributor = function() {
+                            var toContributor = 0;
+                            fullInvoice.tasks.forEach(
+                                function(task){
+                                    toContributor += task.value
+                                }
+                            )
+                            return toContributor;
+                        }.call();
+                        doc.text("to Contributor: $" + toContributor, 23, 81);
+                        var toPm = function() {
+                            var toPm = 0;
+                            fullInvoice.tasks.forEach(
+                                function (task) {
+                                    toPm += task.commission
+                                }
+                            )
+                            return toPm;
+                        }.call();
+                        doc.text("to Project Manager: $" + toPm, 23, 88);
+                        if(fullInvoice.isPaid) {
+                            doc.text("Status: paid", 20, 95)
+                            doc.text("paid at: " + fullInvoice.paymentTime, 23, 102)
+                            doc.text("transaction id: " + fullInvoice.transactionId, 23, 109)
+                        } else {
+                            doc.text("Status: active (not paid)", 20, 95)
+                            doc.text("payment due: 1st day of next month,", 23, 102)
+                            doc.text("or when more than $100 are cumulated ", 23, 109)
+                        }
+                        doc.text("Invoiced tasks bellow.", 20, 116);
+
+                        doc.text("______________________________", 20, 120);
+
+                        function createHeaders(keys) {
+                            var result = [];
+                            for (var i = 0; i < keys.length; i += 1) {
+                                result.push({
+                                    id: keys[i],
+                                    name: keys[i],
+                                    prompt: keys[i],
+                                    width: 30,
+                                    align: "center",
+                                    padding: 0
+                                });
+                            }
+                            return result;
+                        }
+
+                        var headers = createHeaders([
+                            "Issue ID",
+                            "Estimation",
+                            "Value",
+                            "Commission"
+                        ]);
+
+                        var generateData = function(invoicedTasks) {
+                            var result = [];
+                            for (var i = 0; i < invoicedTasks.length; i += 1) {
+                                var task = {
+                                    "Issue ID": invoicedTasks[i].issueId,
+                                    Estimation: invoicedTasks[i].estimation + "min",
+                                    Value: "$" + invoicedTasks[i].value,
+                                    Commission: "$" + invoicedTasks[i].commission
+                                };
+                                result.push(Object.assign({}, task));
+                            }
+                            return result;
+                        };
+                        doc.table(
+                            55, 127,
+                            generateData(fullInvoice.tasks),
+                            headers,
+                            {
+                                autoSize: true
+                            }
+                        );
+
+                        doc.save("self_invoice_" + fullInvoice.id + ".pdf");
+                    }
+                }
+            }
+        );
+    }
+
     function addContractToTable(contract){
         var row = "<tr>"
                     +"<td>"+contract.id.contributorUsername+"</td>"
@@ -109,6 +218,12 @@
             "click",
             function(event) {
                 getTasksOfContract(contract);
+            }
+        );
+        $($(".downloadInvoice")[$(".downloadInvoice").length -1]).on(
+            "click",
+            function(event) {
+                activeInvoiceToPdf(contract);
             }
         );
     }
@@ -230,14 +345,35 @@
                         if($(".contractAgenda").length > 0) {
                             $($(".contractAgenda")[0]).trigger("click");
                         }
+                        $(".downloadInvoice").each(
+                            function() {
+                                $(this).on(
+                                    "click",
+                                    function(event) {
+                                        event.preventDefault();
+
+                                        var repo = $("#owner").text() + "/" + $("#name").text();
+                                        var contributor = $(this).parent().parent().children()[0].innerText;
+                                        var role = $(this).parent().parent().children()[1].innerText;
+                                        var hourly = $(this).parent().parent().children()[2].innerText;
+                                        var provider = "github";
+                                        var contract = {
+                                            id: {
+                                                repoFullName: repo,
+                                                contributorUsername: contributor,
+                                                role: role,
+                                                provider: provider
+                                            },
+                                            hourlyRate: hourly
+                                        }
+                                        activeInvoiceToPdf(contract);
+                                    }
+                                )
+                            }
+                        );
                      })
                     .catch(handleError)
                     .finally(hideLoading);
-            },
-            rowCallback: function(settings) {
-                console.log("ROW CALLBACK")
-                console.log(settings);
-                //do whatever
             }
         });
 

@@ -148,7 +148,7 @@ function getInvoicesOfContract(contract) {
         "Invoices of " + contract.id.repoFullName + " (" + contract.id.role + ")"
     )
     $("#loadingInvoices").show();
-    $.ajax( //API call to get the Tasks.
+    $.ajax( //API call to get the Invoices.
         "/api/contributor/contracts/"
         + contract.id.repoFullName
         + "/invoices?role=" + contract.id.role,
@@ -230,13 +230,11 @@ function invoiceToPdf(invoice, contract) {
             type: "GET",
             statusCode: {
                 200: function (fullInvoice) {
-                    console.log("FULL INVOICE: " + fullInvoice.tasks);
-
                     const doc = new jsPDF();
 
                     doc.addImage("/images/self-xdsd.png", "png", 170, 10, 20, 20);
                     doc.text("Invoice", 105, 20, null, null, "center");
-                    doc.text("Invoice ID: #" + fullInvoice.id, 20, 35);
+                    doc.text("Invoice #" + fullInvoice.id + " from " + fullInvoice.createdAt, 20, 35);
                     doc.text("Contributor: " + contract.id.contributorUsername, 20, 42);
                     doc.text("Project: " + contract.id.repoFullName + " at " + contract.id.provider, 20, 49);
                     doc.text("Role: " + contract.id.role, 20, 56);
@@ -264,9 +262,18 @@ function invoiceToPdf(invoice, contract) {
                         return toPm;
                     }.call();
                     doc.text("to Project Manager: $" + toPm, 23, 88);
-                    doc.text("Invoiced tasks bellow.", 20, 95);
+                    if(fullInvoice.isPaid) {
+                        doc.text("Status: paid", 20, 95)
+                        doc.text("paid at: " + fullInvoice.paymentTime, 23, 102)
+                        doc.text("transaction id: " + fullInvoice.transactionId, 23, 109)
+                    } else {
+                        doc.text("Status: active (not paid)", 20, 95)
+                        doc.text("payment due: 1st day of next month,", 23, 102)
+                        doc.text("or when more than $100 are cumulated ", 23, 109)
+                    }
+                    doc.text("Invoiced tasks bellow.", 20, 116);
 
-                    doc.text("______________________________", 20, 99);
+                    doc.text("______________________________", 20, 120);
 
                     function createHeaders(keys) {
                         var result = [];
@@ -304,7 +311,7 @@ function invoiceToPdf(invoice, contract) {
                         return result;
                     };
                     doc.table(
-                        55, 106,
+                        55, 127,
                         generateData(fullInvoice.tasks),
                         headers,
                         {
