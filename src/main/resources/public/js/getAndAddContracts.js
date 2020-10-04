@@ -14,14 +14,92 @@
 */
 (function getAndAddContracts($, contractsService, usersService){
 
+    function getTasksOfContract(contract) {
+        console.log("GET TASKS:");
+        console.log(contract);
+        $("#tasksTable").dataTable().fnDestroy();
+        $("#tasksTable").find("tbody").html('');
+        $("#tasksTitle").html(
+            " Tasks assigned to " + contract.id.contributorUsername
+            + " (" + contract.id.role + ")"
+        )
+        $("#loadingTasks").show();
+        $.ajax( //API call to get the Tasks.
+            "/api/projects/"
+            + contract.id.repoFullName
+            + "/contracts/" + contract.id.contributorUsername + "/tasks?role=" + contract.id.role,
+            {
+                type: "GET",
+                statusCode: {
+                    200: function (tasks) {
+                        $("#loadingTasks").hide();
+                        tasks.forEach(
+                            function(task) {
+                                $("#tasksTable").find("tbody").append(
+                                    taskAsTableRow(contract, task)
+                                );
+                            }
+                        );
+                        $("#tasksTable").dataTable();
+                        $("#tasksBody").show();
+                        console.log(tasks);
+                    },
+                    204: function (data) {
+                        $("#loadingTasks").hide();
+                        $("#loadingTasksHidden").show();
+                        $("#tasksTable").dataTable();
+                        $("#tasksBody").show();
+                    },
+
+                }
+            }
+        );
+    }
+
+    /**
+     * Turn a Task into a table row.
+     * @param task Task.
+     */
+    function taskAsTableRow(contract, task) {
+        var issueLink;
+        if(contract.id.provider == 'github') {
+            issueLink = 'https://github.com/'
+                + contract.id.repoFullName
+                + "/issues/"
+                + task.issueId;
+        } else if(contract.id.provider == 'gitlab') {
+            issueLink = 'https://gitlab.com/'
+                + contract.id.repoFullName
+                + "/issues/"
+                + task.issueId;
+        } else {
+            issueLink = '#';
+        }
+        return "<tr>" +
+            "<td><a href='" + issueLink + "' target='_blank'>#" + task.issueId + "</a></td>" +
+            "<td>" + task.assignmentDate + "</td>"  +
+            "<td>" + task.deadline + "</td>" +
+            "<td>" + task.estimation + "min</td>" +
+            "</tr>"
+    }
+
     function addContractToTable(contract){
         var row = "<tr>"
                     +"<td>"+contract.id.contributorUsername+"</td>"
                     +"<td>"+contract.id.role+"</td>"
                     +"<td>"+contract.hourlyRate+"</td>"
                     +"<td>"+contract.value+"</td>"
-                  +"</tr>";
+                    +"<td><a href='#tasks' class='contractAgenda'>"
+                    +     "<i class='fa fa-laptop fa-lg'></i>"
+                    + "</a></td>"
+                    +"</tr>";
         $("#contracts").find("tbody").append(row);
+        $($(".contractAgenda")[$(".contractAgenda").length -1]).on(
+            "click",
+            function(event) {
+                getTasksOfContract(contract);
+            }
+        );
     }
 
     function handleError(error){
@@ -98,15 +176,48 @@
                                     c.id.contributorUsername,
                                     c.id.role,
                                     c.hourlyRate,
-                                    c.value
+                                    c.value,
+                                    "<a href='#tasks' class='contractAgenda'>"
+                                    +"<i class='fa fa-laptop fa-lg'></i>"
+                                    +"</a>"
                                 ];
                             })
                         };
                         //send page to DataTable to be rendered
                         callback(dataTablePage);
+                        $(".contractAgenda").each(
+                            function() {
+                                $(this).on(
+                                    "click",
+                                    function(event) {
+                                        var repo = $("#owner").text() + "/" + $("#name").text();
+                                        var contributor = $(this).parent().parent().children()[0].innerText;
+                                        var role = $(this).parent().parent().children()[1].innerText;
+                                        var provider = "github";
+                                        var contract = {
+                                            id: {
+                                                repoFullName: repo,
+                                                contributorUsername: contributor,
+                                                role: role,
+                                                provider: provider
+                                            }
+                                        }
+                                        getTasksOfContract(contract);
+                                    }
+                                )
+                            }
+                        );
+                        if($(".contractAgenda").length > 0) {
+                            $($(".contractAgenda")[0]).trigger("click");
+                        }
                      })
                     .catch(handleError)
                     .finally(hideLoading);
+            },
+            rowCallback: function(settings) {
+                console.log("ROW CALLBACK")
+                console.log(settings);
+                //do whatever
             }
         });
 

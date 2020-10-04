@@ -198,6 +198,9 @@
                                                title="Total value of the currently assigned tasks, active Invoice and PM commission.">
                                             </i>
                                         </th>
+                                        <th>
+                                            Agenda
+                                        </th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -260,6 +263,34 @@
                                 </span>
                             </div>
                         </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4" id="tasks">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h4 class="m-0 font-weight-bold card-title" id="tasksTitle">Tasks</h4>
+                </div>
+                <div id="loadingTasks" class="text-center" style="display: none;">
+                    <img src="/images/loading.svg">
+                </div>
+                <div class="card-body" id="tasksBody" style="display: none;">
+                    <div class="table-responsive">
+                        <div id="tasksTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                            <table id="tasksTable" class="display">
+                                <thead>
+                                <tr>
+                                    <th>Issue</th>
+                                    <th>Assigned</th>
+                                    <th>Deadline</th>
+                                    <th>Estimation</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

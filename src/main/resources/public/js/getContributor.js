@@ -102,6 +102,7 @@ function getTasksOfContract(contract) {
                     $("#loadingTasks").hide();
                     $("#loadingTasksHidden").show();
                     $("#tasksTable").dataTable();
+                    $("#tasksBody").show();
                 },
 
             }

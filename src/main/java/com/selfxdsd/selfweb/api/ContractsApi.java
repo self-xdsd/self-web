@@ -26,14 +26,12 @@ import com.selfxdsd.api.*;
 import com.selfxdsd.selfweb.api.input.ContractInput;
 import com.selfxdsd.selfweb.api.output.JsonContract;
 import com.selfxdsd.selfweb.api.output.JsonContracts;
+import com.selfxdsd.selfweb.api.output.JsonTasks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.json.Json;
 import javax.validation.Valid;
@@ -94,6 +92,51 @@ public class ContractsApi extends BaseApiController {
             contracts = new JsonContracts(project.contracts());
         }
         return ResponseEntity.ok(contracts.toString());
+    }
+
+    /**
+     * Get the Tasks of a specific Contract.
+     * @param owner Owner of the project (username or org name).
+     * @param name Simple name of the project.
+     * @param username Contributor's username.
+     * @param role Contributor's role.
+     * @return JsonArray.
+     */
+    @GetMapping(
+        value = "/projects/{owner}/{name}/contracts/{username}/tasks",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> tasks(
+        @PathVariable final String owner,
+        @PathVariable final String name,
+        @PathVariable final String username,
+        @RequestParam("role") final String role
+    ) {
+        final ResponseEntity<String> resp;
+        final Project project = this.user.projects().getProjectById(
+            owner + "/" + name, this.user.provider().name()
+        );
+        if(project == null) {
+            resp = ResponseEntity.noContent().build();
+        } else {
+            final Contract contract = project.contracts().findById(
+                new Contract.Id(
+                    owner + "/" + name,
+                    username,
+                    project.provider(),
+                    role
+                )
+            );
+            if(contract == null) {
+                resp = ResponseEntity.noContent().build();
+            } else {
+                final Tasks tasks = contract.tasks();
+                resp = ResponseEntity.ok(
+                    new JsonTasks(tasks).toString()
+                );
+            }
+        }
+        return resp;
     }
 
     /**
