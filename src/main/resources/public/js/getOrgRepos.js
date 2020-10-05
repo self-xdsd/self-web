@@ -38,7 +38,5 @@ function getOrgRepos() {
  * Wrap a repo's information between <li> tags, with anchor.
  */
 function repoAsTableRow(repo) {
-    return "<tr><td>" +
-        repo.full_name
-        + "</td></tr>"
+    return "<tr><td><a href='/github/" + repo.full_name + "'>" + repo.full_name + "</a></td></tr>"
 }
