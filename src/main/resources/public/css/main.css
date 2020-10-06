@@ -91,3 +91,17 @@ a.btn-outline-primary:hover {
     border: 1px solid #CBD3DD;
     background: #FFF;
 }
+
+html{
+    min-height: 100%;
+    position:relative;
+}
+
+footer{
+    position:absolute;
+    width:100%;
+    bottom:0;
+}
+body {
+        padding-bottom: 136px;
+}
