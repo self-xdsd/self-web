@@ -21,6 +21,9 @@
                     <li class="nav-item project-owner-buttons">
                         <button class="nav-link" role="button" id="projectContractsButton">Contracts</button>
                     </li>
+                    <li class="nav-item project-owner-buttons">
+                        <button class="nav-link" role="button" id="projectWalletsButton">Wallets</button>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -296,6 +299,9 @@
             </div>
         </div>
     </div>
+    <div class="collapse multi-collapse" id="projectWallets">
+        <p>Wallets Here...</p>
+    </div>
     <div class="card card-body project-not-registered" style="display: none;">
         <div>
             <h3>This repository is not active</h3>
@@ -353,7 +359,9 @@
                     $("#projectOverview").addClass("show");
 
                     $("#projectContractsButton").removeClass("active");
+                    $("#projectWalletsButton").removeClass("active");
                     $("#projectContracts").removeClass("show");
+                    $("#projectWallets").removeClass("show");
                 }
             );
             $("#projectContractsButton").on(
@@ -363,10 +371,25 @@
                     $("#projectContracts").addClass("show");
 
                     $("#projectOverviewButton").removeClass("active");
+                    $("#projectWalletsButton").removeClass("active");
                     $("#projectOverview").removeClass("show");
+                    $("#projectWallets").removeClass("show");
                     //otherwise when tab is showing, table headers will be
                     //initially squashed at start
                     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+                }
+            );
+
+            $("#projectWalletsButton").on(
+                "click",
+                function(){
+                    $(this).addClass("active");
+                    $("#projectWallets").addClass("show");
+
+                    $("#projectContractsButton").removeClass("active");
+                    $("#projectOverviewButton").removeClass("active");
+                    $("#projectContracts").removeClass("show");
+                    $("#projectOverview").removeClass("show");
                 }
             );
 
