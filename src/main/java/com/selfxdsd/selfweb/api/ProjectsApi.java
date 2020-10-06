@@ -160,4 +160,20 @@ public class ProjectsApi extends BaseApiController {
         return resp;
     }
 
+    /**
+     * Get a project's wallets.
+     * @param owner Owner of the repo.
+     * @param name Name of the repo.
+     * @return Json wallets.
+     */
+    @GetMapping(
+        value = "/projects/{owner}/{name}/wallets",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> wallets(
+        @PathVariable final String owner,
+        @PathVariable final String name
+    ) {
+        return null;
+    }
 }
