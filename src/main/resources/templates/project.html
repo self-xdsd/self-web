@@ -307,9 +307,15 @@
             <p>This project doesn't seem to have any wallets.</p>
         </div>
         <div id="wallets" class="mt-4" style="display: none;">
-            <div class="card shadow">
+            <div class="card shadow" id="fakeWalletDiv">
                 <div class="card-header py-3">
-                    <h4 class="m-0 font-weight-bold card-title">Fake Wallet <span id="fakeWalletBadge" class="badge"></span></h4>
+                    <h4 class="m-0 font-weight-bold card-title">
+                        Fake Wallet
+                        <span id="fakeWalletBadge" class="badge"></span>
+                        <span id="activateFakeWallet" class="badge" style="display: none;">
+                            <a href="#">Activate</a>
+                        </span>
+                    </h4>
                 </div>
                 <div class="card-body">
                     <div>
@@ -335,6 +341,71 @@
                             Self's commission.<br>
                             We recommend you switch to a real wallet as soon as possible, to keep your team motivated.
                         </p>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow mt-4" id="stripeWalletDiv">
+                <div class="card-header py-3">
+                    <h4 class="m-0 font-weight-bold card-title">
+                        Real Wallet
+                        <span id="stripeWalletBadge" class="badge"></span>
+                        <span id="activateStripeWallet" class="badge" style="display: none;">
+                            <a href="#">Activate</a>
+                        </span>
+                </h4>
+                </div>
+                <div class="card-body">
+                    <div id="realWalletOverview" style="display: none;">
+                        <div>
+                            <b>Limit:</b> <span id="stripeCash"></span>
+                        </div>
+                        <div>
+                            <b>Debt:</b> <span id="stripeDebt"></span>
+                            <i
+                                    class="fa fa-question-circle-o fa-lg fakeWalletInfo"
+                                    style="display: none;"
+                                    aria-hidden="true"
+                                    data-toggle="tooltip"
+                                    data-placement="right"
+                                    title="Total cost of all currently assigned tasks, active invoices and PM commission.">
+                            </i>
+                        </div>
+                        <div>
+                            <b>Available:</b> <span id="stripeAvailable"></span>
+                        </div>
+                        <div class="mt-2">
+                            <p>
+                                This is your Stripe wallet. We will use this to make payments to your project's contributors.<br>
+                            </p>
+                        </div>
+                    </div>
+                    <div id="notRealWallet" style="display: none;">
+                        <p>
+                            It looks like you don't have any real wallet set up.<br>
+                            You can set up a <a href="https://stripe.com" target="_blank">Stripe</a> wallet by pressing
+                            the button bellow.
+                        </p>
+                        <form id="stripeCustomerForm">
+                            <div class="form-group">
+                                <button id="stripeCustomerButton" type="submit" class="btn btn-primary" aria-describedby="setupStripeHelp">
+                                    Setup Stripe Wallet
+                                </button>
+                                <small id="setupStripeHelp" class="form-text text-muted">
+                                    <p>All your sensitive data such as card information will securely be handled by Stripe.<br>
+                                    Self XDSD will only have access to anonymized data and will not handle or store any sensitive information.
+                                    </p>
+                                </small>
+                                <span id="loadingStripeCustomerForm" class="text-center" style="display: none;">
+                                    <img height="40" width="40" src="/images/loading.svg">
+                                </span>
+                                <div class="invalid-feedback browser-error">
+                                    <small>
+                                        Something went wrong. Please refresh the page and try again.<br>
+                                        If the error persists, please open an Issue <a href="https://github.com/self-xdsd/self-web/issues" target="_blank">here</a>.
+                                    </small>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

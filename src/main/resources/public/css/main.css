@@ -82,7 +82,10 @@ a.btn-outline-primary:hover {
     text-justify: inter-word;
 }
 
-#createStripeConnectAccountButton, #completeOnboardingProcessButton, #stripeDashboardButton {
+#createStripeConnectAccountButton,
+#completeOnboardingProcessButton,
+#stripeDashboardButton,
+#stripeCustomerButton {
     background-color: #5469D4;
 }
 
@@ -103,5 +106,5 @@ footer{
     bottom:0;
 }
 body {
-        padding-bottom: 136px;
+        padding-bottom: 20%;
 }

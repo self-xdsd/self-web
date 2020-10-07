@@ -103,6 +103,7 @@ function getProjectWallets() {
                 $("#wallets").hide();
             } else {
                 $("#noWallets").hide();
+                var realWalletFound = false;
                 wallets.forEach(function(wallet) {
                     if(wallet.type == "FAKE") {
                         $("#fakeCash").html('$' + wallet.cash);
@@ -111,11 +112,32 @@ function getProjectWallets() {
                         if(wallet.active) {
                             $("#fakeWalletBadge").addClass("badge-success")
                             $("#fakeWalletBadge").html("active")
+                            $("#activateFakeWallet").hide();
                         } else {
-                            //display "activate" button.
+                            $("#activateFakeWallet").show();
+                        }
+                    }
+                    if(wallet.type == "STRIPE") {
+                        realWalletFound = true;
+                        $("#stripeCash").html('$' + wallet.cash);
+                        $("#stripeDebt").html('$' + wallet.debt);
+                        $("#stripeAvailable").html('$' + wallet.available);
+                        if(wallet.active) {
+                            $("#stripeWalletBadge").addClass("badge-success")
+                            $("#stripeWalletBadge").html("active")
+                            $("#activateStripeWallet").hide();
+                        } else {
+                            $("#activateStripeWallet").show();
                         }
                     }
                 });
+                if(realWalletFound) {
+                    $("#realWalletOverview").show();
+                    $("#notRealWallet").hide();
+                } else {
+                    $("#realWalletOverview").hide();
+                    $("#notRealWallet").show();
+                }
                 $("#wallets").show();
             }
         }
