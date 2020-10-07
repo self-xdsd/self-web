@@ -108,6 +108,12 @@ function getProjectWallets() {
                         $("#fakeCash").html('$' + wallet.cash);
                         $("#fakeDebt").html('$' + wallet.debt);
                         $("#fakeAvailable").html('$' + wallet.available);
+                        if(wallet.active) {
+                            $("#fakeWalletBadge").addClass("badge-success")
+                            $("#fakeWalletBadge").html("active")
+                        } else {
+                            //display "activate" button.
+                        }
                     }
                 });
                 $("#wallets").show();

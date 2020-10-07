@@ -43,6 +43,7 @@ public final class JsonWallet extends AbstractJsonObject {
         super(
             Json.createObjectBuilder()
                 .add("type", wallet.type())
+                .add("active", wallet.active())
                 .add("cash", wallet.cash().divide(BigDecimal.valueOf(100)))
                 .add("debt", wallet.debt().divide(BigDecimal.valueOf(100)))
                 .add(
