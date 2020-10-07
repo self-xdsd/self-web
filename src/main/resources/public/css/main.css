@@ -105,3 +105,23 @@ footer{
 body {
         padding-bottom: 136px;
 }
+
+@media (max-width:767px)
+{
+    body {
+        padding-bottom: 472px;
+}
+
+#how-it-works img[alt="Self XDSD Screenshot"]{
+    display:none ;
+}
+
+.about-self, .register-repo,.features{
+    width:100% !important;
+}
+
+#how-it-works .bg-light{
+    display: none;
+}
+}
+
