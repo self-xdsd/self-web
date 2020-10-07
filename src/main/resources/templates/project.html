@@ -300,7 +300,45 @@
         </div>
     </div>
     <div class="collapse multi-collapse" id="projectWallets">
-        <p>Wallets Here...</p>
+        <div id="loadingWallets" class="text-center">
+            <img src="/images/loading.svg">
+        </div>
+        <div id="noWallets" style="display: none;">
+            <p>This project doesn't seem to have any wallets.</p>
+        </div>
+        <div id="wallets" class="mt-4" style="display: none;">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h4 class="m-0 font-weight-bold card-title">Fake Wallet</h4>
+                </div>
+                <div class="card-body">
+                    <div>
+                        <b>Cash:</b> <span id="fakeCash"></span>
+                    </div>
+                    <div>
+                        <b>Debt:</b> <span id="fakeDebt"></span>
+                        <i
+                        class="fa fa-question-circle-o fa-lg fakeWalletInfo"
+                        style="display: none;"
+                        aria-hidden="true"
+                        data-toggle="tooltip"
+                        data-placement="right"
+                        title="Total cost of all currently assigned tasks, active invoices and PM commission.">
+                        </i>
+                    </div>
+                    <div>
+                        <b>Available:</b> <span id="fakeAvailable"></span>
+                    </div>
+                    <div class="mt-2">
+                        <p>
+                            This is a fake wallet. As long as it is active, all the <b>payments will be fictive</b>, including
+                            Self's commission.<br>
+                            We recommend you switch to a real wallet as soon as possible, to keep your team motivated.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="card card-body project-not-registered" style="display: none;">
         <div>
@@ -383,6 +421,8 @@
             $("#projectWalletsButton").on(
                 "click",
                 function(){
+                    getProjectWallets();
+
                     $(this).addClass("active");
                     $("#projectWallets").addClass("show");
 

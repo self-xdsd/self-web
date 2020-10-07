@@ -89,3 +89,29 @@ function displayProject(userLogin, project) {
     }
     $(".project-buttons").show();
 }
+
+function getProjectWallets() {
+    $("#loadingWallets").show();
+    var owner =$("#owner").text();
+    var name =$("#name").text();
+    $.get(
+        "/api/projects/"+owner+"/"+name +"/wallets",
+        function(wallets) {
+            $("#loadingWallets").hide();
+            if(wallets === undefined) {
+                $("#noWallets").show();
+                $("#wallets").hide();
+            } else {
+                $("#noWallets").hide();
+                wallets.forEach(function(wallet) {
+                    if(wallet.type == "FAKE") {
+                        $("#fakeCash").html('$' + wallet.cash);
+                        $("#fakeDebt").html('$' + wallet.debt);
+                        $("#fakeAvailable").html('$' + wallet.available);
+                    }
+                });
+                $("#wallets").show();
+            }
+        }
+    );
+}
