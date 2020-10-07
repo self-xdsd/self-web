@@ -25,6 +25,8 @@ package com.selfxdsd.selfweb.api;
 import com.selfxdsd.api.*;
 import com.selfxdsd.selfweb.api.input.RepoInput;
 import com.selfxdsd.selfweb.api.output.JsonProject;
+import com.selfxdsd.selfweb.api.output.JsonWallet;
+import com.selfxdsd.selfweb.api.output.JsonWallets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -174,6 +176,15 @@ public class ProjectsApi extends BaseApiController {
         @PathVariable final String owner,
         @PathVariable final String name
     ) {
-        return null;
+        final Project found = this.self.projects().getProjectById(
+            owner + "/" + name, user.provider().name()
+        );
+        ResponseEntity<String> response = ResponseEntity.noContent().build();
+        if(found != null) {
+            response = ResponseEntity.ok(
+                new JsonWallets(found.wallets()).toString()
+            );
+        }
+        return response;
     }
 }
