@@ -22,7 +22,6 @@
  */
 package com.selfxdsd.selfweb.api.output;
 
-import com.selfxdsd.api.Tasks;
 import com.selfxdsd.api.Wallets;
 
 import javax.json.Json;

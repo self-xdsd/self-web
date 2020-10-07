@@ -25,7 +25,6 @@ package com.selfxdsd.selfweb.api;
 import com.selfxdsd.api.*;
 import com.selfxdsd.selfweb.api.input.RepoInput;
 import com.selfxdsd.selfweb.api.output.JsonProject;
-import com.selfxdsd.selfweb.api.output.JsonWallet;
 import com.selfxdsd.selfweb.api.output.JsonWallets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,6 +42,10 @@ import javax.validation.Valid;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #123:40min As soon as we have this logic implemented in the core,
+ *  we should offer an endpoint for setting up a project's Stripe wallet.
+ *  Then, also the front-end will need to be modified, to offer a button (form)
+ *  which will access this endpoint.
  */
 @RestController
 public class ProjectsApi extends BaseApiController {
