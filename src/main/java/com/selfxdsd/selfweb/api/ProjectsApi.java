@@ -25,7 +25,6 @@ package com.selfxdsd.selfweb.api;
 import com.selfxdsd.api.*;
 import com.selfxdsd.selfweb.api.input.RepoInput;
 import com.selfxdsd.selfweb.api.output.JsonProject;
-import com.selfxdsd.selfweb.api.output.JsonWallets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -42,10 +41,6 @@ import javax.validation.Valid;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #123:40min As soon as we have this logic implemented in the core,
- *  we should offer an endpoint for setting up a project's Stripe wallet.
- *  Then, also the front-end will need to be modified, to offer a button (form)
- *  which will access this endpoint.
  */
 @RestController
 public class ProjectsApi extends BaseApiController {
@@ -163,31 +158,5 @@ public class ProjectsApi extends BaseApiController {
                 .body(new JsonProject(activated).toString());
         }
         return resp;
-    }
-
-    /**
-     * Get a project's wallets.
-     * @param owner Owner of the repo.
-     * @param name Name of the repo.
-     * @return Json wallets.
-     */
-    @GetMapping(
-        value = "/projects/{owner}/{name}/wallets",
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<String> wallets(
-        @PathVariable final String owner,
-        @PathVariable final String name
-    ) {
-        final Project found = this.self.projects().getProjectById(
-            owner + "/" + name, user.provider().name()
-        );
-        ResponseEntity<String> response = ResponseEntity.noContent().build();
-        if(found != null) {
-            response = ResponseEntity.ok(
-                new JsonWallets(found.wallets()).toString()
-            );
-        }
-        return response;
     }
 }
