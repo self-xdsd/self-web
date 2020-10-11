@@ -85,7 +85,8 @@ a.btn-outline-primary:hover {
 #createStripeConnectAccountButton,
 #completeOnboardingProcessButton,
 #stripeDashboardButton,
-#stripeCustomerButton {
+#stripeCustomerButton,
+#activateStripeWalletButton {
     background-color: #5469D4;
 }
 

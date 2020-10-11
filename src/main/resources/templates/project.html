@@ -350,7 +350,10 @@
                         Real Wallet
                         <span id="stripeWalletBadge" class="badge"></span>
                         <span id="activateStripeWallet" class="badge" style="display: none;">
-                            <a href="#">Activate</a>
+                            <button type="button" class="btn btn-primary btn-sm" id="activateStripeWalletButton">Activate</button>
+                            <span id="loadingActivateStripeWalletButton" class="text-center" style="display: none;">
+                                <img height="40" width="40" src="/images/loading.svg">
+                            </span>
                         </span>
                 </h4>
                 </div>
@@ -358,16 +361,24 @@
                     <div id="realWalletOverview" style="display: none;">
                         <div>
                             <b>Limit:</b> <span id="stripeCash"></span>
+                            <i
+                                class="fa fa-question-circle-o fa-lg fakeWalletInfo"
+                                style="display: none;"
+                                aria-hidden="true"
+                                data-toggle="tooltip"
+                                data-placement="right"
+                                title="This is how much money we are allowed to take from your Wallet.">
+                            </i>
                         </div>
                         <div>
                             <b>Debt:</b> <span id="stripeDebt"></span>
                             <i
-                                    class="fa fa-question-circle-o fa-lg fakeWalletInfo"
-                                    style="display: none;"
-                                    aria-hidden="true"
-                                    data-toggle="tooltip"
-                                    data-placement="right"
-                                    title="Total cost of all currently assigned tasks, active invoices and PM commission.">
+                                class="fa fa-question-circle-o fa-lg fakeWalletInfo"
+                                style="display: none;"
+                                aria-hidden="true"
+                                data-toggle="tooltip"
+                                data-placement="right"
+                                title="Total cost of all currently assigned tasks, active invoices and PM commission.">
                             </i>
                         </div>
                         <div>
@@ -375,11 +386,12 @@
                         </div>
                         <div class="mt-2">
                             <p>
-                                This is your Stripe wallet. We will use this to make payments to your project's contributors.<br>
+                                This is your Stripe wallet. As soon as you activate it, we will use it to make payments to your project's contributors.<br>
+                                We will spend up to the Limit that you specify.
                             </p>
                         </div>
                     </div>
-                    <div id="notRealWallet" style="display: none;">
+                    <div id="noRealWallet" style="display: none;">
                         <p>
                             It looks like this project doesn't have any real wallet set up.<br>
                             You can set up a <a href="https://stripe.com" target="_blank">Stripe</a> wallet by pressing
@@ -390,15 +402,15 @@
                                 <button id="stripeCustomerButton" type="submit" class="btn btn-primary" aria-describedby="setupStripeHelp">
                                     Setup Stripe Wallet
                                 </button>
+                                <span id="loadingStripeCustomerForm" class="text-center" style="display: none;">
+                                    <img height="40" width="40" src="/images/loading.svg">
+                                </span>
                                 <small id="setupStripeHelp" class="form-text text-muted">
                                     <p>All your sensitive data such as card information will securely be handled by Stripe.<br>
                                     Self XDSD will only have access to anonymized data and will not handle or store any sensitive information.
                                     </p>
                                 </small>
-                                <span id="loadingStripeCustomerForm" class="text-center" style="display: none;">
-                                    <img height="40" width="40" src="/images/loading.svg">
-                                </span>
-                                <div class="invalid-feedback browser-error">
+                                <div class="invalid-feedback" id="setupCustomerError">
                                     <small>
                                         Something went wrong. Please refresh the page and try again.<br>
                                         If the error persists, please open an Issue <a href="https://github.com/self-xdsd/self-web/issues" target="_blank">here</a>.
@@ -559,6 +571,58 @@
                     } else {
                         $(".browser-error").show();
                     }
+                }
+            );
+
+            $("#stripeCustomerForm").submit(
+                function(e) {
+                    e.preventDefault();
+                    $("#stripeCustomerButton").addClass("disabled");
+                    $("#loadingStripeCustomerForm").show();
+                    var owner =$("#owner").text();
+                    var name =$("#name").text();
+                    var form = $(this);
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: "/api/projects/" + owner + "/" + name + "/wallets/stripe",
+                            data: form.serialize(),
+                            success: function (wallet) {
+                                $("#noRealWallet").hide();
+
+                                $("#stripeCash").html('$' + wallet.cash);
+                                $("#stripeDebt").html('$' + wallet.debt);
+                                $("#stripeAvailable").html('$' + wallet.available);
+                                if(wallet.active) {
+                                    $("#stripeWalletBadge").addClass("badge-success")
+                                    $("#stripeWalletBadge").html("active")
+                                    $("#activateStripeWallet").hide();
+                                } else {
+                                    $("#activateStripeWallet").show();
+                                }
+
+                                $("#stripeCustomerButton").removeClass("disabled");
+                                $("#loadingStripeCustomerForm").hide();
+
+                                $("#realWalletOverview").show();
+                            },
+                            error: function(jqXHR, error, errorThrown) {
+                                $("#stripeCustomerButton").removeClass("disabled");
+                                $("#loadingStripeCustomerForm").hide();
+                                if(jqXHR.status && jqXHR.status == 400){
+                                    console.error("Bad Request: " + jqXHR.responseText);
+                                    $("#setupCustomerError").show();
+                                } else {
+                                    console.log("Server error status: " + jqXHR.status);
+                                    console.log("Server error: " + jqXHR.responseText);
+                                    alert(
+                                        "Something went wrong (" + jqXHR.status + ")." +
+                                        "Please, try again later."
+                                    );
+                                }
+                            }
+                        }
+                    );
                 }
             );
 

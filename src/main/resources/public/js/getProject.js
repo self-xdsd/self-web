@@ -133,10 +133,10 @@ function getProjectWallets() {
                 });
                 if(realWalletFound) {
                     $("#realWalletOverview").show();
-                    $("#notRealWallet").hide();
+                    $("#noRealWallet").hide();
                 } else {
                     $("#realWalletOverview").hide();
-                    $("#notRealWallet").show();
+                    $("#noRealWallet").show();
                 }
                 $("#wallets").show();
             }

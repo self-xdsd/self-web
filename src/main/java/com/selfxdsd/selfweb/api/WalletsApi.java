@@ -25,12 +25,17 @@ package com.selfxdsd.selfweb.api;
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.Self;
 import com.selfxdsd.api.User;
+import com.selfxdsd.api.exceptions.WalletAlreadyExistsException;
+import com.selfxdsd.selfweb.api.output.JsonWallet;
 import com.selfxdsd.selfweb.api.output.JsonWallets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -41,6 +46,13 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class WalletsApi extends BaseApiController {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(
+        WalletsApi.class
+    );
 
     /**
      * Authenticated user.
@@ -85,6 +97,47 @@ public class WalletsApi extends BaseApiController {
             response = ResponseEntity.ok(
                 new JsonWallets(found.wallets()).toString()
             );
+        }
+        return response;
+    }
+
+    /**
+     * Create a Stripe Wallet for one of the authenticated user's projects.
+     * @param owner Owner of the project (login of user or org name).
+     * @param name Repo name.
+     * @return Stripe Wallet as JSON string.
+     */
+    @PostMapping(
+        value = "/projects/{owner}/{name}/wallets/stripe",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> createStripeWallet(
+        @PathVariable final String owner,
+        @PathVariable final String name
+    ) {
+        ResponseEntity<String> response;
+        final Project found = this.self.projects().getProjectById(
+            owner + "/" + name, user.provider().name()
+        );
+        if(found == null) {
+            response = ResponseEntity.badRequest().build();
+        } else {
+            try {
+                response = ResponseEntity.ok(
+                    new JsonWallet(
+                        found.createStripeWallet()
+                    ).toString()
+                );
+            } catch (final WalletAlreadyExistsException ex) {
+                LOG.error(
+                    "WalletAlreadyExistsException when creating "
+                    + "a new Stripe wallet!",
+                    ex.getMessage()
+                );
+                response = ResponseEntity.badRequest().body(
+                    ex.toString()
+                );
+            }
         }
         return response;
     }
