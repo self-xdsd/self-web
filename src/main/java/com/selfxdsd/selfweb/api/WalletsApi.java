@@ -43,6 +43,14 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #135:30min Add an endpoint and front-end code for a
+ *  Wallet's activation.
+ * @todo #135:60min Once the PaymentMethod logic is implemented in the core,
+ *  we should add a form in the Real Wallet widget, where the User will add
+ *  payment methods.
+ * @todo #135:60min Once the Wallet.updateCash(...) method is implemented in
+ *  the core, we should allow the User to update the Limit of their real
+ *  wallet.
  */
 @RestController
 public class WalletsApi extends BaseApiController {
