@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.json.Json;
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 /**
@@ -45,6 +46,8 @@ import java.math.BigDecimal;
  * @since 0.0.1
  * @todo #84:30min. Start implementing ContributorsApi method contributors GET.
  *  This will list all contributors.
+ * @todo #142:30min As soon as we have this logic implemented in the core,
+ *  provide a proper implementation for methods updateContract(...) here.
  */
 @RestController
 public class ContractsApi extends BaseApiController {
@@ -243,4 +246,37 @@ public class ContractsApi extends BaseApiController {
         return response;
     }
 
+    /**
+     * Update a specific Contract.
+     * @param owner Owner of the project (username or org name).
+     * @param name Simple name of the project.
+     * @param username Contributor's username.
+     * @param role Contributor's role.
+     * @param newHourlyRate New Hourly rate. At the moment, this is the
+     *  only Contract attribute which can be updated.
+     * @return JsonArray.
+     * @checkstyle ParameterNumber (10 lines)
+     */
+    @PostMapping(
+        value = "/projects/{owner}/{name}/contracts/{username}/update",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> updateContract(
+        @PathVariable final String owner,
+        @PathVariable final String name,
+        @PathVariable final String username,
+        @RequestParam("role") final String role,
+
+        @RequestParam("newHourlyRate")
+        @Positive(message = "Hourly rate must be a positive number!")
+        final String newHourlyRate
+    ) {
+        System.out.println("NEW HOURLY RATE: " + newHourlyRate);
+        return ResponseEntity.ok(
+            Json.createObjectBuilder()
+                .add("status", "ok")
+                .build()
+                .toString()
+        );
+    }
 }

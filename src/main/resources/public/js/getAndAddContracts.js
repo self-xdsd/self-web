@@ -275,107 +275,194 @@
             }
         }
 
-        var table = $("#contracts").DataTable({
-            //setup
-            serverSide:  true,
-            searching:   false,//searching not possible yet on server
-            ordering:    false,//same for ordering
-            //adapt DataTable request to Self-Paged API specification.
-            ajax: function(data, callback){
-                var draw = data.draw; // draw counter that ensure the page draw ordering is respected
-                var page = {
-                    no: Math.ceil(data.start/data.length) + 1,
-                    size: data.length
-                }
-                //fetch the page from server
-                contractsService
-                    .getAll(project, page, showLoading)
-                    .then(function(contracts){
-                        //convert contracts page to DataTable "page" specification
-                        var total = contracts.paged.totalPages * contracts.paged.current.size;
-                        var dataTablePage = {
-                            draw: draw,
-                            recordsTotal: total,
-                            recordsFiltered: total,
-                            data: contracts.data.map(function(c){
-                                return [
-                                    c.id.contributorUsername,
-                                    c.id.role,
-                                    c.hourlyRate,
-                                    c.value,
-                                    "<a href='#tasks' title='See Tasks' class='contractAgenda'>"
-                                    +"<i class='fa fa-laptop fa-lg'></i>"
-                                    +"</a>  "
-                                    + "<a href='#' title='Download Invoice' class='downloadInvoice'>"
-                                    +"<i class='fa fa-file-pdf-o fa-lg'></i>"
-                                    +"</a>  "
-                                    +"<a href='#' title='Edit Contract' class='editContract'>"
-                                    +"<i class='fa fa-edit fa-lg'></i>"
-                                    +"</a>  "
-                                    +"<a href='#' title='Remove Contract' class='removeContract'>"
-                                    +"<i class='fa fa-trash fa-lg'></i>"
-                                    +"</a>"
-                                ];
-                            })
-                        };
-                        //send page to DataTable to be rendered
-                        callback(dataTablePage);
-                        $(".contractAgenda").each(
-                            function() {
-                                $(this).on(
-                                    "click",
-                                    function(event) {
-                                        var repo = $("#owner").text() + "/" + $("#name").text();
-                                        var contributor = $(this).parent().parent().children()[0].innerText;
-                                        var role = $(this).parent().parent().children()[1].innerText;
-                                        var provider = "github";
-                                        var contract = {
-                                            id: {
-                                                repoFullName: repo,
-                                                contributorUsername: contributor,
-                                                role: role,
-                                                provider: provider
+        function loadContracts() {
+            $("#contracts").dataTable().fnDestroy();
+            $("#contracts").dataTable({
+                //setup
+                serverSide:  true,
+                searching:   false,//searching not possible yet on server
+                ordering:    false,//same for ordering
+                //adapt DataTable request to Self-Paged API specification.
+                ajax: function(data, callback){
+                    var draw = data.draw; // draw counter that ensure the page draw ordering is respected
+                    var page = {
+                        no: Math.ceil(data.start/data.length) + 1,
+                        size: data.length
+                    }
+                    //fetch the page from server
+                    contractsService
+                        .getAll(project, page, showLoading)
+                        .then(function(contracts){
+                            //convert contracts page to DataTable "page" specification
+                            var total = contracts.paged.totalPages * contracts.paged.current.size;
+                            var dataTablePage = {
+                                draw: draw,
+                                recordsTotal: total,
+                                recordsFiltered: total,
+                                data: contracts.data.map(function(c){
+                                    return [
+                                        c.id.contributorUsername,
+                                        c.id.role,
+                                        c.hourlyRate,
+                                        c.value,
+                                        "<a href='#tasks' title='See Tasks' class='contractAgenda'>"
+                                        +"<i class='fa fa-laptop fa-lg'></i>"
+                                        +"</a>  "
+                                        + "<a href='#' title='Download Invoice' class='downloadInvoice'>"
+                                        +"<i class='fa fa-file-pdf-o fa-lg'></i>"
+                                        +"</a>  "
+                                        +"<a href='#' title='Edit Contract' class='editContract'>"
+                                        +"<i class='fa fa-edit fa-lg'></i>"
+                                        +"</a>  "
+                                        +"<a href='#' title='Remove Contract' class='removeContract'>"
+                                        +"<i class='fa fa-trash fa-lg'></i>"
+                                        +"</a>"
+                                    ];
+                                })
+                            };
+                            //send page to DataTable to be rendered
+                            callback(dataTablePage);
+                            $(".contractAgenda").each(
+                                function() {
+                                    $(this).on(
+                                        "click",
+                                        function(event) {
+                                            var repo = $("#owner").text() + "/" + $("#name").text();
+                                            var contributor = $(this).parent().parent().children()[0].innerText;
+                                            var role = $(this).parent().parent().children()[1].innerText;
+                                            var provider = "github";
+                                            var contract = {
+                                                id: {
+                                                    repoFullName: repo,
+                                                    contributorUsername: contributor,
+                                                    role: role,
+                                                    provider: provider
+                                                }
                                             }
+                                            getTasksOfContract(contract);
                                         }
-                                        getTasksOfContract(contract);
-                                    }
-                                )
+                                    )
+                                }
+                            );
+                            if($(".contractAgenda").length > 0) {
+                                $($(".contractAgenda")[0]).trigger("click");
                             }
-                        );
-                        if($(".contractAgenda").length > 0) {
-                            $($(".contractAgenda")[0]).trigger("click");
-                        }
-                        $(".downloadInvoice").each(
-                            function() {
-                                $(this).on(
-                                    "click",
-                                    function(event) {
-                                        event.preventDefault();
+                            $(".editContract").each(
+                                function() {
+                                    $(this).on(
+                                        "click",
+                                        function(event) {
+                                            event.preventDefault();
+                                            var contributor = $(this).parent().parent().children()[0].innerText;
+                                            var role = $(this).parent().parent().children()[1].innerText;
 
-                                        var repo = $("#owner").text() + "/" + $("#name").text();
-                                        var contributor = $(this).parent().parent().children()[0].innerText;
-                                        var role = $(this).parent().parent().children()[1].innerText;
-                                        var hourly = $(this).parent().parent().children()[2].innerText;
-                                        var provider = "github";
-                                        var contract = {
-                                            id: {
-                                                repoFullName: repo,
-                                                contributorUsername: contributor,
-                                                role: role,
-                                                provider: provider
-                                            },
-                                            hourlyRate: hourly
+                                            $("#newContractCard").hide();
+
+                                            $("#updateContractUsername").val(contributor);
+                                            $("#updateContractRole").val(role);
+                                            $("#usernameDisplayed").html(contributor);
+                                            $("#roleDisplayed").html(role);
+                                            $("#updatedHourlyRate").val("");
+
+                                            $("#updateContractCard").show();
                                         }
-                                        activeInvoiceToPdf(contract);
-                                    }
-                                )
+                                    )
+                                }
+                            )
+                            $(".downloadInvoice").each(
+                                function() {
+                                    $(this).on(
+                                        "click",
+                                        function(event) {
+                                            event.preventDefault();
+
+                                            var repo = $("#owner").text() + "/" + $("#name").text();
+                                            var contributor = $(this).parent().parent().children()[0].innerText;
+                                            var role = $(this).parent().parent().children()[1].innerText;
+                                            var hourly = $(this).parent().parent().children()[2].innerText;
+                                            var provider = "github";
+                                            var contract = {
+                                                id: {
+                                                    repoFullName: repo,
+                                                    contributorUsername: contributor,
+                                                    role: role,
+                                                    provider: provider
+                                                },
+                                                hourlyRate: hourly
+                                            }
+                                            activeInvoiceToPdf(contract);
+                                        }
+                                    )
+                                }
+                            );
+                        })
+                        .catch(handleError)
+                        .finally(hideLoading);
+                }
+            });
+        }
+
+        loadContracts();
+
+        $("#updateContractForm").submit(
+            function(e) {
+                e.preventDefault();
+                var valid = true;
+                $.each($("#updateContractForm .required"), function(index, element) {
+                    if($(element).val() == '') {
+                        $(element).addClass("is-invalid");
+                        valid = valid && false;
+                    } else {
+                        $(element).removeClass("is-invalid");
+                        valid = valid && true;
+                    }
+                });
+                if(valid) {
+                    $("#updateContractButton").addClass("disabled");
+                    $("#cancelUpdateContract").addClass("disabled");
+                    $("#loadingUpdateContract").show();
+                    var formData = $(this).serialize();
+                    //check if username exists before submit
+                    contractsService.update(project, formData)
+                        .then(
+                            function(updatedContract){
+                                $("#updateContractForm input").val('');
+                                loadContracts();
+                                $("#updateContractCard").hide();
+                                $("#newContractCard").show();
+                            }
+                        ).catch(handleError)
+                        .finally(
+                            function(){
+                                $("#updateContractButton").removeClass("disabled");
+                                $("#cancelUpdateContract").removeClass("disabled");
+                                $("#loadingUpdateContract").hide();
                             }
                         );
-                     })
-                    .catch(handleError)
-                    .finally(hideLoading);
+                    return false;
+                }
             }
-        });
+        );
+
+        $("#cancelUpdateContract").on(
+            "click",
+            function(event) {
+                event.preventDefault();
+
+                $("#updateContractCard").hide();
+                $("#newContractCard").show();
+
+                $("#updateContractUsername").val("");
+                $("#updateContractRole").val("");
+                $("#usernameDisplayed").html("");
+                $("#roleDisplayed").html("");
+                $("#updatedHourlyRate").val("");
+                $.each($("#updateContractForm .required"), function(index, element) {
+                    $(element).removeClass("is-invalid");
+                });
+
+            }
+        )
 
         $("#addContractForm").submit(
             function(e) {

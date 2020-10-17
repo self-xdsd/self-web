@@ -215,7 +215,7 @@
                 </div>
             </div>
             <div class="mt-4 col-lg-4">
-                <div class="card shadow mb-4">
+                <div class="card shadow mb-4" id="newContractCard">
                     <div class="card-header py-3">
                         <h4 class="m-0 font-weight-bold card-title">
                             New Contract
@@ -264,6 +264,45 @@
                                     <img src="/images/loading.svg" width="36"
                                          height="36">
                                 </span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="card shadow mb-4" id="updateContractCard" style="display: none;">
+                    <div class="card-header py-3">
+                        <h4 class="m-0 font-weight-bold card-title">
+                            Update Contract
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form id="updateContractForm">
+                            <div class="form-group input-group-sm">
+                                <label for="usernameDisplayed">Github Username:</label>
+                                <span id="usernameDisplayed"></span>
+                            </div>
+                            <div class="form-group input-group-sm">
+                                <label for="roleDisplayed">Role:</label>
+                                <span id="roleDisplayed"></span>
+                            </div>
+                            <div class="form-group input-group-sm">
+                                <input type="hidden" id="updateContractUsername">
+                                <input type="hidden" id="updateContractRole">
+                                <label for="updatedHourlyRate">New Houtly Rate*</label>
+                                <input type="number" class="form-control required"
+                                       id="updatedHourlyRate" name="newHourlyRate" placeholder="e.g. 10.00" min="8.00">
+                                <div class="invalid-feedback hourlyRate-error">
+                                    Please specify a numeric hourly rage.
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" id="updateContractButton" class="btn btn-primary bg">Update</button>
+                                <span id="loadingUpdateContract"
+                                      class="bg-light align-self-center"
+                                      style="margin-top:25px; margin-right:25px; display:none">
+                                    <img src="/images/loading.svg" width="36"
+                                         height="36">
+                                </span>
+                                <button type="button" id="cancelUpdateContract" class="btn btn-secondary bg">Cancel</button>
                             </div>
                         </form>
                     </div>
