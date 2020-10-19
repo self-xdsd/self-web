@@ -78,5 +78,139 @@ public final class JsonTaskTestCase {
             Matchers.equalTo(now.toString())
         );
     }
+    
+    /**
+     * JsonTask has deadline
+     */
+    
+    @Test
+    public void hasDeadline(){
+    
+        final LocalDateTime now = LocalDateTime.now();
+        
+        final Task task = Mockito.mock(Task.class);
+        Mockito.when(task.issueId()).thenReturn("123");
+        Mockito.when(task.assignmentDate()).thenReturn(LocalDateTime.now());
+        Mockito.when(task.deadline()).thenReturn(now);
+        Mockito.when(task.estimation()).thenReturn(60);
+        
+        final JsonObject jsonTask = new JsonTask(task);
+        MatcherAssert.assertThat(
+            jsonTask.getString("deadline"),
+            Matchers.equalTo(now.toString())
+        );
+        
+    }
+    
+    /**
+     * JsonTask has estimation
+     */
+    
+    @Test 
+    public void hasEstimation(){
+        
+        
+        final Task task = Mockito.mock(Task.class);
+        Mockito.when(task.issueId()).thenReturn("123");
+        Mockito.when(task.assignmentDate()).thenReturn(LocalDateTime.now());
+        Mockito.when(task.deadline()).thenReturn(LocalDateTime.now());
+        Mockito.when(task.estimation()).thenReturn(60);
+        
+        final JsonObject jsonTask = new JsonTask(task);
+        MatcherAssert.assertThat(
+            jsonTask.getInt("estimation"),
+            Matchers.equalTo(60)
+        );
+        
+    }
+    
+    
+    /**
+     * JsonTask hasn't the issueId attribute
+     */
+    
+    @Test
+    public void hasNullIssueId() {
+        final Task task = Mockito.mock(Task.class);
+        
+        Mockito.when(task.issueId()).thenReturn("null");
+        Mockito.when(task.assignmentDate()).thenReturn(LocalDateTime.now());
+        Mockito.when(task.deadline()).thenReturn(LocalDateTime.now());
+        Mockito.when(task.estimation()).thenReturn(60);
+
+        final JsonObject jsonTask = new JsonTask(task);
+
+        MatcherAssert.assertThat(
+            jsonTask.getString("issueId"),
+            Matchers.equalTo("null")
+        );
+    }
+    
+    /**
+     * JsonTask hasn't assignmentDate
+     */
+    
+    @Test
+    public void hasNullAssignmentDate() {
+        
+        final Task task = Mockito.mock(Task.class);
+        
+        Mockito.when(task.issueId()).thenReturn("null");
+        Mockito.when(task.assignmentDate()).thenReturn(null);
+        Mockito.when(task.deadline()).thenReturn(LocalDateTime.now());
+        Mockito.when(task.estimation()).thenReturn(60);
+
+        final JsonObject jsonTask = new JsonTask(task);
+
+        MatcherAssert.assertThat(
+            jsonTask.getString("assignmentDate"),
+            Matchers.equalTo("null")
+        );
+    }
+    
+     /**
+     * JsonTask hasn't deadline
+     */
+    
+        @Test
+        public void hasNullDeadline() {
+            
+        final Task task = Mockito.mock(Task.class);
+        
+        Mockito.when(task.issueId()).thenReturn("null");
+        Mockito.when(task.assignmentDate()).thenReturn(LocalDateTime.now());
+        Mockito.when(task.deadline()).thenReturn(null);
+        Mockito.when(task.estimation()).thenReturn(60);
+
+        final JsonObject jsonTask = new JsonTask(task);
+
+        MatcherAssert.assertThat(
+            jsonTask.getString("deadline"),
+            Matchers.equalTo("null")
+        );
+    }
+        
+        /**
+     * JsonTask hasn't estimation
+     */
+    
+        
+        @Test
+        public void hasNullEstimation() {
+            
+        final Task task = Mockito.mock(Task.class);
+        
+        Mockito.when(task.issueId()).thenReturn("null");
+        Mockito.when(task.assignmentDate()).thenReturn(LocalDateTime.now());
+        Mockito.when(task.deadline()).thenReturn(LocalDateTime.now());
+        Mockito.when(task.estimation()).thenReturn(0);
+
+        final JsonObject jsonTask = new JsonTask(task);
+
+        MatcherAssert.assertThat(
+            jsonTask.getInt("estimation"),
+            Matchers.equalTo(0)
+        );
+    }
 
 }
