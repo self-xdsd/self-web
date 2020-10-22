@@ -52,7 +52,8 @@ import java.math.BigDecimal;
  *  provide a proper implementation for methods updateContract(...) here.
  * @todo #142:30min As soon as we have this logic implemented in the core,
  *  provide a proper implementation for methods markContractForRemoval(...)
- *  here.
+ *  here. Don't forget to also specify the "markedForRemoval" attribute to
+ *  JsonContract.
  */
 @RestController
 public class ContractsApi extends BaseApiController {
