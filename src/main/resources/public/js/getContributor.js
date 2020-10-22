@@ -63,7 +63,11 @@ function contractAsTableRow(contract) {
         "<td>" + contract.value + "</td>" +
         "<td><a href='#tasks' class='contractAgenda'>" +
             "<i class='fa fa-laptop fa-lg'></i>" +
-        "</a></td>" +
+        "</a>  "
+        +"<a href='#' title='Mark Contract For Removal' class='removeContract'>"
+        +"<i class='fa fa-trash fa-lg'></i>"
+        +"</a>"
+        "</td>" +
         "</tr>"
 }
 
