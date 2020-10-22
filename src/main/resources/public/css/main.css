@@ -42,7 +42,7 @@ ul {
     color: #701516;
     border-color: #701516;
 }
-
+button.btn-outline-primary:hover,
 a.btn-outline-primary:hover {
     color: white;
     border-color: #701516;
