@@ -192,42 +192,6 @@
         );
     }
 
-    function addContractToTable(contract){
-        var row = "<tr>"
-                    +"<td>"+contract.id.contributorUsername+"</td>"
-                    +"<td>"+contract.id.role+"</td>"
-                    +"<td>"+contract.hourlyRate+"</td>"
-                    +"<td>"+contract.value+"</td>"
-                    +"<td>"
-                    +  "<a href='#tasks' title='See Tasks' class='contractAgenda'>"
-                    +     "<i class='fa fa-laptop fa-lg'></i>"
-                    +  "</a>  "
-                    +  "<a href='#' title='Download Invoice' class='downloadInvoice'>"
-                    +    "<i class='fa fa-file-pdf-o fa-lg'></i>"
-                    +  "</a>  "
-                    +  "<a href='#' title='Edit Contract' class='editContract'>"
-                    +    "<i class='fa fa-edit fa-lg'></i>"
-                    +  "</a>  "
-                    +  "<a href='#' title='Remove Contract' class='removeContract'>"
-                    +    "<i class='fa fa-trash fa-lg'></i>"
-                    +  "</a>"
-                    +"</td>"
-                    +"</tr>";
-        $("#contracts").find("tbody").append(row);
-        $($(".contractAgenda")[$(".contractAgenda").length -1]).on(
-            "click",
-            function(event) {
-                getTasksOfContract(contract);
-            }
-        );
-        $($(".downloadInvoice")[$(".downloadInvoice").length -1]).on(
-            "click",
-            function(event) {
-                activeInvoiceToPdf(contract);
-            }
-        );
-    }
-
     function handleError(error){
         if(error.validation){
             Object.entries(error.validation).forEach(function(fieldError) {
@@ -368,6 +332,30 @@
                                         }
                                     )
                                 }
+                            );
+                            $(".removeContract").each(
+                                function() {
+                                    $(this).on(
+                                        "click",
+                                        function(event) {
+                                            event.preventDefault();
+
+                                            var repo = $("#owner").text() + "/" + $("#name").text();
+                                            var contributor = $(this).parent().parent().children()[0].innerText;
+                                            var role = $(this).parent().parent().children()[1].innerText;
+                                            var provider = "github";
+                                            var contract = {
+                                                id: {
+                                                    repoFullName: repo,
+                                                    contributorUsername: contributor,
+                                                    role: role,
+                                                    provider: provider
+                                                }
+                                            }
+                                            markContractForRemoval(contract);
+                                        }
+                                    )
+                                }
                             )
                             $(".downloadInvoice").each(
                                 function() {
@@ -464,6 +452,27 @@
             }
         )
 
+        /**
+         * Mark a Contract for deletion.
+         * @param contract Contract.
+         */
+        function markContractForRemoval(contract) {
+            $.ajax( //API call to get the active Invoice.
+                "/api/projects/"
+                + contract.id.repoFullName
+                + "/contracts/" + contract.id.contributorUsername + "/mark?role=" + contract.id.role,
+                {
+                    type: "DELETE",
+                    success: function() {
+                        loadContracts();
+                    },
+                    error: function () {
+                        alert("Something went wrong. Please refresh the page and try again.")
+                    }
+                }
+            );
+        }
+
         $("#addContractForm").submit(
             function(e) {
                 e.preventDefault();
@@ -484,7 +493,7 @@
                         $("#username").val(),
                         "github",
                         function(){
-                            showLoading();
+                            $("#addContractLoading").show();
                             clearFormErrors();
                             disableForm(true);
                             }
@@ -499,16 +508,13 @@
                                 //we check the current page (0 based) displayed in table.
                                 //if is last page, we're adding the contract to table.
                                 //since it's the latest contract created.
-                                var pageInfo = table.page.info();
-                                if((pageInfo.page + 1) === pageInfo.pages){
-                                    addContractToTable(contract);
-                                }
+                                loadContracts();
                              }
                         ).catch(handleError)
                         .finally(
                             function(){
                             disableForm(false);
-                            hideLoading();
+                            $("#addContractLoading").hide();
                         });
                     return false;
                 }

@@ -40,7 +40,9 @@ import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 /**
- * Contracts.
+ * This controller offers HTTP endpoints regarding a Project's contracts.
+ * It's used primarily by the forms on the Project's "Contracts" tab.
+ *
  * @author criske
  * @version $Id$
  * @since 0.0.1
@@ -48,6 +50,10 @@ import java.math.BigDecimal;
  *  This will list all contributors.
  * @todo #142:30min As soon as we have this logic implemented in the core,
  *  provide a proper implementation for methods updateContract(...) here.
+ * @todo #142:30min As soon as we have this logic implemented in the core,
+ *  provide a proper implementation for methods markContractForRemoval(...)
+ *  here. Don't forget to also specify the "markedForRemoval" attribute to
+ *  JsonContract.
  */
 @RestController
 public class ContractsApi extends BaseApiController {
@@ -275,6 +281,34 @@ public class ContractsApi extends BaseApiController {
         return ResponseEntity.ok(
             Json.createObjectBuilder()
                 .add("status", "ok")
+                .build()
+                .toString()
+        );
+    }
+
+    /**
+     * Mark a Project's Contract for deletion.
+     * @param owner Owner of the project (username or org name).
+     * @param name Simple name of the project.
+     * @param username Contributor's username.
+     * @param role Contributor's role.
+     * @return JsonResponse.
+     * @checkstyle ParameterNumber (10 lines)
+     */
+    @DeleteMapping(
+        value = "/projects/{owner}/{name}/contracts/{username}/mark",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> markContractForRemoval(
+        @PathVariable final String owner,
+        @PathVariable final String name,
+        @PathVariable final String username,
+        @RequestParam("role") final String role
+    ) {
+        System.out.println("Contract marked for removal!");
+        return ResponseEntity.ok(
+            Json.createObjectBuilder()
+                .add("status", "Contract marked for removal")
                 .build()
                 .toString()
         );
