@@ -192,6 +192,27 @@
         );
     }
 
+    /**
+     * Mark a Contract for deletion.
+     * @param contract Contract.
+     */
+    function markContractForRemoval(contract) {
+        $.ajax( //API call to get the active Invoice.
+            "/api/projects/"
+            + contract.id.repoFullName
+            + "/contracts/" + contract.id.contributorUsername + "/mark?role=" + contract.id.role,
+            {
+                type: "DELETE",
+                success: function() {
+                    alert("Everything went ok!");
+                },
+                error: function () {
+                    alert("Something went wrong. Please refresh the page and try again.")
+                }
+            }
+        );
+    }
+
     function addContractToTable(contract){
         var row = "<tr>"
                     +"<td>"+contract.id.contributorUsername+"</td>"
@@ -208,7 +229,7 @@
                     +  "<a href='#' title='Edit Contract' class='editContract'>"
                     +    "<i class='fa fa-edit fa-lg'></i>"
                     +  "</a>  "
-                    +  "<a href='#' title='Remove Contract' class='removeContract'>"
+                    +  "<a href='#' title='Mark Contract For Removal' class='removeContract'>"
                     +    "<i class='fa fa-trash fa-lg'></i>"
                     +  "</a>"
                     +"</td>"
@@ -365,6 +386,30 @@
                                             $("#updatedHourlyRate").val("");
 
                                             $("#updateContractCard").show();
+                                        }
+                                    )
+                                }
+                            );
+                            $(".removeContract").each(
+                                function() {
+                                    $(this).on(
+                                        "click",
+                                        function(event) {
+                                            event.preventDefault();
+
+                                            var repo = $("#owner").text() + "/" + $("#name").text();
+                                            var contributor = $(this).parent().parent().children()[0].innerText;
+                                            var role = $(this).parent().parent().children()[1].innerText;
+                                            var provider = "github";
+                                            var contract = {
+                                                id: {
+                                                    repoFullName: repo,
+                                                    contributorUsername: contributor,
+                                                    role: role,
+                                                    provider: provider
+                                                }
+                                            }
+                                            markContractForRemoval(contract);
                                         }
                                     )
                                 }
