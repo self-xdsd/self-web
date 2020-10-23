@@ -32,8 +32,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.json.Json;
+
 /**
- * A Contributor.
+ * Contributor endpoints.<br><br>
+ *
+ * These endpoints are mainly used on the 'Contributor Dashboard' page.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
@@ -42,6 +46,9 @@ import org.springframework.web.bind.annotation.*;
  *  display a message saying "You are not a contributor in any project...".
  *  If the /contributor returns data, we should display the Contracts,
  *  links to the Tasks etc.
+ * @todo #142:30min As soon as we have this logic implemented in the core,
+ *  provide a proper implementation for methods markContractForRemoval(...)
+ *  here.
  */
 @RestController
 public class ContributorApi extends BaseApiController {
@@ -198,5 +205,31 @@ public class ContributorApi extends BaseApiController {
             }
         }
         return resp;
+    }
+
+    /**
+     * Mark for removal one contract of the authenticated Contributor.
+     * @param owner Repo owner.
+     * @param name Repo name.
+     * @param role Contributor role (DEV, REV etc).
+     * @return JsonResponse.
+     * @checkstyle ParameterNumber (10 lines)
+     */
+    @DeleteMapping(
+        value = "/contributor/contracts/{owner}/{name}/mark",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> markContractForRemoval(
+        @PathVariable final String owner,
+        @PathVariable final String name,
+        @RequestParam("role") final String role
+    ) {
+        System.out.println("Contract marked for removal!");
+        return ResponseEntity.ok(
+            Json.createObjectBuilder()
+                .add("status", "Contract marked for removal")
+                .build()
+                .toString()
+        );
     }
 }
