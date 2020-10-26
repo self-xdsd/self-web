@@ -361,7 +361,7 @@ function markContractForRemoval(contract, removeButton) {
                     "click",
                     function(event) {
                         event.preventDefault();
-                        alert("Contract restored API call!");
+                        alert("Contract restored API call (not yet implemented).");
                     }
                 )
             },
