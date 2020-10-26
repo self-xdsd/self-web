@@ -20,6 +20,13 @@ function getContributorDashboard() {
                                 getInvoicesOfContract(contract);
                             }
                         );
+                        $($(".removeContract")[$(".removeContract").length -1]).on(
+                            "click",
+                            function(event) {
+                                event.preventDefault();
+                                markContractForRemoval(contract, $(this));
+                            }
+                        );
                     }
                 )
                 if(contributor.contracts.length > 0) {
@@ -329,6 +336,47 @@ function invoiceToPdf(invoice, contract) {
         }
     );
 
+}
+
+/**
+ * Mark a Contract for deletion.
+ * @param contract Contract.
+ * @param removeButton Remove button for which we have to change
+ *  the icon and add the "Restore Contract" listener.
+ */
+function markContractForRemoval(contract, removeButton) {
+    removeButton.off("click");
+    $.ajax(
+        "/api/contributor/contracts/"
+        + contract.id.repoFullName
+        + "/mark?role=" + contract.id.role,
+        {
+            type: "DELETE",
+            success: function() {
+                removeButton.html(
+                    "<i class='fa fa-hourglass' style='color: red;'></i>"
+                );
+                removeButton.attr("title", "Restore the Contract");
+                removeButton.on(
+                    "click",
+                    function(event) {
+                        event.preventDefault();
+                        alert("Contract restored API call!");
+                    }
+                )
+            },
+            error: function () {
+                alert("Something went wrong. Please refresh the page and try again.")
+                removeButton.on(
+                    "click",
+                    function(event) {
+                        event.preventDefault();
+                        markContractForRemoval(contract, removeButton);
+                    }
+                );
+            }
+        }
+    );
 }
 
 /**
