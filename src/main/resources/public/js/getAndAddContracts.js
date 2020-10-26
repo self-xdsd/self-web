@@ -278,7 +278,7 @@
                                         +"<a href='#' title='Edit Contract' class='editContract'>"
                                         +"<i class='fa fa-edit fa-lg'></i>"
                                         +"</a>  "
-                                        +"<a href='#' title='Remove Contract' class='removeContract'>"
+                                        +"<a href='#' title='Mark Contract For Removal' class='removeContract'>"
                                         +"<i class='fa fa-trash fa-lg'></i>"
                                         +"</a>"
                                     ];
