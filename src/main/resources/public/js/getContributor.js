@@ -29,6 +29,7 @@ function getContributorDashboard() {
                         );
                     }
                 )
+                $('[data-toggle="tooltip"]').tooltip();
                 if(contributor.contracts.length > 0) {
                     $("#tasks").show();
                     getTasksOfContract(contributor.contracts[0]);
@@ -63,6 +64,20 @@ function contractAsTableRow(contract) {
     } else {
         link = '#';
     }
+    var removeIcon;
+    if(contract.markedForRemoval == 'null') {
+        removeIcon = "<a href='#' title='Mark Contract For Removal' class='removeContract'>"
+            +"<i class='fa fa-trash fa-lg'></i>"
+            +"</a>";
+    } else {
+        var toolTipMessage = "This contract has been marked for removal on " + contract.markedForRemoval + ". "
+            + "No more tasks will be assigned to it and it will be removed after 30 days. "
+            + "Contact the PO if you want to have it reactivated.";
+        removeIcon = "<i class='fa fa-exclamation-circle fa-lg' style='color:red;' aria-hidden='true' "
+            + "data-toggle='tooltip' data-placement='top' "
+            + "data-original-title='" + toolTipMessage + "'>"
+            +"</i>"
+    }
     return "<tr>" +
         "<td><a href='" + link + "' target='_blank'>" + contract.id.repoFullName + "</a></td>" +
         "<td>" + contract.id.role + "</td>"  +
@@ -71,9 +86,7 @@ function contractAsTableRow(contract) {
         "<td><a href='#tasks' title='See Tasks & Invoices' class='contractAgenda'>" +
             "<i class='fa fa-laptop fa-lg'></i>" +
         "</a>  "
-        +"<a href='#' title='Mark Contract For Removal' class='removeContract'>"
-        +"<i class='fa fa-trash fa-lg'></i>"
-        +"</a>"
+        + removeIcon +
         "</td>" +
         "</tr>"
 }
@@ -342,7 +355,7 @@ function invoiceToPdf(invoice, contract) {
  * Mark a Contract for deletion.
  * @param contract Contract.
  * @param removeButton Remove button for which we have to change
- *  the icon and add the "Restore Contract" listener.
+ *  the icon to "Contract Marked For Removal" tooltip.
  */
 function markContractForRemoval(contract, removeButton) {
     removeButton.off("click");
@@ -352,18 +365,15 @@ function markContractForRemoval(contract, removeButton) {
         + "/mark?role=" + contract.id.role,
         {
             type: "DELETE",
-            success: function() {
-                removeButton.html(
-                    "<i class='fa fa-hourglass' style='color: red;'></i>"
-                );
-                removeButton.attr("title", "Restore the Contract");
-                removeButton.on(
-                    "click",
-                    function(event) {
-                        event.preventDefault();
-                        alert("Contract restored API call (not yet implemented).");
-                    }
-                )
+            success: function(marked) {
+                var toolTipMessage = "This contract has been marked for removal on " + marked.markedForRemoval + ". "
+                    + "No more tasks will be assigned to it and it will be removed after 30 days. "
+                    + "Contact the PO if you want to have it reactivated."
+                removeButton.replaceWith("<i class='fa fa-exclamation-circle fa-lg' style='color:red;' aria-hidden='true' "
+                    + "data-toggle='tooltip' data-placement='top' "
+                    + "data-original-title='" + toolTipMessage + "'>"
+                    +"</i>");
+                $('[data-toggle="tooltip"]').tooltip();
             },
             error: function () {
                 alert("Something went wrong. Please refresh the page and try again.")
