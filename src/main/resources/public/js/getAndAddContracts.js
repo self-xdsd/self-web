@@ -264,7 +264,6 @@
                                 recordsTotal: total,
                                 recordsFiltered: total,
                                 data: contracts.data.map(function(c){
-                                    console.log("CONTRACT MARKED: " + c.markedForRemoval);
                                     var removeRestoreIcon;
                                     if(c.markedForRemoval == 'null') {
                                         removeRestoreIcon = "<a href='#' title='Mark Contract For Removal' class='removeContract'>"
@@ -272,7 +271,7 @@
                                             +"</a>";
                                     } else {
                                         var toolTipMessage = "This contract has been marked for removal on " + c.markedForRemoval + ". "
-                                        + "No more tasks will be assigned to it and it will be completely removed after 30 days.";
+                                        + "No more tasks will be assigned to it and it will be removed after 30 days.";
                                         removeRestoreIcon = "<a href='#' title='Restore Contract' class='restoreContract'>"
                                             +"<i class='fa fa-recycle fa-lg'></i>"
                                             +"</a>  "
