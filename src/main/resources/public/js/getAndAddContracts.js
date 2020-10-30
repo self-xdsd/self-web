@@ -264,6 +264,23 @@
                                 recordsTotal: total,
                                 recordsFiltered: total,
                                 data: contracts.data.map(function(c){
+                                    console.log("CONTRACT MARKED: " + c.markedForRemoval);
+                                    var removeRestoreIcon;
+                                    if(c.markedForRemoval == 'null') {
+                                        removeRestoreIcon = "<a href='#' title='Mark Contract For Removal' class='removeContract'>"
+                                            +"<i class='fa fa-trash fa-lg'></i>"
+                                            +"</a>";
+                                    } else {
+                                        var toolTipMessage = "This contract has been marked for removal on " + c.markedForRemoval + ". "
+                                        + "No more tasks will be assigned to it and it will be completely removed after 30 days.";
+                                        removeRestoreIcon = "<a href='#' title='Restore Contract' class='restoreContract'>"
+                                            +"<i class='fa fa-recycle fa-lg'></i>"
+                                            +"</a>  "
+                                            +"<i class='fa fa-exclamation-circle fa-lg fakeWalletInfo' style='color:red;' aria-hidden='true' "
+                                            + "data-toggle='tooltip' data-placement='top' "
+                                            + "data-original-title='" + toolTipMessage + "'>"
+                                            +"</i>"
+                                    }
                                     return [
                                         c.id.contributorUsername,
                                         c.id.role,
@@ -278,14 +295,13 @@
                                         +"<a href='#' title='Edit Contract' class='editContract'>"
                                         +"<i class='fa fa-edit fa-lg'></i>"
                                         +"</a>  "
-                                        +"<a href='#' title='Mark Contract For Removal' class='removeContract'>"
-                                        +"<i class='fa fa-trash fa-lg'></i>"
-                                        +"</a>"
+                                        + removeRestoreIcon
                                     ];
                                 })
                             };
                             //send page to DataTable to be rendered
                             callback(dataTablePage);
+                            $('[data-toggle="tooltip"]').tooltip();
                             $(".contractAgenda").each(
                                 function() {
                                     $(this).on(

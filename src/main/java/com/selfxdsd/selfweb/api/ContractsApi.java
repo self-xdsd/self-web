@@ -50,6 +50,8 @@ import java.math.BigDecimal;
  *  This will list all contributors.
  * @todo #142:30min As soon as we have this logic implemented in the core,
  *  provide a proper implementation for methods updateContract(...) here.
+ * @todo #149:30min Implement the 'Restore Contract' functionality for
+ *  a Project Contract,as soon as we have it available in self-core.
  */
 @RestController
 public class ContractsApi extends BaseApiController {
