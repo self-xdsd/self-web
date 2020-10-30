@@ -105,6 +105,7 @@ public final class ContractsApiTestCase {
                         .build())
                     .add("hourlyRate", "$5.00")
                     .add("value", "$100.00")
+                    .add("markedForRemoval", "null")
                     .build())
                 .build())
         );

@@ -50,10 +50,6 @@ import java.math.BigDecimal;
  *  This will list all contributors.
  * @todo #142:30min As soon as we have this logic implemented in the core,
  *  provide a proper implementation for methods updateContract(...) here.
- * @todo #142:30min As soon as we have this logic implemented in the core,
- *  provide a proper implementation for methods markContractForRemoval(...)
- *  here. Don't forget to also specify the "markedForRemoval" attribute to
- *  JsonContract.
  */
 @RestController
 public class ContractsApi extends BaseApiController {
@@ -305,12 +301,30 @@ public class ContractsApi extends BaseApiController {
         @PathVariable final String username,
         @RequestParam("role") final String role
     ) {
-        System.out.println("Contract marked for removal!");
-        return ResponseEntity.ok(
-            Json.createObjectBuilder()
-                .add("status", "Contract marked for removal")
-                .build()
-                .toString()
+        final ResponseEntity<String> resp;
+        final Project project = this.user.projects().getProjectById(
+            owner + "/" + name, this.user.provider().name()
         );
+        if(project == null) {
+            resp = ResponseEntity.noContent().build();
+        } else {
+            final Contract contract = project.contracts().findById(
+                new Contract.Id(
+                    owner + "/" + name,
+                    username,
+                    project.provider(),
+                    role
+                )
+            );
+            if(contract == null) {
+                resp = ResponseEntity.noContent().build();
+            } else {
+                final Contract marked = contract.markForRemoval();
+                resp = ResponseEntity.ok(
+                    new JsonContract(marked).toString()
+                );
+            }
+        }
+        return resp;
     }
 }
