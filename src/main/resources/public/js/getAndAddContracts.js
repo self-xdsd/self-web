@@ -12,7 +12,7 @@
 * Now "$" is just a function argument name and not the jQuery
 * alias anymore. It could named "foo" fo ex, thus making a call like foo("#contracts") valid.
 */
-(function getAndAddContracts($, contractsService, usersService){
+(function getAndAddContracts($, contractsService, usersService, confirmDialog){
 
     function getTasksOfContract(contract) {
         console.log("GET TASKS:");
@@ -367,7 +367,9 @@
                                                     provider: provider
                                                 }
                                             }
-                                            markContractForRemoval(contract);
+                                            confirmDialog
+                                                .create("Are you sure you want to remove this contract?")
+                                                .then(() => markContractForRemoval(contract));
                                         }
                                     )
                                 }
@@ -567,4 +569,4 @@
 
     });
 
-})(jQuery, contractsService, usersService)
+})(jQuery, contractsService, usersService, confirmDialog)
