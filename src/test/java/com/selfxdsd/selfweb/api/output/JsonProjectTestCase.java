@@ -39,14 +39,16 @@ import org.hamcrest.MatcherAssert;
 
 
 /**
- * Unit tests for {@link JsonProject}
+ * Unit tests for {@link JsonProject}.
  * @author Lumi
+ * @todo #152:60min Continue writing unit tests for the json output classes.
+ *  We can start with output class JsonContract.
  */
 public final class JsonProjectTestCase {
     
 
     /**
-     * JsonProject has repoFullName
+     * JsonProject has repoFullName.
      */    
     @Test
     public void hasRepoFullName(){
@@ -92,9 +94,9 @@ public final class JsonProjectTestCase {
             jsonProject.getString("repoFullName"),
             Matchers.equalTo("Andreea/Test")
         );   
-}
+    }
     /**
-     * JsonProject has Provider
+     * JsonProject has Provider.
      */   
     @Test
     public void hasProvider(){
@@ -143,7 +145,7 @@ public final class JsonProjectTestCase {
     }
     
     /**
-     * JsonProject has Owner
+     * JsonProject has Owner.
      */
     @Test
     public void hasOwner(){
@@ -193,7 +195,7 @@ public final class JsonProjectTestCase {
     }
     
     /**
-     * JsonProject has Manager
+     * JsonProject has Manager.
      */
     @Test
     public void hasManager(){
@@ -255,7 +257,7 @@ public final class JsonProjectTestCase {
     }
     
     /**
-     * JsonProject has Wallet
+     * JsonProject has Wallet.
      */
     @Test
     public void hasWallet(){
