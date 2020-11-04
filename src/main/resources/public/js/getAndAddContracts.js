@@ -276,7 +276,7 @@
                                             +"<i class='fa fa-recycle fa-lg'></i>"
                                             +"</a>  "
                                             +"<i class='fa fa-exclamation-circle fa-lg fakeWalletInfo' style='color:red;' aria-hidden='true' "
-                                            + "data-toggle='tooltip' data-placement='top' "
+                                            + "data-toggle='tooltip' data-placement='left'"
                                             + "data-original-title='" + toolTipMessage + "'>"
                                             +"</i>"
                                     }

@@ -128,3 +128,8 @@ body {
         display: none;
     }
 }
+
+.tooltip{
+    pointer-events: none;
+    z-index: 2000;   
+}
