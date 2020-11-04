@@ -24,7 +24,10 @@ function getContributorDashboard() {
                             "click",
                             function(event) {
                                 event.preventDefault();
-                                markContractForRemoval(contract, $(this));
+                                var removeButton = $(this);
+                                confirmDialog
+                                    .create("Are you sure you want to remove this contract?")
+                                    .then(() => markContractForRemoval(contract, removeButton));
                             }
                         );
                     }
@@ -381,7 +384,9 @@ function markContractForRemoval(contract, removeButton) {
                     "click",
                     function(event) {
                         event.preventDefault();
-                        markContractForRemoval(contract, removeButton);
+                        confirmDialog
+                            .create("Are you sure you want to remove this contract?")
+                            .then(() => markContractForRemoval(contract, removeButton));
                     }
                 );
             }
