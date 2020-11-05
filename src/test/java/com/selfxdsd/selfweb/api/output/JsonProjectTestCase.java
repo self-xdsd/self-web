@@ -41,6 +41,7 @@ import org.hamcrest.MatcherAssert;
 /**
  * Unit tests for {@link JsonProject}.
  * @author Lumi
+ * @checkstyle ExecutableStatementCount (500 lines).
  * @todo #152:60min Continue writing unit tests for the json output classes.
  *  We can start with output class JsonContract.
  */
@@ -74,7 +75,8 @@ public final class JsonProjectTestCase {
         Mockito.when(provider.name()).thenReturn("Github");
         
         Mockito.when(manager.provider()).thenReturn(provider);        
-        Mockito.when(manager.commission()).thenReturn(BigDecimal.valueOf(800));  
+        Mockito.when(manager.commission())
+            .thenReturn(BigDecimal.valueOf(800));
         
         Mockito.when(project.projectManager()).thenReturn(manager);
         
