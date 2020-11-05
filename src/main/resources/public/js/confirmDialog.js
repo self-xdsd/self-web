@@ -42,12 +42,18 @@ var confirmDialog = (function ($) {
         create: function (body, title) {
             return new Promise(function (resolve, reject) {
                 var dialog = getDialogEl();
+                var confirmBtn = dialog.find("#dialog-confirm-btn");
                 dialog.find("#dialog-title").text(title || "Warning");
                 dialog.find("#dialog-body").text(body);
-                dialog.find("#dialog-confirm-btn").click(function(event) {
+                confirmBtn.click(function(event) {
                     dialog.modal("hide");
                     resolve();
-                }); 
+                });
+                //remove all listeners after `hide` is completed
+                dialog.on("hidden.bs.modal", function(){
+                    confirmBtn.off("click")
+                    $(this).off()
+                })
                 dialog.modal("show");
             });
         }
