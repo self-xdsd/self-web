@@ -47,35 +47,38 @@ public class JsonContractTestCase {
     @Test
     public void hasId(){
     
-    final Contract contract = Mockito.mock(Contract.class);
+        final Contract contract = Mockito.mock(Contract.class);
     
-    Id id = Mockito.mock(Id.class);
+        Id id = Mockito.mock(Id.class);
     
-    Mockito.when(id.getRepoFullName()).thenReturn("Lumi/Test");
-    Mockito.when(id.getContributorUsername()).thenReturn("Lumi3011");
-    Mockito.when(id.getProvider()).thenReturn("Github");
-    Mockito.when(id.getRole()).thenReturn("dev");
+        Mockito.when(id.getRepoFullName()).thenReturn("Lumi/Test");
+        Mockito.when(id.getContributorUsername()).thenReturn("Lumi3011");
+        Mockito.when(id.getProvider()).thenReturn("Github");
+        Mockito.when(id.getRole()).thenReturn("dev");
     
-    Mockito.when(contract.contractId()).thenReturn(id);
-    Mockito.when(contract.hourlyRate()).thenReturn(BigDecimal.valueOf(5000));
-    Mockito.when(contract.value()).thenReturn(BigDecimal.valueOf(2000));
-    Mockito.when(contract.markedForRemoval()).thenReturn(LocalDateTime.now());
+        Mockito.when(contract.contractId()).thenReturn(id);
+        Mockito.when(contract.hourlyRate())
+            .thenReturn(BigDecimal.valueOf(5000));
+        Mockito.when(contract.value())
+            .thenReturn(BigDecimal.valueOf(2000));
+        Mockito.when(contract.markedForRemoval())
+            .thenReturn(LocalDateTime.now());
     
-    final JsonObject jsonContract = new JsonContract(contract);    
+        final JsonObject jsonContract = new JsonContract(contract);    
 
-    MatcherAssert.assertThat(
-        jsonContract.getJsonObject("id"),
-        Matchers.equalTo(Json.createObjectBuilder()
-            .add("repoFullName", id.getRepoFullName())
-            .add("contributorUsername", id.getContributorUsername())
-            .add("provider", id.getProvider())
-            .add("role", id.getRole())
-            .build())
+        MatcherAssert.assertThat(
+            jsonContract.getJsonObject("id"),
+            Matchers.equalTo(Json.createObjectBuilder()
+                .add("repoFullName", id.getRepoFullName())
+                .add("contributorUsername", id.getContributorUsername())
+                .add("provider", id.getProvider())
+                .add("role", id.getRole())
+                .build())
         );       
-}
+    }
     
     /**
-     * JsonContract has hourlyRate
+     * JsonContract has hourlyRate.
      */
     @Test
     public void hasHourlyRate(){
@@ -89,9 +92,12 @@ public class JsonContractTestCase {
         Mockito.when(id.getRole()).thenReturn("dev");
         
         Mockito.when(contract.contractId()).thenReturn(id);
-        Mockito.when(contract.hourlyRate()).thenReturn(BigDecimal.valueOf(5000));
-        Mockito.when(contract.value()).thenReturn(BigDecimal.valueOf(2000));
-        Mockito.when(contract.markedForRemoval()).thenReturn(LocalDateTime.now());
+        Mockito.when(contract.hourlyRate())
+            .thenReturn(BigDecimal.valueOf(5000));
+        Mockito.when(contract.value())
+            .thenReturn(BigDecimal.valueOf(2000));
+        Mockito.when(contract.markedForRemoval())
+            .thenReturn(LocalDateTime.now());
         
         final JsonObject jsonContract = new JsonContract(contract);
         
@@ -102,7 +108,7 @@ public class JsonContractTestCase {
     }
     
     /**
-     * JsonContract has value
+     * JsonContract has value.
      */
     @Test
     public void hasValue(){
@@ -116,9 +122,12 @@ public class JsonContractTestCase {
         Mockito.when(id.getRole()).thenReturn("dev");
         
         Mockito.when(contract.contractId()).thenReturn(id);
-        Mockito.when(contract.hourlyRate()).thenReturn(BigDecimal.valueOf(5000));
-        Mockito.when(contract.value()).thenReturn(BigDecimal.valueOf(2000));
-        Mockito.when(contract.markedForRemoval()).thenReturn(LocalDateTime.now());
+        Mockito.when(contract.hourlyRate())
+            .thenReturn(BigDecimal.valueOf(5000));
+        Mockito.when(contract.value())
+            .thenReturn(BigDecimal.valueOf(2000));
+        Mockito.when(contract.markedForRemoval())
+            .thenReturn(LocalDateTime.now());
         
         final JsonObject jsonContract = new JsonContract(contract);
         
@@ -129,7 +138,7 @@ public class JsonContractTestCase {
     }
     
     /**
-     * JsonContract has markedForRemoval
+     * JsonContract has markedForRemoval.
      */
     @Test
     public void hasmarkedForRemoval(){
@@ -146,8 +155,10 @@ public class JsonContractTestCase {
         Mockito.when(id.getRole()).thenReturn("dev");
         
         Mockito.when(contract.contractId()).thenReturn(id);
-        Mockito.when(contract.hourlyRate()).thenReturn(BigDecimal.valueOf(5000));
-        Mockito.when(contract.value()).thenReturn(BigDecimal.valueOf(2000));
+        Mockito.when(contract.hourlyRate())
+            .thenReturn(BigDecimal.valueOf(5000));
+        Mockito.when(contract.value())
+            .thenReturn(BigDecimal.valueOf(2000));
         Mockito.when(contract.markedForRemoval()).thenReturn(now);
         
         final JsonObject jsonContract = new JsonContract(contract);
@@ -159,7 +170,7 @@ public class JsonContractTestCase {
     }
     
     /**
-     * JsonContract has null markedForRemoval
+     * JsonContract has null markedForRemoval.
      */
     @Test
     public void hasNullMarkedForRemoval(){
@@ -173,8 +184,10 @@ public class JsonContractTestCase {
         Mockito.when(id.getRole()).thenReturn("dev");
         
         Mockito.when(contract.contractId()).thenReturn(id);
-        Mockito.when(contract.hourlyRate()).thenReturn(BigDecimal.valueOf(5000));
-        Mockito.when(contract.value()).thenReturn(BigDecimal.valueOf(2000));
+        Mockito.when(contract.hourlyRate())
+            .thenReturn(BigDecimal.valueOf(5000));
+        Mockito.when(contract.value())
+            .thenReturn(BigDecimal.valueOf(2000));
         Mockito.when(contract.markedForRemoval()).thenReturn(null);
         
         final JsonObject jsonContract = new JsonContract(contract);
