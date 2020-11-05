@@ -42,8 +42,6 @@ import org.hamcrest.MatcherAssert;
  * Unit tests for {@link JsonProject}.
  * @author Lumi
  * @checkstyle ExecutableStatementCount (500 lines).
- * @todo #152:60min Continue writing unit tests for the json output classes.
- *  We can start with output class JsonContract.
  */
 public final class JsonProjectTestCase {
     
