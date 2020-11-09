@@ -243,7 +243,7 @@ function installUpdateCashLimitPopover(anchor, currentLimit) {
                 submit.prop("disabled", true);
 
                 /**
-                 * @todo #169:60min. Once the Wallet.updateCash(...) endpoint is available on backend,
+                 * @todo #169:60min Once the Wallet.updateCash(...) endpoint is available on backend,
                  *  replace the frontend update limit cash simulating network call with a real one.
                  */
                 setTimeout(() => {
