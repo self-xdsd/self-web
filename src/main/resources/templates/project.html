@@ -400,14 +400,21 @@
                     <div id="realWalletOverview" style="display: none;">
                         <div>
                             <b>Limit:</b> <span id="stripeCash"></span>
-                            <i
-                                class="fa fa-question-circle-o fa-lg fakeWalletInfo"
-                                style="display: none;"
-                                aria-hidden="true"
-                                data-toggle="tooltip"
-                                data-placement="right"
-                                title="This is how much money we are allowed to take from your Wallet.">
-                            </i>
+                                <i
+                                    id = "stripeUpdateCashLimitAction"
+                                    class="fa fa-edit fa-lg"
+                                    aria-hidden="true"
+                                    style="cursor: pointer;"
+                                    role="button">
+                                </i>
+                                <i
+                                    class="fa fa-question-circle-o fa-lg fakeWalletInfo"
+                                    style="display: none;"
+                                    aria-hidden="true"
+                                    data-toggle="tooltip"
+                                    data-placement="right"
+                                    title="This is how much money we are allowed to take from your Wallet.">
+                                </i>
                         </div>
                         <div>
                             <b>Debt:</b> <span id="stripeDebt"></span>
@@ -645,6 +652,8 @@
                                 $("#loadingStripeCustomerForm").hide();
 
                                 $("#realWalletOverview").show();
+
+                                installUpdateCashLimitPopover($("#stripeUpdateCashLimitAction"), $("#stripeCash"));
                             },
                             error: function(jqXHR, error, errorThrown) {
                                 $("#stripeCustomerButton").removeClass("disabled");
