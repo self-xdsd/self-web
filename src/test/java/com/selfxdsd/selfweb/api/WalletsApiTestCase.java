@@ -34,6 +34,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import java.io.StringReader;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 /**
@@ -73,13 +74,13 @@ public final class WalletsApiTestCase {
         Mockito.when(wallet.updateCash(Mockito.any(BigDecimal.class)))
             .thenAnswer(inv -> {
                 final Wallet answer = Mockito.mock(Wallet.class);
-                Mockito.when(answer.cash()).thenReturn(inv.getArgument(0));
+                final BigDecimal cash = inv.getArgument(0);
+                Mockito.when(answer.cash()).thenReturn(cash);
                 Mockito.when(answer.type()).thenReturn(Wallet.Type.STRIPE);
                 Mockito.when(answer.active()).thenReturn(false);
                 Mockito.when(answer.project()).thenReturn(project);
                 Mockito.when(answer.debt()).thenReturn(BigDecimal.ZERO);
-                Mockito.when(answer.available())
-                    .thenReturn(BigDecimal.valueOf(1050));
+                Mockito.when(answer.available()).thenReturn(cash);
                 return answer;
             });
         final List<Wallet> walletsSrc = List.of(wallet);
@@ -88,7 +89,7 @@ public final class WalletsApiTestCase {
         final WalletsApi api = new WalletsApi(user, self);
 
         final ResponseEntity<String> resp = api
-            .updateCash("john", "test", Wallet.Type.STRIPE, 10.5f);
+            .updateCash("john", "test", Wallet.Type.STRIPE, 10.504f);
         MatcherAssert.assertThat(resp.getStatusCode(),
             Matchers.is(HttpStatus.OK));
         final JsonObject body = Json.createReader(
@@ -98,11 +99,28 @@ public final class WalletsApiTestCase {
             Json.createObjectBuilder()
                 .add("type", Wallet.Type.STRIPE)
                 .add("active", false)
-                .add("cash", 10.5f)
+                .add("cash", BigDecimal.valueOf(10.5)
+                    .setScale(2, RoundingMode.HALF_UP))
                 .add("debt", 0)
-                .add("available", 10.5f)
+                .add("available", BigDecimal.valueOf(10.5)
+                    .setScale(2, RoundingMode.HALF_UP))
                 .build()
         ));
+    }
+
+    /**
+     * WalletsApi.updateCash(...) returns error if limit is negative.
+     */
+    @Test
+    public void cashLimitReturnsErrorIfLimitIsNegative(){
+        final Self self = Mockito.mock(Self.class);
+
+        final WalletsApi api = new WalletsApi(Mockito.mock(User.class), self);
+
+        final ResponseEntity<String> resp = api
+            .updateCash("john", "test", Wallet.Type.STRIPE, -10.5f);
+        MatcherAssert.assertThat(resp.getStatusCode(),
+            Matchers.is(HttpStatus.BAD_REQUEST));
     }
 
     /**
