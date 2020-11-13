@@ -245,7 +245,7 @@ function installUpdateCashLimitPopover(anchor, currentLimit, walletType, onLimit
             if (inputValue === "") {
                 error.show();
                 error.find("small").text("Cash limit must not be empty!");
-            } else if (parseFloat(inputValue) < 0) {
+            } else if (parseFloat(inputValue) <= 0) {
                 error.show();
                 error.find("small").text("Cash limit must be positive!");
             } else if (inputValue === currentLimit.text().substring(1)) {

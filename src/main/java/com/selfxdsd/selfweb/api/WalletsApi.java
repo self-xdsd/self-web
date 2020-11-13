@@ -34,8 +34,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -51,6 +53,7 @@ import java.math.RoundingMode;
  *  payment methods.
  */
 @RestController
+@Validated
 public class WalletsApi extends BaseApiController {
 
     /**
@@ -165,12 +168,9 @@ public class WalletsApi extends BaseApiController {
         @PathVariable final String owner,
         @PathVariable final String name,
         @PathVariable final String type,
-        @RequestBody  final float limit) {
+        @RequestBody @Positive final float limit) {
         final ResponseEntity<String> response;
-        if(limit < 0){
-            response = ResponseEntity.badRequest()
-                .body("Cash limit must be positive");
-        } else if (type.equals(Wallet.Type.FAKE)) {
+        if (type.equals(Wallet.Type.FAKE)) {
             response = ResponseEntity.badRequest()
                 .body("Updating cash limit on a fake wallet not allowed.");
         } else {

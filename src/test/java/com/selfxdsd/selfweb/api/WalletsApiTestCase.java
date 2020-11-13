@@ -109,21 +109,6 @@ public final class WalletsApiTestCase {
     }
 
     /**
-     * WalletsApi.updateCash(...) returns error if limit is negative.
-     */
-    @Test
-    public void cashLimitReturnsErrorIfLimitIsNegative(){
-        final Self self = Mockito.mock(Self.class);
-
-        final WalletsApi api = new WalletsApi(Mockito.mock(User.class), self);
-
-        final ResponseEntity<String> resp = api
-            .updateCash("john", "test", Wallet.Type.STRIPE, -10.5f);
-        MatcherAssert.assertThat(resp.getStatusCode(),
-            Matchers.is(HttpStatus.BAD_REQUEST));
-    }
-
-    /**
      * WalletsApi.updateCash(...) ignores fake Wallet type.
      */
     @Test
