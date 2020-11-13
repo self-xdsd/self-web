@@ -29,6 +29,7 @@ import com.selfxdsd.api.Wallet;
 import com.selfxdsd.api.exceptions.WalletAlreadyExistsException;
 import com.selfxdsd.selfweb.api.output.JsonWallet;
 import com.selfxdsd.selfweb.api.output.JsonWallets;
+import com.stripe.model.SetupIntent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.json.Json;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 
@@ -195,6 +197,57 @@ public class WalletsApi extends BaseApiController {
                         ).toString()
                     );
                 }
+            }
+        }
+        return response;
+    }
+
+    /**
+     * Create a SetupIntent for a new PaymentMethod of a Stripe Wallet.<br><br>
+     *
+     * This endpoint returns a Stripe clientSecret which is used together with
+     * the Stripe JS Library to display a widget, take the payment information
+     * and send it to Stripe.
+     *
+     * @param owner Owner of the project (login of user or org name).
+     * @param name Repo name.
+     * @see <a href='https://stripe.com/docs/payments/save-and-reuse'>docs</a>
+     * @return SetupIntent.
+     */
+    @PostMapping(
+        value = "/projects/{owner}/{name}/wallets/stripe/paymentMethods/setup",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> createPaymentMethodSetupIntent(
+        @PathVariable final String owner,
+        @PathVariable final String name
+    ) {
+        ResponseEntity<String> response;
+        final Project found = this.self.projects().getProjectById(
+            owner + "/" + name, user.provider().name()
+        );
+        if(found == null) {
+            response = ResponseEntity.badRequest().build();
+        } else {
+            Wallet wallet = null;
+            for (final Wallet search : found.wallets()) {
+                if (search.type().equals(Wallet.Type.STRIPE)
+                    && search.active()) {
+                    wallet = search;
+                    break;
+                }
+            }
+            if (wallet == null) {
+                response = ResponseEntity.badRequest()
+                    .body("Stripe Wallet not found or not active.");
+            } else {
+                final SetupIntent intent = wallet.paymentMethodSetupIntent();
+                response = ResponseEntity.ok(
+                    Json.createObjectBuilder()
+                        .add("clientSecret", intent.getClientSecret())
+                        .build()
+                        .toString()
+                );
             }
         }
         return response;
