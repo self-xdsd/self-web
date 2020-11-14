@@ -404,7 +404,7 @@
                                     id = "stripeUpdateCashLimitAction"
                                     class="fa fa-edit fa-lg"
                                     aria-hidden="true"
-                                    style="cursor: pointer;"
+                                    style="cursor: pointer;user-select: none;"
                                     role="button">
                                 </i>
                                 <i
@@ -653,7 +653,16 @@
 
                                 $("#realWalletOverview").show();
 
-                                installUpdateCashLimitPopover($("#stripeUpdateCashLimitAction"), $("#stripeCash"));
+                                installUpdateCashLimitPopover(
+                                    $("#stripeUpdateCashLimitAction"),
+                                    $("#stripeCash"),
+                                    wallet.type,
+                                    (updatedWallet) => {
+                                        $("#stripeCash").html('$' + updatedWallet.cash);
+                                        $("#stripeDebt").html('$' + updatedWallet.debt);
+                                        $("#stripeAvailable").html('$' + updatedWallet.available);
+                                    }
+                                );
                             },
                             error: function(jqXHR, error, errorThrown) {
                                 $("#stripeCustomerButton").removeClass("disabled");
