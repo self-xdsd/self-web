@@ -37,6 +37,10 @@ import java.util.Map;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #175:15min Implement a validation exceptions handler for
+ *  `ConstraintViolationException`. This is needed for `@Validated` Controllers,
+ *  otherwise it will be caught by `handleInternalSeverExceptions` handler
+ *  and returned as "Something went wrong while executing this request."
  */
 @RequestMapping("/api")
 public class BaseApiController {
