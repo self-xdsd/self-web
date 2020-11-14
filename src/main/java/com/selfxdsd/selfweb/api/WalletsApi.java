@@ -231,8 +231,7 @@ public class WalletsApi extends BaseApiController {
         } else {
             Wallet wallet = null;
             for (final Wallet search : found.wallets()) {
-                if (search.type().equals(Wallet.Type.STRIPE)
-                    && search.active()) {
+                if (search.type().equals(Wallet.Type.STRIPE)) {
                     wallet = search;
                     break;
                 }
