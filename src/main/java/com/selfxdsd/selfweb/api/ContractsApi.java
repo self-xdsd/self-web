@@ -57,6 +57,13 @@ import java.util.function.Function;
  *  a Project Contract is available, remove the placeholder `restoreContractApi`
  *  and use the real api call. Also test constructor needs to be removed and
  *  "restore contract" unit tests updated.
+ * @todo #176:15min Change the endpoint mapping for `markContractForRemoval()`
+ *  with `@PutMapping /projects/{owner}/{name}/contracts/{username}/mark`
+ *  and for `restoreContract()` with
+ *  `@DeleteMapping /projects/{owner}/{name}/contracts/{username}/mark`.
+ *  Also update frontend
+ *  `getAndAddContracts.js#markContractForRemoval(contract)` ajax call with type
+ *  with "PUT" (line 482).
  */
 @RestController
 public class ContractsApi extends BaseApiController {
