@@ -780,6 +780,37 @@
                                                 $("#addNewCardError").hide();
 
                                                 console.log('Send paymentmethodid to server...');
+                                                var paymentMethodInfo = {
+                                                    paymentMethodId: result.setupIntent.payment_method
+                                                }
+                                                $.ajax(
+                                                    {
+                                                        type: "POST",
+                                                        contentType: "application/json",
+                                                        url: "/api/projects/" + owner + "/" + name +
+                                                            "/wallets/stripe/paymentMethods",
+                                                        data: JSON.stringify(paymentMethodInfo),
+                                                        success: function (paymentMethod) {
+                                                            console.log("SAVED PAYMENT METHOD: " + JSON.stringify(paymentMethod));
+                                                        },
+                                                        error: function(jqXHR, error, errorThrown) {
+                                                            $("#addStripePaymentMethodButton").removeClass("disabled");
+                                                            $("#loadingStripePaymentForm").hide();
+                                                            if(jqXHR.status && jqXHR.status == 400){
+                                                                console.error("Bad Request: " + jqXHR.responseText);
+                                                                $("#stripePaymentMethodFormError").show();
+                                                            } else {
+                                                                console.log("Server error status: " + jqXHR.status);
+                                                                console.log("Server error: " + jqXHR.responseText);
+                                                                alert(
+                                                                    "Something went wrong (" + jqXHR.status + ")." +
+                                                                    "Please, try again later."
+                                                                );
+                                                            }
+                                                        }
+                                                    }
+                                                );
+
 
                                                 $("#cancelNewCardButton").trigger("click");
                                             }
