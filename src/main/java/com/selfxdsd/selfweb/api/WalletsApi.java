@@ -55,6 +55,10 @@ import java.math.RoundingMode;
  *  payment methods.
  * @todo #178:30min On frontend, in `getProject.js`, integrate the wallet
  *  activation feature with the backend.
+ * @todo #179:15min Update WalletsApi endpoints to use `this.user.projects` when
+ *  searching for a project (where is the case). Right now most of them are
+ *  using `this.self.projects` meaning that any user can have access to other
+ *  users wallets.
  */
 @RestController
 @Validated
