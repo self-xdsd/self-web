@@ -196,7 +196,7 @@ public final class WalletsApiTestCase {
 
         final Projects projects = Mockito.mock(Projects.class);
         final Project project = Mockito.mock(Project.class);
-        Mockito.when(self.projects()).thenReturn(projects);
+        Mockito.when(user.projects()).thenReturn(projects);
         Mockito.when(projects.getProjectById(
             "john/test",
             Provider.Names.GITHUB
@@ -271,7 +271,7 @@ public final class WalletsApiTestCase {
         Mockito.when(user.provider()).thenReturn(provider);
 
         final Projects projects = Mockito.mock(Projects.class);
-        Mockito.when(self.projects()).thenReturn(projects);
+        Mockito.when(user.projects()).thenReturn(projects);
 
         final WalletsApi api = new WalletsApi(user, self);
 
@@ -295,7 +295,7 @@ public final class WalletsApiTestCase {
 
         final Projects projects = Mockito.mock(Projects.class);
         final Project project = Mockito.mock(Project.class);
-        Mockito.when(self.projects()).thenReturn(projects);
+        Mockito.when(user.projects()).thenReturn(projects);
         Mockito.when(projects.getProjectById(
             "john/test",
             Provider.Names.GITHUB
@@ -328,7 +328,7 @@ public final class WalletsApiTestCase {
 
         final Projects projects = Mockito.mock(Projects.class);
         final Project project = Mockito.mock(Project.class);
-        Mockito.when(self.projects()).thenReturn(projects);
+        Mockito.when(user.projects()).thenReturn(projects);
         Mockito.when(projects.getProjectById(
             "john/test",
             Provider.Names.GITHUB

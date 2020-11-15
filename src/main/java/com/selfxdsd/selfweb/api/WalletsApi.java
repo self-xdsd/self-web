@@ -227,7 +227,7 @@ public class WalletsApi extends BaseApiController {
         @PathVariable final String type){
 
         final ResponseEntity<String> response;
-        final Project project = this.self.projects().getProjectById(
+        final Project project = this.user.projects().getProjectById(
             owner + "/" + name, user.provider().name()
         );
         if (project == null) {
