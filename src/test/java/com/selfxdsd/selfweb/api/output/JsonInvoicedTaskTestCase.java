@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 /**
- * Unit test for {@link JsonWallet}.
+ * Unit test for {@link JsonInvoicedTask}.
  * @author Lumi
  * @todo #173:60min Continue writing unit tests for the JSON output classes.
  *  We can continue with class JsonPayoutMethod.
