@@ -33,8 +33,6 @@ import org.mockito.Mockito;
 /**
  * Unit test for {@link JsonWallet}.
  * @author Lumi
- * @todo #166:60min Continue writing unit tests for the JSON output classes.
- *  We can continue with class JsonInvoicedTask.
  */
 public class JsonWalletTestCase {
     
