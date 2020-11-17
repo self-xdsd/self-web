@@ -292,25 +292,25 @@ public class WalletsApi extends BaseApiController {
             Wallet wallet = null;
             for (final Wallet search : found.wallets()) {
                 if (search.type().equals(Wallet.Type.STRIPE)) {
-                  wallet = search;
-                  break;
-              }
-          }
-          if (wallet == null) {
-              response = ResponseEntity.badRequest()
-              .body("Stripe Wallet not found.");
-          } else {
-              final JsonObject jsonBody = Json.createReader(
-                  new StringReader(body)
-              ).readObject();
-              final PaymentMethod paymentMethod = wallet.paymentMethods()
-                  .register(
-                      wallet,
-                      jsonBody.getString("paymentMethodId")
-                  );
-              response = ResponseEntity.ok(
-                  new JsonPaymentMethod(paymentMethod).toString()
-              );
+                    wallet = search;
+                    break;
+                }
+            }
+            if (wallet == null) {
+                response = ResponseEntity.badRequest()
+                    .body("Stripe Wallet not found.");
+            } else {
+                final JsonObject jsonBody = Json.createReader(
+                    new StringReader(body)
+                ).readObject();
+                final PaymentMethod paymentMethod = wallet.paymentMethods()
+                    .register(
+                        wallet,
+                        jsonBody.getString("paymentMethodId")
+                    );
+                response = ResponseEntity.ok(
+                    new JsonPaymentMethod(paymentMethod).toString()
+                );
             }
         }
         return response;
