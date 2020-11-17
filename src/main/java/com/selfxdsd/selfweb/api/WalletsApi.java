@@ -23,7 +23,6 @@
 package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.Project;
-import com.selfxdsd.api.Self;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.Wallet;
 import com.selfxdsd.api.Wallets;
@@ -55,10 +54,6 @@ import java.math.RoundingMode;
  *  payment methods.
  * @todo #178:30min On frontend, in `getProject.js`, integrate the wallet
  *  activation feature with the backend.
- * @todo #179:15min Update WalletsApi endpoints to use `this.user.projects` when
- *  searching for a project (where is the case). Right now most of them are
- *  using `this.self.projects` meaning that any user can have access to other
- *  users wallets.
  */
 @RestController
 @Validated
@@ -77,19 +72,12 @@ public class WalletsApi extends BaseApiController {
     private final User user;
 
     /**
-     * Self's core.
-     */
-    private final Self self;
-
-    /**
      * Ctor.
      * @param user Authenticated user.
-     * @param self Self's core.
      */
     @Autowired
-    public WalletsApi(final User user, final Self self) {
+    public WalletsApi(final User user) {
         this.user = user;
-        this.self = self;
     }
 
     /**
@@ -106,7 +94,7 @@ public class WalletsApi extends BaseApiController {
         @PathVariable final String owner,
         @PathVariable final String name
     ) {
-        final Project found = this.self.projects().getProjectById(
+        final Project found = this.user.projects().getProjectById(
             owner + "/" + name, user.provider().name()
         );
         ResponseEntity<String> response = ResponseEntity.noContent().build();
@@ -133,7 +121,7 @@ public class WalletsApi extends BaseApiController {
         @PathVariable final String name
     ) {
         ResponseEntity<String> response;
-        final Project found = this.self.projects().getProjectById(
+        final Project found = this.user.projects().getProjectById(
             owner + "/" + name, user.provider().name()
         );
         if(found == null) {
@@ -182,7 +170,7 @@ public class WalletsApi extends BaseApiController {
             response = ResponseEntity.badRequest()
                 .body("Updating cash limit on a fake wallet not allowed.");
         } else {
-            final Project found = this.self.projects().getProjectById(
+            final Project found = this.user.projects().getProjectById(
                 owner + "/" + name, user.provider().name()
             );
             if (found == null) {
