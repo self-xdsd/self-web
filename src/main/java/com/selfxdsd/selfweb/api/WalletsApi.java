@@ -33,26 +33,35 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.validation.constraints.Positive;
 import java.io.StringReader;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Project Wallets API.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #135:30min Add an endpoint and front-end code for a
- *  Wallet's activation.
  * @todo #135:60min Once the PaymentMethod logic is implemented in the core,
  *  we should add a form in the Real Wallet widget, where the User will add
  *  payment methods.
+ * @todo #178:30min On frontend, in `getProject.js`, integrate the wallet
+ *  activation feature with the backend.
+ * @todo #179:15min Update WalletsApi endpoints to use `this.user.projects` when
+ *  searching for a project (where is the case). Right now most of them are
+ *  using `this.self.projects` meaning that any user can have access to other
+ *  users wallets.
  */
 @RestController
+@Validated
 public class WalletsApi extends BaseApiController {
 
     /**
@@ -191,10 +200,11 @@ public class WalletsApi extends BaseApiController {
                     response = ResponseEntity.badRequest()
                         .body("Wallet of type " + type + " not found.");
                 } else {
+                    final BigDecimal cash = BigDecimal.valueOf(limit)
+                        .setScale(2, RoundingMode.HALF_UP)
+                        .multiply(BigDecimal.valueOf(100));
                     response = ResponseEntity.ok(
-                        new JsonWallet(
-                            wallet.updateCash(BigDecimal.valueOf(limit * 100))
-                        ).toString()
+                        new JsonWallet(wallet.updateCash(cash)).toString()
                     );
                 }
             }
@@ -282,25 +292,84 @@ public class WalletsApi extends BaseApiController {
             Wallet wallet = null;
             for (final Wallet search : found.wallets()) {
                 if (search.type().equals(Wallet.Type.STRIPE)) {
+                  wallet = search;
+                  break;
+              }
+          }
+          if (wallet == null) {
+              response = ResponseEntity.badRequest()
+              .body("Stripe Wallet not found.");
+          } else {
+              final JsonObject jsonBody = Json.createReader(
+                  new StringReader(body)
+              ).readObject();
+              final PaymentMethod paymentMethod = wallet.paymentMethods()
+                  .register(
+                      wallet,
+                      jsonBody.getString("paymentMethodId")
+                  );
+              response = ResponseEntity.ok(
+                  new JsonPaymentMethod(paymentMethod).toString()
+              );
+            }
+        }
+        return response;
+    }
+
+    /**
+     * Activates a Wallet. Returns an array of wallet types which includes the
+     * activated one and the other types deactivated.
+     * @param owner Owner of the project (login of user or org name).
+     * @param name Repo name.
+     * @param type Wallet type (ex: stripe).
+     * @return Array of wallet types which includes the activated one and the
+     * other types deactivated.
+     */
+    @PutMapping(
+        value = "/projects/{owner}/{name}/wallets/{type}/activate",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> activate(
+        @PathVariable final String owner,
+        @PathVariable final String name,
+        @PathVariable final String type){
+
+        final ResponseEntity<String> response;
+        final Project project = this.user.projects().getProjectById(
+            owner + "/" + name, user.provider().name()
+        );
+        if (project == null) {
+            response = ResponseEntity.badRequest()
+                .body("Project not found");
+        } else {
+            final Wallets wallets = project.wallets();
+            Wallet wallet = null;
+            for (final Wallet search : wallets) {
+                if (search.type().equals(type)) {
                     wallet = search;
                     break;
                 }
             }
             if (wallet == null) {
                 response = ResponseEntity.badRequest()
-                    .body("Stripe Wallet not found.");
+                    .body("Wallet of type " + type + " not found.");
+            } else if (wallet.active()){
+                response = ResponseEntity.badRequest()
+                    .body("Wallet of type " + type + " already active");
             } else {
-                final JsonObject jsonBody = Json.createReader(
-                    new StringReader(body)
-                ).readObject();
-                final PaymentMethod paymentMethod = wallet.paymentMethods()
-                    .register(
-                        wallet,
-                        jsonBody.getString("paymentMethodId")
-                    );
-                response = ResponseEntity.ok(
-                    new JsonPaymentMethod(paymentMethod).toString()
-                );
+                wallets.activate(wallet);
+                final JsonArray walletTypes = new JsonWallets(wallets)
+                    .stream()
+                    .map(w -> Json.createObjectBuilder()
+                        .add("type", ((JsonWallet) w).get("type"))
+                        .add("active", ((JsonWallet) w).get("active"))
+                        .build())
+                    .reduce(
+                        Json.createArrayBuilder(),
+                        JsonArrayBuilder::add,
+                        (comb, curr) -> comb
+                    ).build();
+                response = ResponseEntity.ok(walletTypes.toString());
             }
         }
         return response;

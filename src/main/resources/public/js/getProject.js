@@ -172,7 +172,16 @@ function getProjectWallets() {
                                 $("#activateStripeWalletButton").removeClass("disabled");
                             }
                         }
-                        installUpdateCashLimitPopover($("#stripeUpdateCashLimitAction"), $("#stripeCash"));
+                        installUpdateCashLimitPopover(
+                            $("#stripeUpdateCashLimitAction"),
+                            $("#stripeCash"),
+                            wallet.type,
+                            (updatedWallet) => {
+                                $("#stripeCash").html('$' + updatedWallet.cash);
+                                $("#stripeDebt").html('$' + updatedWallet.debt);
+                                $("#stripeAvailable").html('$' + updatedWallet.available);
+                            }
+                        );
                     }
                 });
                 if(realWalletFound) {
@@ -188,7 +197,16 @@ function getProjectWallets() {
     );
 }
 
-function installUpdateCashLimitPopover(anchor, currentLimit) {
+/**
+ * Attaches cash limit form popover to an element.
+ * Also takes care of the cash limit logic.
+ * @param {$} anchor DOM element of which popover is attached.
+ * @param {$} currentLimit DOM element holding Wallet's current cash limit.
+ * @param {String} walletType Wallet type. (ex: STRIPE)
+ * @param {Function} onLimitUpdate Called when limit is successfully updated.
+ * @callback onLimitUpdate Callback having Wallet updated with new limit.
+ */
+function installUpdateCashLimitPopover(anchor, currentLimit, walletType, onLimitUpdate) {
     if (anchor.data("installed") || false) {
         return;
     }
@@ -270,7 +288,7 @@ function installUpdateCashLimitPopover(anchor, currentLimit) {
             if (inputValue === "") {
                 error.show();
                 error.find("small").text("Cash limit must not be empty!");
-            } else if (parseInt(inputValue) < 0) {
+            } else if (parseFloat(inputValue) <= 0) {
                 error.show();
                 error.find("small").text("Cash limit must be positive!");
             } else if (inputValue === currentLimit.text().substring(1)) {
@@ -285,41 +303,42 @@ function installUpdateCashLimitPopover(anchor, currentLimit) {
                 refreshIcon.addClass("fa-spin");
                 submit.prop("disabled", true);
 
-                /**
-                 * @todo #169:60min Once the Wallet.updateCash(...) endpoint is available on backend,
-                 *  replace the frontend update limit cash simulating network call with a real one.
-                 */
-                setTimeout(() => {
-                    var success = Math.random() >= 0.5; //randomly simulates success or error
+                var owner = $("#owner").text();
+                var name = $("#name").text();
+                $.ajax({
+                    type: 'PUT',
+                    url: '/api/projects/' + owner + '/' + name + '/wallets/' + walletType,
+                    contentType: 'application/json',
+                    data: inputValue,
+                }).done(wallet => {
 
                     var isPopoverVisible = anchor.data("showing") || false;
                     if (isPopoverVisible) {
-                        //selectors must be used here, because the popover might be closed in the meantime
-                        //and on re-show, the content is recreated.
-                        content.find("#updateCashSubmit i").removeClass("fa-spin");
-                        content.find("#updateCashSubmit").prop("disabled", false);
-                        // show error network
-                        if (!success) {
-                            var error = content.find("#updateCashFormError");
-                            error.show();
-                            error.find("small").text("Something went wrong, please try again!");
-                            content.find("#updateCashInput").val(anchor.data("updatingValue"));
-                        }
+                        content.find("#updateCashInput").val(wallet.cash);
+                        var currentLimitLen = currentLimit.text().length - 1; // ignore $ sign
                         //reposition if new limit.text length is different than current.
                         //this way the popover it will always be relative to its anchor.
-                        var currentLimitLen = currentLimit.text().length - 1 // ignoring '$' sign.
                         if (currentLimitLen !== inputValue.length) {
                             anchor.popover('show');
                         }
                     }
-                    if (success) {
-                        //update the current limit element
-                        currentLimit.text("$" + inputValue);
-                        anchor.data("updating", IDLE);
-                    } else {
-                        anchor.data("updating", ERROR);
+                    onLimitUpdate(wallet);
+                    anchor.data("updating", IDLE);
+                }).fail(() => {
+                    var isPopoverVisible = anchor.data("showing") || false;
+                    if (isPopoverVisible) {
+                        var error = content.find("#updateCashFormError");
+                        error.show();
+                        error.find("small").text("Something went wrong, please try again!");
                     }
-                }, 3000);
+                    anchor.data("updating", ERROR);
+                }).always(() => {
+                    var isPopoverVisible = anchor.data("showing") || false;
+                    if (isPopoverVisible) {
+                        content.find("#updateCashSubmit i").removeClass("fa-spin");
+                        content.find("#updateCashSubmit").prop("disabled", false);
+                    }
+                });
             }
         });
     });

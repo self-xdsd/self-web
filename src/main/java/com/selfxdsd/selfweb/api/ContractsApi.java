@@ -28,6 +28,8 @@ import com.selfxdsd.selfweb.api.output.JsonContract;
 import com.selfxdsd.selfweb.api.output.JsonContracts;
 import com.selfxdsd.selfweb.api.output.JsonInvoice;
 import com.selfxdsd.selfweb.api.output.JsonTasks;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -38,6 +40,7 @@ import javax.json.Json;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
+import java.util.function.Function;
 
 /**
  * This controller offers HTTP endpoints regarding a Project's contracts.
@@ -50,11 +53,27 @@ import java.math.BigDecimal;
  *  This will list all contributors.
  * @todo #142:30min As soon as we have this logic implemented in the core,
  *  provide a proper implementation for methods updateContract(...) here.
- * @todo #149:30min Implement the 'Restore Contract' functionality for
- *  a Project Contract,as soon as we have it available in self-core.
+ * @todo #175:15min Once self-core 'Restore Contract' functionality for
+ *  a Project Contract is available, remove the placeholder `restoreContractApi`
+ *  and use the real api call. Also test constructor needs to be removed and
+ *  "restore contract" unit tests updated.
+ * @todo #176:15min Change the endpoint mapping for `markContractForRemoval()`
+ *  with `@PutMapping /projects/{owner}/{name}/contracts/{username}/mark`
+ *  and for `restoreContract()` with
+ *  `@DeleteMapping /projects/{owner}/{name}/contracts/{username}/mark`.
+ *  Also update frontend
+ *  `getAndAddContracts.js#markContractForRemoval(contract)` ajax call with type
+ *  with "PUT" (line 482).
  */
 @RestController
 public class ContractsApi extends BaseApiController {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(
+        ContractsApi.class
+    );
 
     /**
      * Authenticated user.
@@ -67,14 +86,39 @@ public class ContractsApi extends BaseApiController {
     private final Self self;
 
     /**
+     * Placeholder until Contract/Contracts API has a way to
+     * restore a Contract from removal.
+     */
+    private final Function<Contract, Contract> restoreContractApi;
+
+    /**
      * Ctor.
      * @param user Authenticated user.
      * @param self Self's core.
      */
     @Autowired
     public ContractsApi(final User user, final Self self) {
+        this(user, self, contract -> {
+            LOG.warn("Contract " + contract.contractId()
+                + " can't be restored from removal."
+                +" API method not available yet.");
+            return contract;
+        });
+    }
+
+    /**
+     * Ctor.
+     * @param user Authenticated user.
+     * @param self Self's core.
+     * @param restoreContractApi Placeholder until Contract/Contracts API
+     * has a way to restore a Contract from removal.
+     */
+    ContractsApi(final User user,
+                 final Self self,
+                 final Function<Contract, Contract> restoreContractApi) {
         this.user = user;
         this.self = self;
+        this.restoreContractApi = restoreContractApi;
     }
 
     /**
@@ -324,6 +368,53 @@ public class ContractsApi extends BaseApiController {
                 final Contract marked = contract.markForRemoval();
                 resp = ResponseEntity.ok(
                     new JsonContract(marked).toString()
+                );
+            }
+        }
+        return resp;
+    }
+
+    /**
+     * Restores a Contract marked for removal.
+     * @param owner Owner of the project (username or org name).
+     * @param name Simple name of the project.
+     * @param username Contributor's username.
+     * @param role Contributor's role.
+     * @return JsonResponse.
+     * @checkstyle ParameterNumber (10 lines)
+     */
+    @PutMapping(
+        value = "/projects/{owner}/{name}/contracts/{username}/restore",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> restoreContract(
+        @PathVariable final String owner,
+        @PathVariable final String name,
+        @PathVariable final String username,
+        @RequestParam("role") final String role
+    ) {
+        final ResponseEntity<String> resp;
+        final Project project = this.user.projects().getProjectById(
+            owner + "/" + name, this.user.provider().name()
+        );
+        if(project == null) {
+            resp = ResponseEntity.noContent().build();
+        } else {
+            final Contract contract = project.contracts().findById(
+                new Contract.Id(
+                    owner + "/" + name,
+                    username,
+                    project.provider(),
+                    role
+                )
+            );
+            if(contract == null || contract.markedForRemoval() == null) {
+                resp = ResponseEntity.noContent().build();
+            } else {
+                final Contract restored = this.restoreContractApi
+                    .apply(contract);
+                resp = ResponseEntity.ok(
+                    new JsonContract(restored).toString()
                 );
             }
         }
