@@ -22,8 +22,11 @@
  */
 package com.selfxdsd.selfweb.api.output;
 
+import com.selfxdsd.api.PaymentMethod;
+import com.selfxdsd.api.PaymentMethods;
 import com.selfxdsd.api.Wallet;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import javax.json.JsonObject;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -51,6 +54,10 @@ public class JsonWalletTestCase {
         Mockito.when(wallet.cash()).thenReturn(BigDecimal.valueOf(2000));
         Mockito.when(wallet.debt()).thenReturn(BigDecimal.valueOf(500));
         Mockito.when(wallet.available()).thenReturn(BigDecimal.valueOf(1500));
+        final PaymentMethods methods = Mockito.mock(PaymentMethods.class);
+        Mockito.when(methods.spliterator())
+            .thenReturn(new ArrayList<PaymentMethod>().spliterator());
+        Mockito.when(wallet.paymentMethods()).thenReturn(methods);
         
         final JsonObject jsonWallet = new JsonWallet(wallet);
         
@@ -74,7 +81,11 @@ public class JsonWalletTestCase {
         Mockito.when(wallet.cash()).thenReturn(BigDecimal.valueOf(2000));
         Mockito.when(wallet.debt()).thenReturn(BigDecimal.valueOf(500));
         Mockito.when(wallet.available()).thenReturn(BigDecimal.valueOf(1500));
-        
+        final PaymentMethods methods = Mockito.mock(PaymentMethods.class);
+        Mockito.when(methods.spliterator())
+            .thenReturn(new ArrayList<PaymentMethod>().spliterator());
+        Mockito.when(wallet.paymentMethods()).thenReturn(methods);
+
         final JsonObject jsonWallet = new JsonWallet(wallet);
         
         MatcherAssert.assertThat(
@@ -96,7 +107,11 @@ public class JsonWalletTestCase {
         Mockito.when(wallet.cash()).thenReturn(BigDecimal.valueOf(2000));
         Mockito.when(wallet.debt()).thenReturn(BigDecimal.valueOf(500));
         Mockito.when(wallet.available()).thenReturn(BigDecimal.valueOf(1500));
-        
+        final PaymentMethods methods = Mockito.mock(PaymentMethods.class);
+        Mockito.when(methods.spliterator())
+            .thenReturn(new ArrayList<PaymentMethod>().spliterator());
+        Mockito.when(wallet.paymentMethods()).thenReturn(methods);
+
         final JsonObject jsonWallet = new JsonWallet(wallet);
         
         MatcherAssert.assertThat(
@@ -119,7 +134,11 @@ public class JsonWalletTestCase {
         Mockito.when(wallet.cash()).thenReturn(BigDecimal.valueOf(2000));
         Mockito.when(wallet.debt()).thenReturn(BigDecimal.valueOf(500));
         Mockito.when(wallet.available()).thenReturn(BigDecimal.valueOf(1500));
-        
+        final PaymentMethods methods = Mockito.mock(PaymentMethods.class);
+        Mockito.when(methods.spliterator())
+            .thenReturn(new ArrayList<PaymentMethod>().spliterator());
+        Mockito.when(wallet.paymentMethods()).thenReturn(methods);
+
         final JsonObject jsonWallet = new JsonWallet(wallet);
         
         MatcherAssert.assertThat(
@@ -142,7 +161,11 @@ public class JsonWalletTestCase {
         Mockito.when(wallet.cash()).thenReturn(BigDecimal.valueOf(2000));
         Mockito.when(wallet.debt()).thenReturn(BigDecimal.valueOf(500));
         Mockito.when(wallet.available()).thenReturn(BigDecimal.valueOf(1500));
-        
+        final PaymentMethods methods = Mockito.mock(PaymentMethods.class);
+        Mockito.when(methods.spliterator())
+            .thenReturn(new ArrayList<PaymentMethod>().spliterator());
+        Mockito.when(wallet.paymentMethods()).thenReturn(methods);
+
         final JsonObject jsonWallet = new JsonWallet(wallet);
         
         MatcherAssert.assertThat(

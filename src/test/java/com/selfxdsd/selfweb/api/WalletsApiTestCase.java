@@ -34,6 +34,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import java.io.StringReader;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -80,6 +81,12 @@ public final class WalletsApiTestCase {
                 Mockito.when(answer.debt()).thenReturn(BigDecimal.ZERO);
                 Mockito.when(answer.available())
                     .thenReturn(BigDecimal.valueOf(1050));
+                final PaymentMethods methods = Mockito.mock(
+                    PaymentMethods.class
+                );
+                Mockito.when(methods.spliterator())
+                    .thenReturn(new ArrayList<PaymentMethod>().spliterator());
+                Mockito.when(answer.paymentMethods()).thenReturn(methods);
                 return answer;
             });
         final List<Wallet> walletsSrc = List.of(wallet);
@@ -101,6 +108,7 @@ public final class WalletsApiTestCase {
                 .add("cash", 10.5f)
                 .add("debt", 0)
                 .add("available", 10.5f)
+                .add("paymentMethods", Json.createArrayBuilder())
                 .build()
         ));
     }

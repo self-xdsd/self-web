@@ -37,7 +37,7 @@ public final class JsonWallet extends AbstractJsonObject {
 
     /**
      * Ctor.
-     * @param wallet Wallet to be converted to JSON..
+     * @param wallet Wallet to be converted to JSON.
      */
     public JsonWallet(final Wallet wallet) {
         super(
@@ -49,6 +49,10 @@ public final class JsonWallet extends AbstractJsonObject {
                 .add(
                     "available",
                     wallet.available().divide(BigDecimal.valueOf(100))
+                )
+                .add(
+                    "paymentMethods",
+                    new JsonPaymentMethods(wallet.paymentMethods())
                 ).build()
         );
     }

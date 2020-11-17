@@ -22,38 +22,34 @@
  */
 package com.selfxdsd.selfweb.api.output;
 
-import com.selfxdsd.api.PaymentMethod;
+import com.selfxdsd.api.PaymentMethods;
 
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import java.util.stream.StreamSupport;
 
 /**
- * PaymentMethod as JSON.
+ * PaymentMethods as JsonArray.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.4
  */
-public final class JsonPaymentMethod extends AbstractJsonObject {
+public final class JsonPaymentMethods extends AbstractJsonArray {
 
     /**
      * Ctor.
-     * @param paymentMethod PaymentMethod to be converted to JsonObject.
+     * @param paymentMethods PaymentMethods to represent as JsonArray.
      */
-    public JsonPaymentMethod(final PaymentMethod paymentMethod) {
+    public JsonPaymentMethods(final PaymentMethods paymentMethods) {
         super(
-            Json.createObjectBuilder()
-                .add(
-                    "self",
-                    Json.createObjectBuilder()
-                        .add("paymentMethodId", paymentMethod.identifier())
-                        .add("active", paymentMethod.active())
-                        .build()
-                )
-                .add(
-                    "stripe",
-                    paymentMethod.json()
-                )
-                .build()
+            StreamSupport
+                .stream(paymentMethods.spliterator(), false)
+                .map(JsonPaymentMethod::new)
+                .reduce(
+                    Json.createArrayBuilder(),
+                    JsonArrayBuilder::add,
+                    (comb, curr) -> comb
+                ).build()
         );
     }
-
 }
