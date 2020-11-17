@@ -129,12 +129,20 @@ function getProjectWallets() {
                         } else {
                             $("#activateStripeWallet").show();
                         }
+                        $("#activateStripeWalletButton").addClass("disabled");
                         if(wallet.paymentMethods.length == 0) {
                             $("#realPaymentMethods").hide();
                         } else {
                             $("#noRealPaymentMethods").hide();
+                            var activePaymentMethodFound = false;
                             $.each(wallet.paymentMethods, function(index, method) {
-                                var active = method.self.active ? "active" : "inactive";
+                                var active;
+                                if(method.self.active) {
+                                    activePaymentMethodFound = true;
+                                    active = "active";
+                                } else {
+                                    active = "inactive";
+                                }
                                 var issuer = method.stripe.card.brand;
                                 issuer = issuer.substr(0,1).toUpperCase() + issuer.substr(1);
                                 $('#realPaymentMethodsTable > tbody').append(
@@ -155,6 +163,9 @@ function getProjectWallets() {
                                 )
                             });
                             $("#realPaymentMethods").show();
+                            if(activePaymentMethodFound) {
+                                $("#activateStripeWalletButton").removeClass("disabled");
+                            }
                         }
                         installUpdateCashLimitPopover($("#stripeUpdateCashLimitAction"), $("#stripeCash"));
                     }
