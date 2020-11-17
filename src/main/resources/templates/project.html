@@ -823,8 +823,13 @@
                                                             "/wallets/stripe/paymentMethods",
                                                         data: JSON.stringify(paymentMethodInfo),
                                                         success: function (paymentMethod) {
-                                                            var active = paymentMethod.self.active ? "active" : "inactive";
-                                                            var issuer = paymentMethod.stripe.card.brand;
+                                                            var active;
+                                                            if(paymentMethod.self.active) {
+                                                                activePaymentMethodFound = true;
+                                                                active = "<input class='pmToggle' type='checkbox' checked data-toggle=\"toggle\">";
+                                                            } else {
+                                                                active = "<input class='pmToggle' type='checkbox' data-toggle='toggle'>";
+                                                            }                                                            var issuer = paymentMethod.stripe.card.brand;
                                                             issuer = issuer.substr(0,1).toUpperCase() + issuer.substr(1);
                                                             $('#realPaymentMethodsTable > tbody').append(
                                                                 "<tr>"
@@ -842,6 +847,11 @@
                                                                 + "</td>"
                                                                 + "</tr>"
                                                             )
+                                                            $('.pmToggle').bootstrapToggle({
+                                                                on: 'Active',
+                                                                off: 'Inactive',
+                                                                width: '45%'
+                                                            });
                                                             $("#noRealPaymentMethods").hide();
                                                             $("#realPaymentMethods").show();
                                                         },

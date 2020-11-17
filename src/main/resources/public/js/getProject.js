@@ -139,9 +139,9 @@ function getProjectWallets() {
                                 var active;
                                 if(method.self.active) {
                                     activePaymentMethodFound = true;
-                                    active = "active";
+                                    active = "<input class='pmToggle' type='checkbox' checked data-toggle=\"toggle\">";
                                 } else {
-                                    active = "inactive";
+                                    active = "<input class='pmToggle' type='checkbox' data-toggle='toggle'>";
                                 }
                                 var issuer = method.stripe.card.brand;
                                 issuer = issuer.substr(0,1).toUpperCase() + issuer.substr(1);
@@ -161,6 +161,11 @@ function getProjectWallets() {
                                   + "</td>"
                                   + "</tr>"
                                 )
+                            });
+                            $('.pmToggle').bootstrapToggle({
+                                on: 'Active',
+                                off: 'Inactive',
+                                width: '45%'
                             });
                             $("#realPaymentMethods").show();
                             if(activePaymentMethodFound) {
