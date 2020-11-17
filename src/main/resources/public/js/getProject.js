@@ -129,6 +129,33 @@ function getProjectWallets() {
                         } else {
                             $("#activateStripeWallet").show();
                         }
+                        if(wallet.paymentMethods.length == 0) {
+                            $("#realPaymentMethods").hide();
+                        } else {
+                            $("#noRealPaymentMethods").hide();
+                            $.each(wallet.paymentMethods, function(index, method) {
+                                var active = method.self.active ? "active" : "inactive";
+                                var issuer = method.stripe.card.brand;
+                                issuer = issuer.substr(0,1).toUpperCase() + issuer.substr(1);
+                                $('#realPaymentMethodsTable > tbody').append(
+                                    "<tr>"
+                                  + "<td>"
+                                  + issuer
+                                  + "</td>"
+                                  + "<td>"
+                                  + "****** " + method.stripe.card.last4
+                                  + "</td>"
+                                  + "<td>"
+                                  + method.stripe.card.exp_month + "/" + method.stripe.card.exp_year
+                                  + "</td>"
+                                  + "<td>"
+                                  + active
+                                  + "</td>"
+                                  + "</tr>"
+                                )
+                            });
+                            $("#realPaymentMethods").show();
+                        }
                         installUpdateCashLimitPopover($("#stripeUpdateCashLimitAction"), $("#stripeCash"));
                     }
                 });

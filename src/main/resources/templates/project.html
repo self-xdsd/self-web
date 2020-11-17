@@ -436,6 +436,38 @@
                                 We will spend up to the Limit that you specify.
                             </p>
                         </div>
+                        <div class="mt-2 card">
+                            <div class="card-header py-3">
+                                <h4 class="m-0 font-weight-bold card-title">
+                                    Payment Methods
+                                </h4>
+                            </div>
+                            <div class="card-body" id="registeredCardsTable">
+                                <div id="noRealPaymentMethods">
+                                    <p>
+                                        It looks like you haven't registered any payment methods yet.<br>
+                                        Add a Payment Method by pressing the button bellow.
+                                    </p>
+                                    <p>
+                                        Only <a href="https://stripe.com" target="_blank">Stripe</a> will store and handle your sensitive card information.
+                                    </p>
+                                </div>
+                                <div id="realPaymentMethods" style="display: none;">
+                                    <table id="realPaymentMethodsTable" class="table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Issuer</th>
+                                            <th scope="col">Ending</th>
+                                            <th scope="col">Expiration</th>
+                                            <th scope="col">Status</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                         <div class="mt-2">
                             <div class="col-lg-6" style="padding-left: 0">
                                 <form id="addStripePaymentMethodForm">
@@ -791,7 +823,27 @@
                                                             "/wallets/stripe/paymentMethods",
                                                         data: JSON.stringify(paymentMethodInfo),
                                                         success: function (paymentMethod) {
-                                                            console.log("SAVED PAYMENT METHOD: " + JSON.stringify(paymentMethod));
+                                                            var active = paymentMethod.self.active ? "active" : "inactive";
+                                                            var issuer = paymentMethod.stripe.card.brand;
+                                                            issuer = issuer.substr(0,1).toUpperCase() + issuer.substr(1);
+                                                            $('#realPaymentMethodsTable > tbody').append(
+                                                                "<tr>"
+                                                                + "<td>"
+                                                                + issuer
+                                                                + "</td>"
+                                                                + "<td>"
+                                                                + "****** " + paymentMethod.stripe.card.last4
+                                                                + "</td>"
+                                                                + "<td>"
+                                                                + paymentMethod.stripe.card.exp_month + "/" + paymentMethod.stripe.card.exp_year
+                                                                + "</td>"
+                                                                + "<td>"
+                                                                + active
+                                                                + "</td>"
+                                                                + "</tr>"
+                                                            )
+                                                            $("#noRealPaymentMethods").hide();
+                                                            $("#realPaymentMethods").show();
                                                         },
                                                         error: function(jqXHR, error, errorThrown) {
                                                             $("#addStripePaymentMethodButton").removeClass("disabled");
