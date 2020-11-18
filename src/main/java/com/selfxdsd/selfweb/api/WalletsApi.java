@@ -24,10 +24,8 @@ package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.exceptions.WalletAlreadyExistsException;
-import com.selfxdsd.selfweb.api.output.JsonPaymentMethod;
 import com.selfxdsd.selfweb.api.output.JsonWallet;
 import com.selfxdsd.selfweb.api.output.JsonWallets;
-import com.stripe.model.SetupIntent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +35,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.json.Json;
-import javax.json.JsonObject;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.validation.constraints.Positive;
-import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -196,110 +192,6 @@ public class WalletsApi extends BaseApiController {
                         new JsonWallet(wallet.updateCash(cash)).toString()
                     );
                 }
-            }
-        }
-        return response;
-    }
-
-    /**
-     * Create a SetupIntent for a new PaymentMethod of a Stripe Wallet.<br><br>
-     *
-     * This endpoint returns a Stripe clientSecret which is used together with
-     * the Stripe JS Library to display a widget, take the payment information
-     * and send it to Stripe.
-     *
-     * @param owner Owner of the project (login of user or org name).
-     * @param name Repo name.
-     * @see <a href='https://stripe.com/docs/payments/save-and-reuse'>docs</a>
-     * @return SetupIntent.
-     */
-    @PostMapping(
-        value = "/projects/{owner}/{name}/wallets/stripe/paymentMethods/setup",
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<String> createStripePaymentMethodSetupIntent(
-        @PathVariable final String owner,
-        @PathVariable final String name
-    ) {
-        ResponseEntity<String> response;
-        final Project found = this.user.projects().getProjectById(
-            owner + "/" + name, user.provider().name()
-        );
-        if(found == null) {
-            response = ResponseEntity.badRequest().build();
-        } else {
-            Wallet wallet = null;
-            for (final Wallet search : found.wallets()) {
-                if (search.type().equals(Wallet.Type.STRIPE)) {
-                    wallet = search;
-                    break;
-                }
-            }
-            if (wallet == null) {
-                response = ResponseEntity.badRequest()
-                    .body("Stripe Wallet not found.");
-            } else {
-                final SetupIntent intent = wallet.paymentMethodSetupIntent();
-                response = ResponseEntity.ok(
-                    Json.createObjectBuilder()
-                        .add("clientSecret", intent.getClientSecret())
-                        .build()
-                        .toString()
-                );
-            }
-        }
-        return response;
-    }
-
-    /**
-     * Save a PaymentMethod in a Stripe wallet. Before using this endpoint,
-     * you have to call /createStripePaymentMethodSetupIntent, send the card
-     * data to Stripe using StripeJS and the clientSecret, and receive the
-     * paymentMethodId.
-     * @param owner Owner of the project (login of user or org name).
-     * @param name Repo name.
-     * @param body PaymentMethod data in JSON.
-     * @return PaymentMethod.
-     */
-    @PostMapping(
-        value = "/projects/{owner}/{name}/wallets/stripe/paymentMethods",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<String> saveStripePaymentMethod(
-        @PathVariable final String owner,
-        @PathVariable final String name,
-        @RequestBody final String body
-    ) {
-        ResponseEntity<String> response;
-        final Project found = this.user.projects().getProjectById(
-            owner + "/" + name, user.provider().name()
-        );
-        if(found == null) {
-            response = ResponseEntity.badRequest().build();
-        } else {
-            Wallet wallet = null;
-            for (final Wallet search : found.wallets()) {
-                if (search.type().equals(Wallet.Type.STRIPE)) {
-                    wallet = search;
-                    break;
-                }
-            }
-            if (wallet == null) {
-                response = ResponseEntity.badRequest()
-                    .body("Stripe Wallet not found.");
-            } else {
-                final JsonObject jsonBody = Json.createReader(
-                    new StringReader(body)
-                ).readObject();
-                final PaymentMethod paymentMethod = wallet.paymentMethods()
-                    .register(
-                        wallet,
-                        jsonBody.getString("paymentMethodId")
-                    );
-                response = ResponseEntity.ok(
-                    new JsonPaymentMethod(paymentMethod).toString()
-                );
             }
         }
         return response;
