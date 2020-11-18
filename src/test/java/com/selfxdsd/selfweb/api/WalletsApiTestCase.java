@@ -53,7 +53,6 @@ public final class WalletsApiTestCase {
      */
     @Test
     public void cashLimitIsUpdated(){
-        final Self self = Mockito.mock(Self.class);
 
         final User user = Mockito.mock(User.class);
         final Provider provider = Mockito.mock(Provider.class);
@@ -62,7 +61,7 @@ public final class WalletsApiTestCase {
 
         final Projects projects = Mockito.mock(Projects.class);
         final Project project = Mockito.mock(Project.class);
-        Mockito.when(self.projects()).thenReturn(projects);
+        Mockito.when(user.projects()).thenReturn(projects);
         Mockito.when(projects.getProjectById(
             "john/test",
             Provider.Names.GITHUB
@@ -88,7 +87,7 @@ public final class WalletsApiTestCase {
         final List<Wallet> walletsSrc = List.of(wallet);
         Mockito.when(wallets.iterator()).thenReturn(walletsSrc.iterator());
 
-        final WalletsApi api = new WalletsApi(user, self);
+        final WalletsApi api = new WalletsApi(user);
 
         final ResponseEntity<String> resp = api
             .updateCash("john", "test", Wallet.Type.STRIPE, 10.504f);
@@ -115,9 +114,8 @@ public final class WalletsApiTestCase {
      */
     @Test
     public void cashLimitIgnoresFakeWallet(){
-        final Self self = Mockito.mock(Self.class);
 
-        final WalletsApi api = new WalletsApi(Mockito.mock(User.class), self);
+        final WalletsApi api = new WalletsApi(Mockito.mock(User.class));
 
         final ResponseEntity<String> resp = api
             .updateCash("john", "test", Wallet.Type.FAKE, 10.5f);
@@ -130,7 +128,6 @@ public final class WalletsApiTestCase {
      */
     @Test
     public void cashLimitReturnsErrorIfProjectNotFound(){
-        final Self self = Mockito.mock(Self.class);
 
         final User user = Mockito.mock(User.class);
         final Provider provider = Mockito.mock(Provider.class);
@@ -138,9 +135,9 @@ public final class WalletsApiTestCase {
         Mockito.when(user.provider()).thenReturn(provider);
 
         final Projects projects = Mockito.mock(Projects.class);
-        Mockito.when(self.projects()).thenReturn(projects);
+        Mockito.when(user.projects()).thenReturn(projects);
 
-        final WalletsApi api = new WalletsApi(user, self);
+        final WalletsApi api = new WalletsApi(user);
 
         final ResponseEntity<String> resp = api
             .updateCash("john", "test", Wallet.Type.STRIPE, 10.5f);
@@ -153,8 +150,6 @@ public final class WalletsApiTestCase {
      */
     @Test
     public void cashLimitReturnsErrorIfWalletNotFound(){
-        final Self self = Mockito.mock(Self.class);
-
         final User user = Mockito.mock(User.class);
         final Provider provider = Mockito.mock(Provider.class);
         Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
@@ -162,7 +157,7 @@ public final class WalletsApiTestCase {
 
         final Projects projects = Mockito.mock(Projects.class);
         final Project project = Mockito.mock(Project.class);
-        Mockito.when(self.projects()).thenReturn(projects);
+        Mockito.when(user.projects()).thenReturn(projects);
         Mockito.when(projects.getProjectById(
             "john/test",
             Provider.Names.GITHUB
@@ -173,7 +168,7 @@ public final class WalletsApiTestCase {
             .thenReturn(List.<Wallet>of().iterator());
         Mockito.when(project.wallets()).thenReturn(wallets);
 
-        final WalletsApi api = new WalletsApi(user, self);
+        final WalletsApi api = new WalletsApi(user);
 
         final ResponseEntity<String> resp = api
             .updateCash("john", "test", Wallet.Type.STRIPE, 10.5f);
@@ -187,7 +182,6 @@ public final class WalletsApiTestCase {
      */
     @Test
     public void activateWalletWorks(){
-        final Self self = Mockito.mock(Self.class);
 
         final User user = Mockito.mock(User.class);
         final Provider provider = Mockito.mock(Provider.class);
@@ -231,7 +225,7 @@ public final class WalletsApiTestCase {
             return activated;
         });
 
-        final WalletsApi api = new WalletsApi(user, self);
+        final WalletsApi api = new WalletsApi(user);
 
         final ResponseEntity<String> resp =
             api.activate("john", "test", Wallet.Type.STRIPE);
@@ -273,7 +267,7 @@ public final class WalletsApiTestCase {
         final Projects projects = Mockito.mock(Projects.class);
         Mockito.when(user.projects()).thenReturn(projects);
 
-        final WalletsApi api = new WalletsApi(user, self);
+        final WalletsApi api = new WalletsApi(user);
 
         final ResponseEntity<String> resp = api
             .activate("john", "test", Wallet.Type.STRIPE);
@@ -306,7 +300,7 @@ public final class WalletsApiTestCase {
             .thenReturn(List.<Wallet>of().iterator());
         Mockito.when(project.wallets()).thenReturn(wallets);
 
-        final WalletsApi api = new WalletsApi(user, self);
+        final WalletsApi api = new WalletsApi(user);
 
         final ResponseEntity<String> resp = api
             .activate("john", "test", Wallet.Type.STRIPE);
@@ -346,7 +340,7 @@ public final class WalletsApiTestCase {
             .thenReturn(walletsSrc.iterator());
         Mockito.when(project.wallets()).thenReturn(wallets);
 
-        final WalletsApi api = new WalletsApi(user, self);
+        final WalletsApi api = new WalletsApi(user);
 
         final ResponseEntity<String> resp = api
             .activate("john", "test", Wallet.Type.STRIPE);
