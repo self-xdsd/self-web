@@ -25,6 +25,7 @@ package com.selfxdsd.selfweb.api.output;
 import com.selfxdsd.api.PaymentMethod;
 
 import javax.json.Json;
+import javax.json.JsonObject;
 
 /**
  * PaymentMethod as JSON.
@@ -35,25 +36,50 @@ import javax.json.Json;
 public final class JsonPaymentMethod extends AbstractJsonObject {
 
     /**
-     * Ctor.
+     * Ctor. Full JSON is included by default.
      * @param paymentMethod PaymentMethod to be converted to JsonObject.
      */
     public JsonPaymentMethod(final PaymentMethod paymentMethod) {
-        super(
-            Json.createObjectBuilder()
-                .add(
-                    "self",
-                    Json.createObjectBuilder()
-                        .add("paymentMethodId", paymentMethod.identifier())
-                        .add("active", paymentMethod.active())
-                        .build()
-                )
-                .add(
-                    "stripe",
-                    paymentMethod.json()
-                )
-                .build()
-        );
+        this(paymentMethod, Boolean.TRUE);
+    }
+
+    /**
+     * Ctor.
+     * @param paymentMethod PaymentMethod to be converted to JsonObject.
+     * @param fullJson Include the full JSON or not?
+     */
+    public JsonPaymentMethod(
+        final PaymentMethod paymentMethod,
+        final boolean fullJson
+    ) {
+        super(() -> {
+            final JsonObject json;
+            if(fullJson) {
+                json = Json.createObjectBuilder()
+                    .add(
+                        "self",
+                        Json.createObjectBuilder()
+                            .add("paymentMethodId", paymentMethod.identifier())
+                            .add("active", paymentMethod.active())
+                            .build()
+                    )
+                    .add(
+                        "stripe",
+                        paymentMethod.json()
+                    )
+                    .build();
+            } else {
+                json = Json.createObjectBuilder()
+                    .add(
+                        "self",
+                        Json.createObjectBuilder()
+                            .add("paymentMethodId", paymentMethod.identifier())
+                            .add("active", paymentMethod.active())
+                            .build()
+                    ).build();
+            }
+            return json;
+        });
     }
 
 }

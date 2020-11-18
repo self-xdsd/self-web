@@ -590,6 +590,7 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.1.1/jspdf.umd.min.js"></script>
 </body>
 <script src="/js/confirmDialog.js"></script>
+<script src="/js/paymentMethods.js"></script>
 <script src="/js/getProject.js"></script>
 <script src="/js/autocomplete.js/jquery.autocomplete.min.js"></script>
 <script src="/js/usersService.js"></script>
@@ -861,17 +862,22 @@
                                                                 off: 'Inactive',
                                                                 width: '45%'
                                                             });
-                                                            $('input.pmToggle').on('change', function() {
-                                                                if($(this).prop('checked')) {
-                                                                    $('input.pmToggle').not(this).prop('checked', false);
-                                                                    let parent = $('input.pmToggle').not(this).parent();
-                                                                    parent.removeClass('btn-primary');
-                                                                    parent.addClass('btn-default');
-                                                                    parent.addClass('off');
-                                                                } else { //we don't allow manual inactivation of a PaymentMethod
-                                                                    $(this).bootstrapToggle('on');
+                                                            $($('input.pmToggle')[$('input.pmToggle').length - 1]).on(
+                                                                'change',
+                                                                function() {
+                                                                    if($(this).prop('checked')) {
+                                                                        $('input.pmToggle').not(this).prop('checked', false);
+                                                                        let parent = $('input.pmToggle').not(this).parent();
+                                                                        parent.removeClass('btn-primary');
+                                                                        parent.addClass('btn-default');
+                                                                        parent.addClass('off');
+                                                                        activatePaymentMethod(owner, name, paymentMethod);
+                                                                        $("#activateStripeWalletButton").removeClass("disabled");
+                                                                    } else { //we don't allow manual inactivation of a PaymentMethod
+                                                                        $(this).bootstrapToggle('on');
+                                                                    }
                                                                 }
-                                                            });
+                                                            );
                                                             $("#noRealPaymentMethods").hide();
                                                             $("#realPaymentMethods").show();
                                                         },

@@ -233,10 +233,12 @@ public class PaymentMethodsApi extends BaseApiController {
                 } else {
                     final JsonObject json;
                     if(paymentMethod.active()) {
-                        json = new JsonPaymentMethod(paymentMethod);
+                        json = new JsonPaymentMethod(
+                            paymentMethod, Boolean.FALSE
+                        );
                     } else {
                         final PaymentMethod active = paymentMethod.activate();
-                        json = new JsonPaymentMethod(active);
+                        json = new JsonPaymentMethod(active, Boolean.FALSE);
                     }
                     response = ResponseEntity.ok(json.toString());
                 }
