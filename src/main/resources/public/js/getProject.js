@@ -167,6 +167,17 @@ function getProjectWallets() {
                                 off: 'Inactive',
                                 width: '45%'
                             });
+                            $('input.pmToggle').on('change', function() {
+                                if($(this).prop('checked')) {
+                                    $('input.pmToggle').not(this).prop('checked', false);
+                                    let parent = $('input.pmToggle').not(this).parent();
+                                    parent.removeClass('btn-primary');
+                                    parent.addClass('btn-default');
+                                    parent.addClass('off');
+                                } else { //we don't allow manual inactivation of a PaymentMethod
+                                    $(this).bootstrapToggle('on');
+                                }
+                            });
                             $("#realPaymentMethods").show();
                             if(activePaymentMethodFound) {
                                 $("#activateStripeWalletButton").removeClass("disabled");
