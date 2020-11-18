@@ -134,6 +134,7 @@ function getProjectWallets() {
                             $("#realPaymentMethods").hide();
                         } else {
                             $("#noRealPaymentMethods").hide();
+                            $('#realPaymentMethodsTable > tbody').html('');
                             var activePaymentMethodFound = false;
                             $.each(wallet.paymentMethods, function(index, method) {
                                 var active;
