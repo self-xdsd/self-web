@@ -35,17 +35,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import java.io.StringReader;
 
 /**
- * API for Payment methods of a Wallet.
+ * API for Payment methods of a Wallet.<br><br>
+ *
+ * The methods here are only for Stripe wallets at the moment,
+ * because those are the only real wallets which actually have
+ * payment methods.
+ *
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.4
@@ -174,6 +176,70 @@ public class PaymentMethodsApi extends BaseApiController {
                 response = ResponseEntity.ok(
                     new JsonPaymentMethod(paymentMethod).toString()
                 );
+            }
+        }
+        return response;
+    }
+
+    /**
+     * This will activate the specified Stripe PaymentMethod and will
+     * deactivate all the others (there can be only one active PaymentMethod).
+     * @param owner Owner of the project (login of user or org name).
+     * @param name Repo name.
+     * @param paymentMethodId Id of the PaymentMethod to be activated.
+     * @return Activated PaymentMethod in JSON.
+     * @checkstyle ExecutableStatementCount (100 lines)
+     */
+    @PutMapping(
+        value = "/projects/{owner}/{name}/wallets/stripe/paymentMethods/"
+            + "{paymentMethodId}/activate",
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> activateStripePaymentMethod(
+        @PathVariable final String owner,
+        @PathVariable final String name,
+        @PathVariable final String paymentMethodId
+    ) {
+        ResponseEntity<String> response;
+        final Project found = this.user.projects().getProjectById(
+            owner + "/" + name, user.provider().name()
+        );
+        if(found == null) {
+            response = ResponseEntity.badRequest().build();
+        } else {
+            Wallet wallet = null;
+            for (final Wallet search : found.wallets()) {
+                if (search.type().equals(Wallet.Type.STRIPE)) {
+                    wallet = search;
+                    break;
+                }
+            }
+            if (wallet == null) {
+                response = ResponseEntity.badRequest()
+                    .body("Stripe Wallet not found.");
+            } else {
+                PaymentMethod paymentMethod = null;
+                for (final PaymentMethod method : wallet.paymentMethods()) {
+                    final String methodId = method.identifier();
+                    if (methodId.equalsIgnoreCase(paymentMethodId)) {
+                        paymentMethod = method;
+                        break;
+                    }
+                }
+                if (paymentMethod == null) {
+                    response = ResponseEntity.badRequest()
+                        .body("Payment Method not found.");
+                } else {
+                    final JsonObject json;
+                    if(paymentMethod.active()) {
+                        json = new JsonPaymentMethod(paymentMethod);
+                    } else {
+                        final PaymentMethod active = paymentMethod.activate();
+                        json = new JsonPaymentMethod(active);
+                    }
+                    response = ResponseEntity.ok(json.toString());
+                }
             }
         }
         return response;
