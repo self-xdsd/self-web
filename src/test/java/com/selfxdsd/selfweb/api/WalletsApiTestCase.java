@@ -81,6 +81,12 @@ public final class WalletsApiTestCase {
                 Mockito.when(answer.active()).thenReturn(false);
                 Mockito.when(answer.project()).thenReturn(project);
                 Mockito.when(answer.debt()).thenReturn(BigDecimal.ZERO);
+                final PaymentMethods methods = Mockito.mock(
+                    PaymentMethods.class
+                );
+                Mockito.when(methods.spliterator())
+                    .thenReturn(new ArrayList<PaymentMethod>().spliterator());
+                Mockito.when(answer.paymentMethods()).thenReturn(methods);
                 Mockito.when(answer.available()).thenReturn(cash);
                 return answer;
             });
@@ -105,6 +111,7 @@ public final class WalletsApiTestCase {
                 .add("debt", 0)
                 .add("available", BigDecimal.valueOf(10.5)
                     .setScale(2, RoundingMode.HALF_UP))
+                .add("paymentMethods", Json.createArrayBuilder())
                 .build()
         ));
     }
@@ -195,12 +202,19 @@ public final class WalletsApiTestCase {
             "john/test",
             Provider.Names.GITHUB
         )).thenReturn(project);
-
+        final PaymentMethods methods = Mockito.mock(
+            PaymentMethods.class
+        );
+        Mockito.when(methods.spliterator()).thenReturn(
+            new ArrayList<PaymentMethod>().spliterator()
+        );
         final Wallet fake = Mockito.mock(Wallet.class);
         Mockito.when(fake.type()).thenReturn(Wallet.Type.FAKE);
         Mockito.when(fake.cash()).thenReturn(BigDecimal.TEN);
         Mockito.when(fake.available()).thenReturn(BigDecimal.TEN);
         Mockito.when(fake.debt()).thenReturn(BigDecimal.ZERO);
+        Mockito.when(fake.paymentMethods()).thenReturn(methods);
+
         final Wallet stripe = Mockito.mock(Wallet.class);
         Mockito.when(stripe.type()).thenReturn(Wallet.Type.STRIPE);
         Mockito.when(stripe.cash()).thenReturn(BigDecimal.TEN);
@@ -221,6 +235,9 @@ public final class WalletsApiTestCase {
             Mockito.when(activated.available()).thenReturn(BigDecimal.TEN);
             Mockito.when(activated.debt()).thenReturn(BigDecimal.ZERO);
             Mockito.when(activated.active()).thenReturn(true);
+            Mockito.when(methods.spliterator())
+                .thenReturn(new ArrayList<PaymentMethod>().spliterator());
+            Mockito.when(activated.paymentMethods()).thenReturn(methods);
             walletsSrc.set(1, activated);
             return activated;
         });

@@ -22,12 +22,10 @@
  */
 package com.selfxdsd.selfweb.api.output;
 
-import com.selfxdsd.api.Project;
-import com.selfxdsd.api.ProjectManager;
-import com.selfxdsd.api.Provider;
-import com.selfxdsd.api.User;
-import com.selfxdsd.api.Wallet;
+import com.selfxdsd.api.*;
+
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import javax.json.Json;
 
 import javax.json.JsonObject;
@@ -85,7 +83,11 @@ public final class JsonProjectTestCase {
         Mockito.when(wallet.cash()).thenReturn(BigDecimal.valueOf(1000));
         Mockito.when(wallet.debt()).thenReturn(BigDecimal.valueOf(200));
         Mockito.when(wallet.available()).thenReturn(BigDecimal.valueOf(800));
-        
+        final PaymentMethods methods = Mockito.mock(PaymentMethods.class);
+        Mockito.when(methods.spliterator())
+            .thenReturn(new ArrayList<PaymentMethod>().spliterator());
+        Mockito.when(wallet.paymentMethods()).thenReturn(methods);
+
         Mockito.when(project.wallet()).thenReturn(wallet);       
         
         final JsonObject jsonProject = new JsonProject(project);
@@ -133,7 +135,11 @@ public final class JsonProjectTestCase {
         Mockito.when(wallet.cash()).thenReturn(BigDecimal.valueOf(1000));
         Mockito.when(wallet.debt()).thenReturn(BigDecimal.valueOf(200));
         Mockito.when(wallet.available()).thenReturn(BigDecimal.valueOf(800));
-        
+        final PaymentMethods methods = Mockito.mock(PaymentMethods.class);
+        Mockito.when(methods.spliterator())
+            .thenReturn(new ArrayList<PaymentMethod>().spliterator());
+        Mockito.when(wallet.paymentMethods()).thenReturn(methods);
+
         Mockito.when(project.wallet()).thenReturn(wallet);       
         
         final JsonObject jsonProject = new JsonProject(project);
@@ -182,7 +188,11 @@ public final class JsonProjectTestCase {
         Mockito.when(wallet.cash()).thenReturn(BigDecimal.valueOf(1000));
         Mockito.when(wallet.debt()).thenReturn(BigDecimal.valueOf(200));
         Mockito.when(wallet.available()).thenReturn(BigDecimal.valueOf(800));
-        
+        final PaymentMethods methods = Mockito.mock(PaymentMethods.class);
+        Mockito.when(methods.spliterator())
+            .thenReturn(new ArrayList<PaymentMethod>().spliterator());
+        Mockito.when(wallet.paymentMethods()).thenReturn(methods);
+
         Mockito.when(project.wallet()).thenReturn(wallet);       
         
         final JsonObject jsonProject = new JsonProject(project);
@@ -232,7 +242,11 @@ public final class JsonProjectTestCase {
         Mockito.when(wallet.cash()).thenReturn(BigDecimal.valueOf(1000));
         Mockito.when(wallet.debt()).thenReturn(BigDecimal.valueOf(200));
         Mockito.when(wallet.available()).thenReturn(BigDecimal.valueOf(800));
-        
+        final PaymentMethods methods = Mockito.mock(PaymentMethods.class);
+        Mockito.when(methods.spliterator())
+            .thenReturn(new ArrayList<PaymentMethod>().spliterator());
+        Mockito.when(wallet.paymentMethods()).thenReturn(methods);
+
         Mockito.when(project.wallet()).thenReturn(wallet);       
         
         final JsonObject jsonProject = new JsonProject(project);
@@ -294,7 +308,11 @@ public final class JsonProjectTestCase {
         Mockito.when(wallet.cash()).thenReturn(BigDecimal.valueOf(1000));
         Mockito.when(wallet.debt()).thenReturn(BigDecimal.valueOf(200));
         Mockito.when(wallet.available()).thenReturn(BigDecimal.valueOf(800));
-        
+        final PaymentMethods methods = Mockito.mock(PaymentMethods.class);
+        Mockito.when(methods.spliterator())
+            .thenReturn(new ArrayList<PaymentMethod>().spliterator());
+        Mockito.when(wallet.paymentMethods()).thenReturn(methods);
+
         Mockito.when(project.wallet()).thenReturn(wallet);       
         
         final JsonObject jsonProject = new JsonProject(project);
@@ -309,7 +327,7 @@ public final class JsonProjectTestCase {
                 .add(
                     "available",
                     wallet.available().divide(BigDecimal.valueOf(100))
-                ).build())
+                ).add("paymentMethods", Json.createArrayBuilder()).build())
         );       
     }
    

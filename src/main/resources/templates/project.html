@@ -389,7 +389,7 @@
                         Real Wallet
                         <span id="stripeWalletBadge" class="badge"></span>
                         <span id="activateStripeWallet" class="badge" style="display: none;">
-                            <button type="button" class="btn btn-primary btn-sm" id="activateStripeWalletButton">Activate</button>
+                            <button type="button" class="btn btn-primary btn-sm disabled" id="activateStripeWalletButton">Activate</button>
                             <span id="loadingActivateStripeWalletButton" class="text-center" style="display: none;">
                                 <img height="40" width="40" src="/images/loading.svg">
                             </span>
@@ -432,9 +432,88 @@
                         </div>
                         <div class="mt-2">
                             <p>
-                                This is your Stripe wallet. As soon as you activate it, we will use it to make payments to your project's contributors.<br>
+                                This is your Stripe wallet. When it is active, we will use it to make payments to your project's contributors.<br>
                                 We will spend up to the Limit that you specify.
                             </p>
+                        </div>
+                        <div class="mt-2 card">
+                            <div class="card-header py-3">
+                                <h4 class="m-0 font-weight-bold card-title">
+                                    Payment Methods
+                                </h4>
+                            </div>
+                            <div class="card-body" id="registeredCardsTable">
+                                <div id="noRealPaymentMethods">
+                                    <p>
+                                        It looks like you haven't registered any payment methods yet.<br>
+                                        Add a Payment Method by pressing the button bellow.
+                                    </p>
+                                    <p>
+                                        Only <a href="https://stripe.com" target="_blank">Stripe</a> will store and handle your sensitive card information.
+                                    </p>
+                                </div>
+                                <div id="realPaymentMethods" style="display: none;">
+                                    <table id="realPaymentMethodsTable" class="table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Issuer</th>
+                                            <th scope="col">Ending</th>
+                                            <th scope="col">Expiration</th>
+                                            <th scope="col">Status</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <div class="col-lg-6" style="padding-left: 0">
+                                <form id="addStripePaymentMethodForm">
+                                    <div class="form-group">
+                                        <button id="addStripePaymentMethodButton" type="submit" class="btn btn-primary">
+                                            Add Payment Method
+                                        </button>
+                                        <span id="loadingStripePaymentForm" class="text-center" style="display: none;">
+                                        <img height="40" width="40" src="/images/loading.svg">
+                                    </span>
+                                        <div class="invalid-feedback" id="stripePaymentMethodFormError">
+                                            <small>
+                                                Something went wrong. Please refresh the page and try again.<br>
+                                                If the error persists, please open an Issue <a href="https://github.com/self-xdsd/self-web/issues" target="_blank">here</a>.
+                                            </small>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="card mt2" id="payment-method-element-card" style="display: none;">
+                                    <div class="card-header py-3">
+                                        <h4 class="m-0 font-weight-bold card-title">
+                                            Add New Card
+                                        </h4>
+                                    </div>
+                                    <div class="card-body" id="payment-method-element">
+                                    </div>
+                                    <div id="addNewCardButtons" class="ml-3 form-group">
+                                        <button type="button" id="addNewCardButton" class="btn btn-primary bg" aria-describedby="addCardInfo">Add</button>
+                                        <button type="button" id="cancelNewCardButton" class="btn btn-secondary bg">Cancel</button>
+                                        <span id="loadingAddNewCard" class="text-center" style="display: none;">
+                                            <img src="/images/loading.svg" width="40" height="40">
+                                        </span>
+                                        <div class="invalid-feedback" id="addNewCardError" style="display:none">
+                                            <small id="addNewCardErrorMessage">
+                                            </small>
+                                        </div>
+                                        <small id="addCardInfo" class="form-text text-muted">
+                                            <p>Your card information will securely be stored and handled by <a href="https://stripe.com/" target="_blank">Stripe</a>.<br></p>
+                                            <p>
+                                                Once you add and activate this card (and the wallet), Self XDSD<br> will use it to make payments
+                                                on your behalf, with respect to the <br>limit defined above.
+                                            </p>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div id="noRealWallet" style="display: none;">
@@ -683,6 +762,168 @@
                     );
                 }
             );
+
+            $("#addStripePaymentMethodForm").submit(
+                function(e) {
+                    e.preventDefault();
+                    $("#addStripePaymentMethodButton").addClass("disabled");
+                    $("#loadingStripePaymentForm").show();
+                    var owner =$("#owner").text();
+                    var name =$("#name").text();
+                    var form = $(this);
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: "/api/projects/" + owner + "/" + name +
+                                "/wallets/stripe/paymentMethods/setup",
+                            data: form.serialize(),
+                            success: function (setupIntent) {
+                                $("#addStripePaymentMethodButton").removeClass("disabled");
+                                $("#loadingStripePaymentForm").hide();
+                                var stripe = Stripe('pk_test_51HFJACFQ8qkNTW7CcB9UoOCrCPBcipFuU0UnsuuaOT4zCxB3217kBgWCIN0cRnJ7ETJazRxMILYHyV0fUBqd5Kca00ClMmHcO0');
+
+                                var elements = stripe.elements();
+                                var cardElement = elements.create('card');
+                                cardElement.mount('#payment-method-element');
+                                $("#addStripePaymentMethodButton").hide();
+                                $("#payment-method-element-card").show();
+
+
+                                $("#addNewCardButton").on(
+                                    "click",
+                                    function(event) {
+                                        event.preventDefault();
+                                        $("#addNewCardButton").addClass("disabled");
+                                        $("#cancelNewCardButton").addClass("disabled");
+                                        $("#loadingAddNewCard").show();
+
+                                        stripe.confirmCardSetup(
+                                            setupIntent.clientSecret,
+                                            {
+                                                payment_method: {
+                                                    card: cardElement,
+                                                    billing_details: {},
+                                                },
+                                            }
+                                        ).then(function(result) {
+                                            console.log("STRIPE RESULT: " + JSON.stringify(result));
+                                            if(result.error) {
+                                                var message;
+                                                if(result.error.message) {
+                                                    message = result.error.message;
+                                                } else {
+                                                    message = "Something went wrong. Please refresh the page and try again.";
+                                                }
+                                                $("#addNewCardErrorMessage").html(message);
+                                                $("#addNewCardError").show();
+                                            } else {
+                                                $("#addNewCardErrorMessage").html("");
+                                                $("#addNewCardError").hide();
+
+                                                console.log('Send paymentmethodid to server...');
+                                                var paymentMethodInfo = {
+                                                    paymentMethodId: result.setupIntent.payment_method
+                                                }
+                                                $.ajax(
+                                                    {
+                                                        type: "POST",
+                                                        contentType: "application/json",
+                                                        url: "/api/projects/" + owner + "/" + name +
+                                                            "/wallets/stripe/paymentMethods",
+                                                        data: JSON.stringify(paymentMethodInfo),
+                                                        success: function (paymentMethod) {
+                                                            var active;
+                                                            if(paymentMethod.self.active) {
+                                                                activePaymentMethodFound = true;
+                                                                active = "<input class='pmToggle' type='checkbox' checked data-toggle=\"toggle\">";
+                                                            } else {
+                                                                active = "<input class='pmToggle' type='checkbox' data-toggle='toggle'>";
+                                                            }                                                            var issuer = paymentMethod.stripe.card.brand;
+                                                            issuer = issuer.substr(0,1).toUpperCase() + issuer.substr(1);
+                                                            $('#realPaymentMethodsTable > tbody').append(
+                                                                "<tr>"
+                                                                + "<td>"
+                                                                + issuer
+                                                                + "</td>"
+                                                                + "<td>"
+                                                                + "****** " + paymentMethod.stripe.card.last4
+                                                                + "</td>"
+                                                                + "<td>"
+                                                                + paymentMethod.stripe.card.exp_month + "/" + paymentMethod.stripe.card.exp_year
+                                                                + "</td>"
+                                                                + "<td>"
+                                                                + active
+                                                                + "</td>"
+                                                                + "</tr>"
+                                                            )
+                                                            $('.pmToggle').bootstrapToggle({
+                                                                on: 'Active',
+                                                                off: 'Inactive',
+                                                                width: '45%'
+                                                            });
+                                                            $("#noRealPaymentMethods").hide();
+                                                            $("#realPaymentMethods").show();
+                                                        },
+                                                        error: function(jqXHR, error, errorThrown) {
+                                                            $("#addStripePaymentMethodButton").removeClass("disabled");
+                                                            $("#loadingStripePaymentForm").hide();
+                                                            if(jqXHR.status && jqXHR.status == 400){
+                                                                console.error("Bad Request: " + jqXHR.responseText);
+                                                                $("#stripePaymentMethodFormError").show();
+                                                            } else {
+                                                                console.log("Server error status: " + jqXHR.status);
+                                                                console.log("Server error: " + jqXHR.responseText);
+                                                                alert(
+                                                                    "Something went wrong (" + jqXHR.status + ")." +
+                                                                    "Please, try again later."
+                                                                );
+                                                            }
+                                                        }
+                                                    }
+                                                );
+
+
+                                                $("#cancelNewCardButton").trigger("click");
+                                            }
+                                            $("#addNewCardButton").removeClass("disabled");
+                                            $("#cancelNewCardButton").removeClass("disabled");
+                                            $("#loadingAddNewCard").hide();
+                                        });
+                                    }
+                                )
+
+                            },
+                            error: function(jqXHR, error, errorThrown) {
+                                $("#addStripePaymentMethodButton").removeClass("disabled");
+                                $("#loadingStripePaymentForm").hide();
+                                if(jqXHR.status && jqXHR.status == 400){
+                                    console.error("Bad Request: " + jqXHR.responseText);
+                                    $("#stripePaymentMethodFormError").show();
+                                } else {
+                                    console.log("Server error status: " + jqXHR.status);
+                                    console.log("Server error: " + jqXHR.responseText);
+                                    alert(
+                                        "Something went wrong (" + jqXHR.status + ")." +
+                                        "Please, try again later."
+                                    );
+                                }
+                            }
+                        }
+                    );
+                }
+            );
+
+            $("#cancelNewCardButton").on(
+                "click",
+                function(event) {
+                    event.preventDefault();
+                    $("#payment-method-element").html('');
+                    $("#addNewCardErrorMessage").html("");
+                    $("#addNewCardError").hide();
+                    $("#addStripePaymentMethodButton").show();
+                    $("#payment-method-element-card").hide();
+                }
+            )
 
             $("#markdownBadge").on(
                 "click",

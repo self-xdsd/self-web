@@ -389,6 +389,10 @@ public final class ProjectsApiTestCase {
         Mockito.when(wallet.cash()).thenReturn(BigDecimal.valueOf(1200));
         Mockito.when(wallet.debt()).thenReturn(BigDecimal.valueOf(200));
         Mockito.when(wallet.type()).thenReturn("fake");
+        final PaymentMethods methods = Mockito.mock(PaymentMethods.class);
+        Mockito.when(methods.spliterator())
+            .thenReturn(new ArrayList<PaymentMethod>().spliterator());
+        Mockito.when(wallet.paymentMethods()).thenReturn(methods);
         Mockito.when(project.wallet()).thenReturn(wallet);
 
         return project;

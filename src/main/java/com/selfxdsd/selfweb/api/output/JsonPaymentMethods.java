@@ -22,37 +22,33 @@
  */
 package com.selfxdsd.selfweb.api.output;
 
-import com.selfxdsd.api.Wallet;
+import com.selfxdsd.api.PaymentMethods;
 
 import javax.json.Json;
-import java.math.BigDecimal;
+import javax.json.JsonArrayBuilder;
+import java.util.stream.StreamSupport;
 
 /**
- * Wallet in JSON.
+ * PaymentMethods as JsonArray.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.1
+ * @since 0.0.4
  */
-public final class JsonWallet extends AbstractJsonObject {
+public final class JsonPaymentMethods extends AbstractJsonArray {
 
     /**
      * Ctor.
-     * @param wallet Wallet to be converted to JSON.
+     * @param paymentMethods PaymentMethods to represent as JsonArray.
      */
-    public JsonWallet(final Wallet wallet) {
+    public JsonPaymentMethods(final PaymentMethods paymentMethods) {
         super(
-            Json.createObjectBuilder()
-                .add("type", wallet.type())
-                .add("active", wallet.active())
-                .add("cash", wallet.cash().divide(BigDecimal.valueOf(100)))
-                .add("debt", wallet.debt().divide(BigDecimal.valueOf(100)))
-                .add(
-                    "available",
-                    wallet.available().divide(BigDecimal.valueOf(100))
-                )
-                .add(
-                    "paymentMethods",
-                    new JsonPaymentMethods(wallet.paymentMethods())
+            StreamSupport
+                .stream(paymentMethods.spliterator(), false)
+                .map(JsonPaymentMethod::new)
+                .reduce(
+                    Json.createArrayBuilder(),
+                    JsonArrayBuilder::add,
+                    (comb, curr) -> comb
                 ).build()
         );
     }

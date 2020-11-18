@@ -22,38 +22,38 @@
  */
 package com.selfxdsd.selfweb.api.output;
 
-import com.selfxdsd.api.Wallet;
+import com.selfxdsd.api.PaymentMethod;
 
 import javax.json.Json;
-import java.math.BigDecimal;
 
 /**
- * Wallet in JSON.
+ * PaymentMethod as JSON.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.1
+ * @since 0.0.4
  */
-public final class JsonWallet extends AbstractJsonObject {
+public final class JsonPaymentMethod extends AbstractJsonObject {
 
     /**
      * Ctor.
-     * @param wallet Wallet to be converted to JSON.
+     * @param paymentMethod PaymentMethod to be converted to JsonObject.
      */
-    public JsonWallet(final Wallet wallet) {
+    public JsonPaymentMethod(final PaymentMethod paymentMethod) {
         super(
             Json.createObjectBuilder()
-                .add("type", wallet.type())
-                .add("active", wallet.active())
-                .add("cash", wallet.cash().divide(BigDecimal.valueOf(100)))
-                .add("debt", wallet.debt().divide(BigDecimal.valueOf(100)))
                 .add(
-                    "available",
-                    wallet.available().divide(BigDecimal.valueOf(100))
+                    "self",
+                    Json.createObjectBuilder()
+                        .add("paymentMethodId", paymentMethod.identifier())
+                        .add("active", paymentMethod.active())
+                        .build()
                 )
                 .add(
-                    "paymentMethods",
-                    new JsonPaymentMethods(wallet.paymentMethods())
-                ).build()
+                    "stripe",
+                    paymentMethod.json()
+                )
+                .build()
         );
     }
+
 }

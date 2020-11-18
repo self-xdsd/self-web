@@ -129,6 +129,49 @@ function getProjectWallets() {
                         } else {
                             $("#activateStripeWallet").show();
                         }
+                        if(wallet.paymentMethods.length == 0) {
+                            $("#realPaymentMethods").hide();
+                        } else {
+                            $("#noRealPaymentMethods").hide();
+                            $('#realPaymentMethodsTable > tbody').html('');
+                            var activePaymentMethodFound = false;
+                            $.each(wallet.paymentMethods, function(index, method) {
+                                var active;
+                                if(method.self.active) {
+                                    activePaymentMethodFound = true;
+                                    active = "<input class='pmToggle' type='checkbox' checked data-toggle=\"toggle\">";
+                                } else {
+                                    active = "<input class='pmToggle' type='checkbox' data-toggle='toggle'>";
+                                }
+                                var issuer = method.stripe.card.brand;
+                                issuer = issuer.substr(0,1).toUpperCase() + issuer.substr(1);
+                                $('#realPaymentMethodsTable > tbody').append(
+                                    "<tr>"
+                                  + "<td>"
+                                  + issuer
+                                  + "</td>"
+                                  + "<td>"
+                                  + "****** " + method.stripe.card.last4
+                                  + "</td>"
+                                  + "<td>"
+                                  + method.stripe.card.exp_month + "/" + method.stripe.card.exp_year
+                                  + "</td>"
+                                  + "<td>"
+                                  + active
+                                  + "</td>"
+                                  + "</tr>"
+                                )
+                            });
+                            $('.pmToggle').bootstrapToggle({
+                                on: 'Active',
+                                off: 'Inactive',
+                                width: '45%'
+                            });
+                            $("#realPaymentMethods").show();
+                            if(activePaymentMethodFound) {
+                                $("#activateStripeWalletButton").removeClass("disabled");
+                            }
+                        }
                         installUpdateCashLimitPopover(
                             $("#stripeUpdateCashLimitAction"),
                             $("#stripeCash"),
@@ -268,7 +311,7 @@ function installUpdateCashLimitPopover(anchor, currentLimit, walletType, onLimit
                     contentType: 'application/json',
                     data: inputValue,
                 }).done(wallet => {
-                   
+
                     var isPopoverVisible = anchor.data("showing") || false;
                     if (isPopoverVisible) {
                         content.find("#updateCashInput").val(wallet.cash);
