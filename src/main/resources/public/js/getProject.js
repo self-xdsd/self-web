@@ -129,7 +129,6 @@ function getProjectWallets() {
                         } else {
                             $("#activateStripeWallet").show();
                         }
-                        $("#activateStripeWalletButton").addClass("disabled");
                         if(wallet.paymentMethods.length == 0) {
                             $("#realPaymentMethods").hide();
                         } else {
