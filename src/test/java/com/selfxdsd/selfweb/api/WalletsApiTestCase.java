@@ -31,7 +31,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonObject;
 import java.io.StringReader;
 import java.math.BigDecimal;
@@ -189,7 +188,6 @@ public final class WalletsApiTestCase {
      */
     @Test
     public void activateWalletWorks(){
-
         final User user = Mockito.mock(User.class);
         final Provider provider = Mockito.mock(Provider.class);
         Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
@@ -249,24 +247,23 @@ public final class WalletsApiTestCase {
 
         MatcherAssert.assertThat(resp.getStatusCode(),
             Matchers.is(HttpStatus.OK));
-        final JsonArray body = Json.createReader(
+        final JsonObject body = Json.createReader(
             new StringReader(resp.getBody())
-        ).readArray();
-        MatcherAssert.assertThat(body, Matchers.equalTo(
-            Json.createArrayBuilder()
-                .add(Json.createObjectBuilder()
-                    .add("type", Wallet.Type.FAKE)
-                    .add("active", false)
-                    .build())
-                .add(Json.createObjectBuilder()
+        ).readObject();
+        MatcherAssert.assertThat(
+            body,
+            Matchers.equalTo(
+                Json.createObjectBuilder()
                     .add("type", Wallet.Type.STRIPE)
                     .add("active", true)
-                    .build())
-                .build()
-        ));
+                    .build()
+            )
+        );
 
-        Mockito.verify(wallets, Mockito.times(1))
-            .activate(stripe);
+        Mockito.verify(
+            wallets,
+            Mockito.times(1)
+        ).activate(stripe);
     }
 
     /**
@@ -274,8 +271,6 @@ public final class WalletsApiTestCase {
      */
     @Test
     public void activateReturnsErrorIfProjectNotFound(){
-        final Self self = Mockito.mock(Self.class);
-
         final User user = Mockito.mock(User.class);
         final Provider provider = Mockito.mock(Provider.class);
         Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
@@ -297,8 +292,6 @@ public final class WalletsApiTestCase {
      */
     @Test
     public void activateReturnsErrorIfWalletNotFound(){
-        final Self self = Mockito.mock(Self.class);
-
         final User user = Mockito.mock(User.class);
         final Provider provider = Mockito.mock(Provider.class);
         Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
@@ -315,46 +308,6 @@ public final class WalletsApiTestCase {
         final Wallets wallets = Mockito.mock(Wallets.class);
         Mockito.when(wallets.iterator())
             .thenReturn(List.<Wallet>of().iterator());
-        Mockito.when(project.wallets()).thenReturn(wallets);
-
-        final WalletsApi api = new WalletsApi(user);
-
-        final ResponseEntity<String> resp = api
-            .activate("john", "test", Wallet.Type.STRIPE);
-        MatcherAssert.assertThat(resp.getStatusCode(),
-            Matchers.is(HttpStatus.BAD_REQUEST));
-    }
-
-    /**
-     * WalletsApi.activate(...) returns error if wallet is already active.
-     */
-    @Test
-    public void activateReturnsErrorIfWalletIsAlreadyActive(){
-        final Self self = Mockito.mock(Self.class);
-
-        final User user = Mockito.mock(User.class);
-        final Provider provider = Mockito.mock(Provider.class);
-        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
-        Mockito.when(user.provider()).thenReturn(provider);
-
-        final Projects projects = Mockito.mock(Projects.class);
-        final Project project = Mockito.mock(Project.class);
-        Mockito.when(user.projects()).thenReturn(projects);
-        Mockito.when(projects.getProjectById(
-            "john/test",
-            Provider.Names.GITHUB
-        )).thenReturn(project);
-
-        final Wallet stripe = Mockito.mock(Wallet.class);
-        Mockito.when(stripe.type()).thenReturn(Wallet.Type.STRIPE);
-        Mockito.when(stripe.active()).thenReturn(true);
-
-        final Wallets wallets = Mockito.mock(Wallets.class);
-        final List<Wallet> walletsSrc = List.of(stripe);
-        Mockito.when(wallets.spliterator())
-            .thenReturn(walletsSrc.spliterator());
-        Mockito.when(wallets.iterator())
-            .thenReturn(walletsSrc.iterator());
         Mockito.when(project.wallets()).thenReturn(wallets);
 
         final WalletsApi api = new WalletsApi(user);

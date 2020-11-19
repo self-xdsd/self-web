@@ -35,8 +35,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -46,11 +44,6 @@ import java.math.RoundingMode;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #135:60min Once the PaymentMethod logic is implemented in the core,
- *  we should add a form in the Real Wallet widget, where the User will add
- *  payment methods.
- * @todo #178:30min On frontend, in `getProject.js`, integrate the wallet
- *  activation feature with the backend.
  */
 @RestController
 @Validated
@@ -198,13 +191,11 @@ public class WalletsApi extends BaseApiController {
     }
 
     /**
-     * Activates a Wallet. Returns an array of wallet types which includes the
-     * activated one and the other types deactivated.
+     * Activates a Wallet.
      * @param owner Owner of the project (login of user or org name).
      * @param name Repo name.
      * @param type Wallet type (ex: stripe).
-     * @return Array of wallet types which includes the activated one and the
-     * other types deactivated.
+     * @return Activated wallet.
      */
     @PutMapping(
         value = "/projects/{owner}/{name}/wallets/{type}/activate",
@@ -213,8 +204,8 @@ public class WalletsApi extends BaseApiController {
     public ResponseEntity<String> activate(
         @PathVariable final String owner,
         @PathVariable final String name,
-        @PathVariable final String type){
-
+        @PathVariable final String type
+    ){
         final ResponseEntity<String> response;
         final Project project = this.user.projects().getProjectById(
             owner + "/" + name, user.provider().name()
@@ -226,7 +217,7 @@ public class WalletsApi extends BaseApiController {
             final Wallets wallets = project.wallets();
             Wallet wallet = null;
             for (final Wallet search : wallets) {
-                if (search.type().equals(type)) {
+                if (search.type().equalsIgnoreCase(type)) {
                     wallet = search;
                     break;
                 }
@@ -234,23 +225,20 @@ public class WalletsApi extends BaseApiController {
             if (wallet == null) {
                 response = ResponseEntity.badRequest()
                     .body("Wallet of type " + type + " not found.");
-            } else if (wallet.active()){
-                response = ResponseEntity.badRequest()
-                    .body("Wallet of type " + type + " already active");
-            } else {
-                wallets.activate(wallet);
-                final JsonArray walletTypes = new JsonWallets(wallets)
-                    .stream()
-                    .map(w -> Json.createObjectBuilder()
-                        .add("type", ((JsonWallet) w).get("type"))
-                        .add("active", ((JsonWallet) w).get("active"))
-                        .build())
-                    .reduce(
-                        Json.createArrayBuilder(),
-                        JsonArrayBuilder::add,
-                        (comb, curr) -> comb
-                    ).build();
-                response = ResponseEntity.ok(walletTypes.toString());
+            }  else {
+                final Wallet activated;
+                if(wallet.active()) {
+                    activated = wallet;
+                } else {
+                    activated = wallets.activate(wallet);
+                }
+                response = ResponseEntity.ok(
+                    Json.createObjectBuilder()
+                        .add("type", activated.type())
+                        .add("active", activated.active())
+                        .build()
+                        .toString()
+                );
             }
         }
         return response;

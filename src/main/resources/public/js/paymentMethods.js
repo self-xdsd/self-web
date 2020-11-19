@@ -1,5 +1,9 @@
 /**
- * Functions handling a wallet's PaymentMethods
+ * Functions handling a wallet's PaymentMethods.
+ */
+
+/**
+ * Activate a PaymentMethod.
  * @param repoOwner Owner of the repository/project.
  * @param repoName Name of the repository.
  * @param method The PaymentMethod to be activate.
