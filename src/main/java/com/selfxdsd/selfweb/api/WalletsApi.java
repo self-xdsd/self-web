@@ -217,7 +217,7 @@ public class WalletsApi extends BaseApiController {
             final Wallets wallets = project.wallets();
             Wallet wallet = null;
             for (final Wallet search : wallets) {
-                if (search.type().equals(type)) {
+                if (search.type().equalsIgnoreCase(type)) {
                     wallet = search;
                     break;
                 }
