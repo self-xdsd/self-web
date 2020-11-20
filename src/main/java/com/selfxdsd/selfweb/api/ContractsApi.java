@@ -420,4 +420,56 @@ public class ContractsApi extends BaseApiController {
         }
         return resp;
     }
+
+    /**
+     * Pay a Contract (actually pay its active Invoice).
+     * @param owner Owner of the project (username or org name).
+     * @param name Simple name of the project.
+     * @param username Contributor's username.
+     * @param role Contributor's role.
+     * @return JsonArray.
+     * @checkstyle ParameterNumber (10 lines)
+     */
+    @PutMapping(
+        value = "/projects/{owner}/{name}/contracts/{username}/invoice/pay",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> pay(
+        @PathVariable final String owner,
+        @PathVariable final String name,
+        @PathVariable final String username,
+        @RequestParam("role") final String role
+    ) {
+        final ResponseEntity<String> resp;
+        final Project project = this.user.projects().getProjectById(
+            owner + "/" + name, this.user.provider().name()
+        );
+        if(project == null) {
+            resp = ResponseEntity.badRequest().build();
+        } else {
+            final Contract contract = project.contracts().findById(
+                new Contract.Id(
+                    owner + "/" + name,
+                    username,
+                    project.provider(),
+                    role
+                )
+            );
+            if(contract == null) {
+                resp = ResponseEntity.badRequest().build();
+            } else {
+                final Invoice active = contract.invoices().active();
+                final Wallet wallet = project.wallets().active();
+                wallet.pay(active);
+                resp = ResponseEntity.ok(
+                    Json.createObjectBuilder()
+                        .add("wallet", wallet.type())
+                        .add("status", "ok")
+                        .build()
+                        .toString()
+                );
+            }
+        }
+        return resp;
+    }
 }
