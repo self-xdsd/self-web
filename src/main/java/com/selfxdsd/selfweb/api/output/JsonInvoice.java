@@ -26,6 +26,8 @@ import com.selfxdsd.api.Invoice;
 import javax.json.Json;
 import javax.json.JsonObject;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  * Invoice as JSON.
@@ -58,7 +60,12 @@ public final class JsonInvoice extends AbstractJsonObject {
                     .add("isPaid", invoice.isPaid())
                     .add(
                         "totalAmount",
-                        invoice.totalAmount().divide(BigDecimal.valueOf(100))
+                        NumberFormat
+                            .getCurrencyInstance(Locale.GERMANY)
+                            .format(
+                                invoice.totalAmount()
+                                    .divide(BigDecimal.valueOf(100))
+                            )
                     ).add(
                         "paymentTime",
                         String.valueOf(invoice.paymentTime())
@@ -74,7 +81,12 @@ public final class JsonInvoice extends AbstractJsonObject {
                     .add("tasks", new JsonInvoicedTasks(invoice.tasks()))
                     .add(
                         "totalAmount",
-                        invoice.totalAmount().divide(BigDecimal.valueOf(100))
+                        NumberFormat
+                            .getCurrencyInstance(Locale.GERMANY)
+                            .format(
+                                invoice.totalAmount()
+                                    .divide(BigDecimal.valueOf(100))
+                            )
                     ).add(
                         "paymentTime",
                         String.valueOf(invoice.paymentTime())
