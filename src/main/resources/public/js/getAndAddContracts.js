@@ -168,8 +168,8 @@
                                 var task = {
                                     "Issue ID": invoicedTasks[i].issueId,
                                     Estimation: invoicedTasks[i].estimation + "min",
-                                    Value: "$" + invoicedTasks[i].value,
-                                    Commission: "$" + invoicedTasks[i].commission
+                                    Value: invoicedTasks[i].value + " EUR",
+                                    Commission: invoicedTasks[i].commission + " EUR"
                                 };
                                 result.push(Object.assign({}, task));
                             }
