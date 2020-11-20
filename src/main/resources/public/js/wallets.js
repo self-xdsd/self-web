@@ -18,9 +18,9 @@ function getProjectWallets() {
                 var realWalletFound = false;
                 wallets.forEach(function(wallet) {
                     if(wallet.type == "FAKE") {
-                        $("#fakeCash").html('$' + wallet.cash);
-                        $("#fakeDebt").html('$' + wallet.debt);
-                        $("#fakeAvailable").html('$' + wallet.available);
+                        $("#fakeCash").html(wallet.cash + " €");
+                        $("#fakeDebt").html(wallet.debt + " €");
+                        $("#fakeAvailable").html(wallet.available + " €");
                         if(wallet.active) {
                             $("#fakeWalletBadge").addClass("badge-success")
                             $("#fakeWalletBadge").html("active")
@@ -31,9 +31,9 @@ function getProjectWallets() {
                     }
                     if(wallet.type == "STRIPE") {
                         realWalletFound = true;
-                        $("#stripeCash").html('$' + wallet.cash);
-                        $("#stripeDebt").html('$' + wallet.debt);
-                        $("#stripeAvailable").html('$' + wallet.available);
+                        $("#stripeCash").html(wallet.cash + " €");
+                        $("#stripeDebt").html(wallet.debt + " €");
+                        $("#stripeAvailable").html(wallet.available + " €");
                         if(wallet.active) {
                             $("#stripeWalletBadge").addClass("badge-success")
                             $("#stripeWalletBadge").html("active")
@@ -105,9 +105,9 @@ function getProjectWallets() {
                             $("#stripeCash"),
                             wallet.type,
                             (updatedWallet) => {
-                                $("#stripeCash").html('$' + updatedWallet.cash);
-                                $("#stripeDebt").html('$' + updatedWallet.debt);
-                                $("#stripeAvailable").html('$' + updatedWallet.available);
+                                $("#stripeCash").html(updatedWallet.cash + " €");
+                                $("#stripeDebt").html(updatedWallet.debt + " €");
+                                $("#stripeAvailable").html(updatedWallet.available + " €");
                             }
                         );
                     }

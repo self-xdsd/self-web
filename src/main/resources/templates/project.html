@@ -98,7 +98,7 @@
                                 aria-hidden="true"
                                 data-toggle="tooltip"
                                 data-placement="top"
-                                title="We assigned you a fake wallet with $10M. You can work with it
+                                title="We assigned you a fake wallet with 1 million €. You can work with it
                                 until you decide to register a real wallet. The business flow is the same,
                                 except the payments are fictive.">
                             </i>
@@ -721,9 +721,9 @@
                             success: function (wallet) {
                                 $("#noRealWallet").hide();
 
-                                $("#stripeCash").html('$' + wallet.cash);
-                                $("#stripeDebt").html('$' + wallet.debt);
-                                $("#stripeAvailable").html('$' + wallet.available);
+                                $("#stripeCash").html(wallet.cash + " €");
+                                $("#stripeDebt").html(wallet.debt + " €");
+                                $("#stripeAvailable").html(wallet.available + " €");
                                 if(wallet.active) {
                                     $("#stripeWalletBadge").addClass("badge-success")
                                     $("#stripeWalletBadge").html("active")
@@ -742,9 +742,9 @@
                                     $("#stripeCash"),
                                     wallet.type,
                                     (updatedWallet) => {
-                                        $("#stripeCash").html('$' + updatedWallet.cash);
-                                        $("#stripeDebt").html('$' + updatedWallet.debt);
-                                        $("#stripeAvailable").html('$' + updatedWallet.available);
+                                        $("#stripeCash").html(updatedWallet.cash + " €");
+                                        $("#stripeDebt").html(updatedWallet.debt + " €");
+                                        $("#stripeAvailable").html(updatedWallet.available + " €");
                                     }
                                 );
                             },
