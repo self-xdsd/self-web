@@ -101,7 +101,7 @@ public class JsonContractTestCase {
         
         MatcherAssert.assertThat(
             jsonContract.getString("hourlyRate"),
-            Matchers.equalTo("$50.00")
+            Matchers.equalTo("50,00 €")
         );       
     }
     
@@ -131,7 +131,7 @@ public class JsonContractTestCase {
         
         MatcherAssert.assertThat(
             jsonContract.getString("value"),
-            Matchers.equalTo("$20.00")
+            Matchers.equalTo("20,00 €")
         );       
     }
     

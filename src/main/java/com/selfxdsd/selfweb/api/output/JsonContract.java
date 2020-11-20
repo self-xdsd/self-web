@@ -30,10 +30,10 @@ public final class JsonContract extends AbstractJsonObject{
                 .add("role", contract.contractId().getRole())
                 .build())
             .add("hourlyRate", NumberFormat
-                .getCurrencyInstance(Locale.US)
+                .getCurrencyInstance(Locale.GERMANY)
                 .format(contract.hourlyRate().divide(BigDecimal.valueOf(100))))
             .add("value", NumberFormat
-                .getCurrencyInstance(Locale.US)
+                .getCurrencyInstance(Locale.GERMANY)
                 .format(contract.value().divide(BigDecimal.valueOf(100))))
             .add(
                 "markedForRemoval",
