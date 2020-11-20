@@ -291,6 +291,9 @@
                                         + "<a href='#' title='Download Invoice' class='downloadInvoice'>"
                                         +"<i class='fa fa-file-pdf-o fa-lg'></i>"
                                         +"</a>  "
+                                        +"<a href='#' title='Pay Invoice' class='payContract'>"
+                                        +"<i class='fa fa-dollar fa-lg'></i>"
+                                        +"</a>  "
                                         +"<a href='#' title='Edit Contract' class='editContract'>"
                                         +"<i class='fa fa-edit fa-lg'></i>"
                                         +"</a>  "
@@ -396,6 +399,32 @@
                                                 hourlyRate: hourly
                                             }
                                             activeInvoiceToPdf(contract);
+                                        }
+                                    )
+                                }
+                            );
+                            $(".payContract").each(
+                                function() {
+                                    $(this).on(
+                                        "click",
+                                        function(event) {
+                                            event.preventDefault();
+
+                                            var repo = $("#owner").text() + "/" + $("#name").text();
+                                            var contributor = $(this).parent().parent().children()[0].innerText;
+                                            var role = $(this).parent().parent().children()[1].innerText;
+                                            var hourly = $(this).parent().parent().children()[2].innerText;
+                                            var provider = "github";
+                                            var contract = {
+                                                id: {
+                                                    repoFullName: repo,
+                                                    contributorUsername: contributor,
+                                                    role: role,
+                                                    provider: provider
+                                                },
+                                                hourlyRate: hourly
+                                            }
+                                            payContract(repo, contract);
                                         }
                                     )
                                 }

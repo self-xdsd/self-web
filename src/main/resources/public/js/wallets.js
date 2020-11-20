@@ -189,3 +189,31 @@ function activateWallet(owner, name, type) {
     );
 
 }
+
+/**
+ * Pay a Contract (its active Invoice).
+ * @package repo (e.g. "mihai/test") where the Contract belongs.
+ * @param contract Contract.
+ */
+function payContract(repo, contract) {
+    $.ajax(
+        {
+            type: "PUT",
+            contentType: "application/json",
+            url: "/api/projects/" + repo +
+                "/contracts/" + contract.id.contributorUsername + "/invoice/pay" +
+                "?role=" + contract.id.role,
+            success: function (json) {
+                console.log("Contract PAID: " + JSON.stringify(json));
+            },
+            error: function(jqXHR, error, errorThrown) {
+                console.log("Server error status: " + jqXHR.status);
+                console.log("Server error: " + jqXHR.responseText);
+                alert(
+                    "Something went wrong (" + jqXHR.status + ")." +
+                    "Please, refresh the page and try again."
+                );
+            }
+        }
+    );
+}

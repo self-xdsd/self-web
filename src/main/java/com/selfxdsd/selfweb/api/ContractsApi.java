@@ -430,8 +430,8 @@ public class ContractsApi extends BaseApiController {
      * @return JsonArray.
      * @checkstyle ParameterNumber (10 lines)
      */
-    @GetMapping(
-        value = "/projects/{owner}/{name}/contracts/{username}/invoice",
+    @PutMapping(
+        value = "/projects/{owner}/{name}/contracts/{username}/invoice/pay",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<String> pay(
@@ -463,6 +463,7 @@ public class ContractsApi extends BaseApiController {
                 wallet.pay(active);
                 resp = ResponseEntity.ok(
                     Json.createObjectBuilder()
+                        .add("wallet", wallet.type())
                         .add("status", "ok")
                         .build()
                         .toString()
