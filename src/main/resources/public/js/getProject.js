@@ -50,7 +50,7 @@ function displayProject(userLogin, project) {
             ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ["Available ($)", "Debt ($)"],
+                    labels: ["Available (€)", "Debt (€)"],
                     datasets: [{
                         data: [project.wallet.available, project.wallet.debt],
                         backgroundColor: ['#701516', '#FFB6C1'],
@@ -76,9 +76,9 @@ function displayProject(userLogin, project) {
                     cutoutPercentage: 80,
                 },
             });
-            $("#walletCash").html('$' + project.wallet.cash);
-            $("#walletDebt").html('$' + project.wallet.debt);
-            $("#walletAvailable").html('$' + project.wallet.available);
+            $("#walletCash").html(project.wallet.cash + " €");
+            $("#walletDebt").html(project.wallet.debt + " €");
+            $("#walletAvailable").html(project.wallet.available + " €");
             if(project.wallet.type == 'FAKE') {
                 $(".fakeWalletInfo").show();
             }
@@ -117,7 +117,7 @@ function installUpdateCashLimitPopover(anchor, currentLimit, walletType, onLimit
                 '<div class="col">'+
                     '<div class="input-group-sm d-flex">'+
                         '<div class="input-group-prepend">'+
-                            '<span class="input-group-text">$</span>'+
+                            '<span class="input-group-text">€</span>'+
                         '</div>'+
                         '<input type="number" class="form-control" id="updateCashInput" placeholder="Limit" required>'+
                     '</div>'+

@@ -35,8 +35,10 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import java.io.StringReader;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -105,9 +107,17 @@ public final class ContractsApiTestCase {
                         .add("provider", "github")
                         .add("role", "DEV")
                         .build())
-                    .add("hourlyRate", "$5.00")
-                    .add("value", "$100.00")
-                    .add("markedForRemoval", "null")
+                    .add(
+                        "hourlyRate",
+                        NumberFormat
+                            .getCurrencyInstance(Locale.GERMANY)
+                            .format(5)
+                    ).add(
+                        "value",
+                        NumberFormat
+                            .getCurrencyInstance(Locale.GERMANY)
+                            .format(100)
+                    ).add("markedForRemoval", "null")
                     .build())
                 .build())
         );

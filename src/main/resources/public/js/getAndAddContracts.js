@@ -104,10 +104,10 @@
                         doc.text("Contributor: " + contract.id.contributorUsername, 20, 42);
                         doc.text("Project: " + contract.id.repoFullName + " at " + contract.id.provider, 20, 49);
                         doc.text("Role: " + contract.id.role, 20, 56);
-                        doc.text("Hourly Rate: " + contract.hourlyRate, 20, 63);
+                        doc.text("Hourly Rate: " + contract.hourlyRate.replace("€", "EUR"), 20, 63);
                         doc.text("______________________________", 20, 67);
 
-                        doc.text("Total Due: $" + fullInvoice.totalAmount, 20, 74);
+                        doc.text("Total Due: " + fullInvoice.totalAmount.replace("€", "EUR"), 20, 74);
                         var toContributor = function() {
                             var toContributor = 0;
                             fullInvoice.tasks.forEach(
@@ -117,7 +117,7 @@
                             )
                             return toContributor;
                         }.call();
-                        doc.text("to Contributor: $" + toContributor, 23, 81);
+                        doc.text("to Contributor: " + toContributor + " EUR", 23, 81);
                         var toPm = function() {
                             var toPm = 0;
                             fullInvoice.tasks.forEach(
@@ -127,15 +127,14 @@
                             )
                             return toPm;
                         }.call();
-                        doc.text("to Project Manager: $" + toPm, 23, 88);
+                        doc.text("to Project Manager: " + toPm + " EUR", 23, 88);
                         if(fullInvoice.isPaid) {
                             doc.text("Status: paid", 20, 95)
                             doc.text("paid at: " + fullInvoice.paymentTime, 23, 102)
                             doc.text("transaction id: " + fullInvoice.transactionId, 23, 109)
                         } else {
                             doc.text("Status: active (not paid)", 20, 95)
-                            doc.text("payment due: 1st day of next month,", 23, 102)
-                            doc.text("or when more than $100 are cumulated ", 23, 109)
+                            doc.text("payment due: next Monday", 23, 102)
                         }
                         doc.text("Invoiced tasks bellow.", 20, 116);
 
@@ -169,8 +168,8 @@
                                 var task = {
                                     "Issue ID": invoicedTasks[i].issueId,
                                     Estimation: invoicedTasks[i].estimation + "min",
-                                    Value: "$" + invoicedTasks[i].value,
-                                    Commission: "$" + invoicedTasks[i].commission
+                                    Value: invoicedTasks[i].value + " EUR",
+                                    Commission: invoicedTasks[i].commission + " EUR"
                                 };
                                 result.push(Object.assign({}, task));
                             }
@@ -292,7 +291,7 @@
                                         +"<i class='fa fa-file-pdf-o fa-lg'></i>"
                                         +"</a>  "
                                         +"<a href='#' title='Pay Invoice' class='payContract'>"
-                                        +"<i class='fa fa-dollar fa-lg'></i>"
+                                        +"<i class='fa fa-euro fa-lg'></i>"
                                         +"</a>  "
                                         +"<a href='#' title='Edit Contract' class='editContract'>"
                                         +"<i class='fa fa-edit fa-lg'></i>"
