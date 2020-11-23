@@ -25,7 +25,9 @@ package com.selfxdsd.selfweb.api.output;
 import com.selfxdsd.api.Contract;
 import com.selfxdsd.api.Contract.Id;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.util.Locale;
 import javax.json.Json;
 import javax.json.JsonObject;
 import org.hamcrest.MatcherAssert;
@@ -101,7 +103,11 @@ public class JsonContractTestCase {
         
         MatcherAssert.assertThat(
             jsonContract.getString("hourlyRate"),
-            Matchers.equalTo("50,00 €")
+            Matchers.equalTo(
+                NumberFormat
+                    .getCurrencyInstance(Locale.GERMANY)
+                    .format(50)
+            )
         );       
     }
     
@@ -131,7 +137,11 @@ public class JsonContractTestCase {
         
         MatcherAssert.assertThat(
             jsonContract.getString("value"),
-            Matchers.equalTo("20,00 €")
+            Matchers.equalTo(
+                NumberFormat
+                    .getCurrencyInstance(Locale.GERMANY)
+                    .format(20)
+            )
         );       
     }
     
