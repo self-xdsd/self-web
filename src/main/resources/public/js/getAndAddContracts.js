@@ -291,7 +291,7 @@
                                         +"<i class='fa fa-file-pdf-o fa-lg'></i>"
                                         +"</a>  "
                                         +"<a href='#' title='Pay Invoice' class='payContract'>"
-                                        +"<i class='fa fa-dollar fa-lg'></i>"
+                                        +"<i class='fa fa-euro fa-lg'></i>"
                                         +"</a>  "
                                         +"<a href='#' title='Edit Contract' class='editContract'>"
                                         +"<i class='fa fa-edit fa-lg'></i>"
