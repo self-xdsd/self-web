@@ -724,6 +724,7 @@
                                 $("#stripeCash").html(wallet.cash + " €");
                                 $("#stripeDebt").html(wallet.debt + " €");
                                 $("#stripeAvailable").html(wallet.available + " €");
+                                cashLimitColor($("#stripeCash"), updatedWallet);
                                 if(wallet.active) {
                                     $("#stripeWalletBadge").addClass("badge-success")
                                     $("#stripeWalletBadge").html("active")
@@ -745,6 +746,7 @@
                                         $("#stripeCash").html(updatedWallet.cash + " €");
                                         $("#stripeDebt").html(updatedWallet.debt + " €");
                                         $("#stripeAvailable").html(updatedWallet.available + " €");
+                                        cashLimitColor($("#stripeCash"), updatedWallet);
                                     }
                                 );
                             },

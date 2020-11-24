@@ -34,6 +34,7 @@ function getProjectWallets() {
                         $("#stripeCash").html(wallet.cash + " €");
                         $("#stripeDebt").html(wallet.debt + " €");
                         $("#stripeAvailable").html(wallet.available + " €");
+                        cashLimitColor($("#stripeCash"), wallet);
                         if(wallet.active) {
                             $("#stripeWalletBadge").addClass("badge-success")
                             $("#stripeWalletBadge").html("active")
@@ -108,6 +109,7 @@ function getProjectWallets() {
                                 $("#stripeCash").html(updatedWallet.cash + " €");
                                 $("#stripeDebt").html(updatedWallet.debt + " €");
                                 $("#stripeAvailable").html(updatedWallet.available + " €");
+                                cashLimitColor($("#stripeCash"), updatedWallet);
                             }
                         );
                     }
@@ -130,6 +132,7 @@ function getProjectWallets() {
  * @param owner Owner of the repo/project.
  * @param name Name of the repo.
  * @param type Type of the wallet (fake or stripe).
+ * @todo #195#60min On frontend, enable wallet activation. Right now `activateWallet()` function is not used.
  */
 function activateWallet(owner, name, type) {
     if(type == 'stripe') {
@@ -216,4 +219,26 @@ function payContract(repo, contract) {
             }
         }
     );
+}
+
+/**
+ * Sets wallet's cash limit color by using Bootstrap color classes):
+ * - red if it's 0 or less than the Debt;
+ * - yellow if limit - debt <= 100;
+ * - green otherwise.
+ * @param cashEl Cash limit DOM element.
+ * @param wallet The Wallet.
+ */
+function cashLimitColor(cashEl, wallet){
+    var colorClass = cashEl.data('limitColor') || 'text-success';
+    cashEl.removeClass(colorClass);
+    if(wallet.cash <= 0 || wallet.cash < wallet.debt ){
+        colorClass = 'text-danger';
+    }else if (wallet.cash - wallet.debt <= 100.0){
+        colorClass = 'text-warning';
+    }else{
+        colorClass = 'text-success';
+    }
+    cashEl.addClass(colorClass);
+    cashEl.data('limitColor', colorClass);
 }
