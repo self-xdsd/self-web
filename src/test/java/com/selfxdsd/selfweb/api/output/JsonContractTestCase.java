@@ -40,7 +40,7 @@ import org.mockito.Mockito;
 public class JsonContractTestCase {
     
     /**
-     * JsonProject has Id.
+     * JsonContract has Id.
      */    
     @Test
     public void hasId(){
