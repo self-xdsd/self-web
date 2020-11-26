@@ -35,7 +35,6 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.validation.Valid;
-import java.math.BigDecimal;
 
 /**
  * Project Managers.
@@ -115,9 +114,7 @@ public class ProjectManagersApi extends BaseApiController {
                     newPm.getUsername(),
                     newPm.getProvider(),
                     newPm.getToken(),
-                    BigDecimal.valueOf(
-                        newPm.getCommission() * 100
-                    )
+                    newPm.getCommission()
                 );
             response = ResponseEntity.ok(
                 new JsonProjectManager(registered).toString()

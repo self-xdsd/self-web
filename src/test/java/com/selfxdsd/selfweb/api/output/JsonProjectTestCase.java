@@ -71,8 +71,7 @@ public final class JsonProjectTestCase {
         Mockito.when(provider.name()).thenReturn("Github");
         
         Mockito.when(manager.provider()).thenReturn(provider);        
-        Mockito.when(manager.commission())
-            .thenReturn(BigDecimal.valueOf(800));
+        Mockito.when(manager.percentage()).thenReturn(6.5);
         
         Mockito.when(project.projectManager()).thenReturn(manager);
         
@@ -123,9 +122,9 @@ public final class JsonProjectTestCase {
         
         Mockito.when(provider.name()).thenReturn("Github");
         
-        Mockito.when(manager.provider()).thenReturn(provider);        
-        Mockito.when(manager.commission()).thenReturn(BigDecimal.valueOf(800));
-        
+        Mockito.when(manager.provider()).thenReturn(provider);
+        Mockito.when(manager.percentage()).thenReturn(6.5);
+
         Mockito.when(project.projectManager()).thenReturn(manager);
         
         Wallet wallet = Mockito.mock(Wallet.class);
@@ -176,9 +175,9 @@ public final class JsonProjectTestCase {
         
         Mockito.when(provider.name()).thenReturn("Github");
         
-        Mockito.when(manager.provider()).thenReturn(provider);        
-        Mockito.when(manager.commission()).thenReturn(BigDecimal.valueOf(800));
-        
+        Mockito.when(manager.provider()).thenReturn(provider);
+        Mockito.when(manager.percentage()).thenReturn(6.5);
+
         Mockito.when(project.projectManager()).thenReturn(manager);
         
         Wallet wallet = Mockito.mock(Wallet.class);
@@ -230,9 +229,9 @@ public final class JsonProjectTestCase {
         
         Mockito.when(provider.name()).thenReturn("Github");
         
-        Mockito.when(manager.provider()).thenReturn(provider);        
-        Mockito.when(manager.commission()).thenReturn(BigDecimal.valueOf(800));
-        
+        Mockito.when(manager.provider()).thenReturn(provider);
+        Mockito.when(manager.percentage()).thenReturn(6.5);
+
         Mockito.when(project.projectManager()).thenReturn(manager);
         
         Wallet wallet = Mockito.mock(Wallet.class);
@@ -258,13 +257,7 @@ public final class JsonProjectTestCase {
                 .add("userId", manager.userId())
                 .add("username", manager.username())
                 .add("provider", manager.provider().name())
-                .add(
-                    "commission",
-                    manager
-                        .commission()
-                        .divide(BigDecimal.valueOf(100))
-                        .doubleValue()
-                )
+                .add("commission", manager.percentage())
                 .build())
         );       
         
@@ -296,8 +289,8 @@ public final class JsonProjectTestCase {
         
         Mockito.when(provider.name()).thenReturn("Github");
         
-        Mockito.when(manager.provider()).thenReturn(provider);        
-        Mockito.when(manager.commission()).thenReturn(BigDecimal.valueOf(800));
+        Mockito.when(manager.provider()).thenReturn(provider);
+        Mockito.when(manager.percentage()).thenReturn(6.5);
         
         Mockito.when(project.projectManager()).thenReturn(manager);
         

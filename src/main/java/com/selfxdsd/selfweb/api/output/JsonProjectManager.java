@@ -25,7 +25,6 @@ package com.selfxdsd.selfweb.api.output;
 import com.selfxdsd.api.ProjectManager;
 
 import javax.json.Json;
-import java.math.BigDecimal;
 
 /**
  * Self ProjectManager as JsonObject.
@@ -49,13 +48,7 @@ public final class JsonProjectManager extends AbstractJsonObject {
                 .add("userId", manager.userId())
                 .add("username", manager.username())
                 .add("provider", manager.provider().name())
-                .add(
-                    "commission",
-                    manager
-                        .commission()
-                        .divide(BigDecimal.valueOf(100))
-                        .doubleValue()
-                )
+                .add("commission", manager.percentage())
                 .build()
         );
     }
