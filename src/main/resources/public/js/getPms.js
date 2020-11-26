@@ -39,6 +39,6 @@ function managerAsTableRow(manager) {
         "<td><a href='" + profile + "' target='_blank'>@" + manager.username + "</a></td>" +
         "<td>" + manager.provider + "</td>"  +
         "<td>" + manager.userId + "</td>"  +
-        "<td>$" + manager.commission + "</td>" +
+        "<td>" + manager.commission + "%</td>" +
         "</tr>"
 }
