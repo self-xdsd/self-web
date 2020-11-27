@@ -36,7 +36,7 @@
             <div class="col-xl-8 col-lg-7">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h4 class="m-0 font-weight-bold card-title managedBy">Project managed by:</h4>
+                        <h4 class="m-0 font-weight-bold card-title">Project managed by: <span class="managedByLink"></span></h4>
                     </div>
                     <div class="card-body">
                         <p>
@@ -50,18 +50,24 @@
                             </p>
                             <p>
                                 If it turns out that the Issue is invalid, not applicable or simply not worth working on as a task,
-                                just label it <code>invalid</code>, <code>wont fix</code> or <code>rejected</code> and the PM will take
-                                it out of scope. No invoicing or payments will be performed.
+                                just say <code><span class="managedBy"></span> deregister</code> and it will be taken out of scope.
+                                The Issue will not be invoiced and the PM will not charge a commission for it.
                             </p>
                             <p>
-                                In the case of Pull Requests, the PM will look for contributors with role <code>REV</code> and assign
-                                them for code review.
+                                Also, when opening a new Issue, you can label it with <code>no-task</code> and the PM will not put
+                                it in scope.
                             </p>
+                            <p>If you want to put an Issue in scope, say <code><span class="managedBy"></span> register</code>.</p>
                         </div>
                         <div class="mb-2">
                             <h5><code>Issue resignation</code></h5>
-                            <p>If the task's assignee does not close the Issue before the deadline arrives,
-                            the PM will resign them and look for another assignee.</p>
+                            <p>If the task's assignee does not close the Issue before the deadline,
+                            the PM will resign them and look for another assignee. The resigned assignee will not be paid.</p>
+                        </div>
+                        <div class="mb-2">
+                            <h5><code>TODOs as Issues</code></h5>
+                            <p>At each <code>push</code>, the PM will scan the code for TODOs and open issues for them.</p>
+                            <p>When a TODO is removed from the code, the PM will close the corresponding Issue.</p>
                         </div>
                         <div class="mb-2">
                             <h5><code>Invoicing and Payments</code></h5>
@@ -70,15 +76,14 @@
                                 active Invoice.
                             </p>
                             <p>
-                                Invoices are paid out on the <code>1st of the month</code> or when they
-                                accumulate more than <code>$100</code>.
+                                Invoices are automatically paid out <code>each Monday</code> from your active Wallet.
                             </p>
                         </div>
                         <div class="mb-2">
                             <h5><code>Commands</code></h5>
                             <p>
                                 The Project Manager listens to certain commands given by users. For example,
-                                if the assignee cannot solve the task, they can say <code>resign</code> right
+                                if the assignee cannot solve the task, they can say <code><span class="managedBy"></span> resign</code> right
                                 in the Issue comments and the PM will look for someone else.
                                 <a href="#">Here</a> is guide on all possible commands and who can give them.
                             </p>
@@ -98,7 +103,7 @@
                                 aria-hidden="true"
                                 data-toggle="tooltip"
                                 data-placement="top"
-                                title="We assigned you a fake wallet with 1 million €. You can work with it
+                                title="We assigned you a fake wallet with 100.000 €. You can work with it
                                 until you decide to register a real wallet. The business flow is the same,
                                 except the payments are fictive.">
                             </i>

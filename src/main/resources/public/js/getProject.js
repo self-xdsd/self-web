@@ -33,14 +33,13 @@ function getProject() {
 
 function displayProject(userLogin, project) {
     console.log(project);
-    $(".managedBy").html(
-        "Project managed by: "
-    ).append(
+    $(".managedByLink").html(
         $('<a></a>')
             .attr("href","https://github.com/" + project.manager.username)
             .attr("target", "_blank")
             .html("@" + project.manager.username)
     );
+    $(".managedBy").html("@" + project.manager.username);
     $("#projectOverview").addClass("show");
     if(project.selfOwner == userLogin) {
         $("#ownerCard").hide();
