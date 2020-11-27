@@ -194,20 +194,35 @@ function activateWallet(owner, name, type) {
 }
 
 /**
- * Pay a Contract (its active Invoice).
- * @package repo (e.g. "mihai/test") where the Contract belongs.
- * @param contract Contract.
+ * Pay an Invoice
+ * @param invoice Invoice to be paid.
+ * @param contract Contract to which the Invoice belongs.
+ * @param payButton Button for payment, which we should hide
+ *  if the payment is successful.
  */
-function payContract(repo, contract) {
+function payInvoice(invoice, contract, payButton) {
     $.ajax(
         {
             type: "PUT",
             contentType: "application/json",
-            url: "/api/projects/" + repo +
-                "/contracts/" + contract.id.contributorUsername + "/invoice/pay" +
-                "?role=" + contract.id.role,
+            url: "/api/projects/" + contract.id.repoFullName +
+                "/contracts/" + contract.id.contributorUsername + "/invoices/"
+                + invoice.id + "?role=" + contract.id.role,
             success: function (json) {
-                console.log("Contract PAID: " + JSON.stringify(json));
+                $("#invoicesBody").hide();
+                $("#loadingInvoices").show();
+                payButton.hide();
+                $('#invoicesTable > tbody  > tr').each(
+                    function(index, row) {
+                        if($(row).find("td:eq(0)").text() == invoice.id){
+                            $(row).find("td:eq(3)").text("Paid");
+                        }
+                    }
+                );
+                $("#invoicesTable").dataTable().fnDestroy();
+                $("#invoicesTable").dataTable();
+                $("#loadingInvoices").hide();
+                $("#invoicesBody").show();
             },
             error: function(jqXHR, error, errorThrown) {
                 console.log("Server error status: " + jqXHR.status);

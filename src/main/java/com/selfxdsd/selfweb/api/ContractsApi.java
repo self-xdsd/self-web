@@ -24,10 +24,7 @@ package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.selfweb.api.input.ContractInput;
-import com.selfxdsd.selfweb.api.output.JsonContract;
-import com.selfxdsd.selfweb.api.output.JsonContracts;
-import com.selfxdsd.selfweb.api.output.JsonInvoice;
-import com.selfxdsd.selfweb.api.output.JsonTasks;
+import com.selfxdsd.selfweb.api.output.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -193,7 +190,7 @@ public class ContractsApi extends BaseApiController {
     }
 
     /**
-     * Get the active Invoice of a specific Contract.
+     * Get the Invoices of a specific Contract.
      * @param owner Owner of the project (username or org name).
      * @param name Simple name of the project.
      * @param username Contributor's username.
@@ -202,10 +199,10 @@ public class ContractsApi extends BaseApiController {
      * @checkstyle ParameterNumber (10 lines)
      */
     @GetMapping(
-        value = "/projects/{owner}/{name}/contracts/{username}/invoice",
+        value = "/projects/{owner}/{name}/contracts/{username}/invoices",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<String> invoice(
+    public ResponseEntity<String> invoices(
         @PathVariable final String owner,
         @PathVariable final String name,
         @PathVariable final String username,
@@ -229,10 +226,62 @@ public class ContractsApi extends BaseApiController {
             if(contract == null) {
                 resp = ResponseEntity.noContent().build();
             } else {
-                final Invoice active = contract.invoices().active();
+                final Invoices invoices = contract.invoices();
                 resp = ResponseEntity.ok(
-                    new JsonInvoice(active, Boolean.TRUE).toString()
+                    new JsonInvoices(invoices).toString()
                 );
+            }
+        }
+        return resp;
+    }
+
+    /**
+     * Get an Invoice of a specific Contract.
+     * @param owner Owner of the project (username or org name).
+     * @param name Simple name of the project.
+     * @param username Contributor's username.
+     * @param invoiceId If od the Invoice.
+     * @param role Contributor's role.
+     * @return JsonArray.
+     * @checkstyle ParameterNumber (10 lines)
+     */
+    @GetMapping(
+        value = "/projects/{owner}/{name}/contracts/{username}/invoices"
+        + "/{invoiceId}",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> invoice(
+        @PathVariable final String owner,
+        @PathVariable final String name,
+        @PathVariable final String username,
+        @PathVariable final int invoiceId,
+        @RequestParam("role") final String role) {
+        final ResponseEntity<String> resp;
+        final Project project = this.user.projects().getProjectById(
+            owner + "/" + name, this.user.provider().name()
+        );
+        if(project == null) {
+            resp = ResponseEntity.noContent().build();
+        } else {
+            final Contract contract = project.contracts().findById(
+                new Contract.Id(
+                    owner + "/" + name,
+                    username,
+                    project.provider(),
+                    role
+                )
+            );
+            if(contract == null) {
+                resp = ResponseEntity.noContent().build();
+            } else {
+                final Invoice found = contract.invoices().getById(invoiceId);
+                if(found == null){
+                    resp = ResponseEntity.noContent().build();
+                } else {
+                    resp = ResponseEntity.ok(
+                        new JsonInvoice(found, Boolean.TRUE).toString()
+                    );
+                }
             }
         }
         return resp;
@@ -422,22 +471,25 @@ public class ContractsApi extends BaseApiController {
     }
 
     /**
-     * Pay a Contract (actually pay its active Invoice).
+     * Pay an Invoice of a specific Contract.
      * @param owner Owner of the project (username or org name).
      * @param name Simple name of the project.
      * @param username Contributor's username.
+     * @param invoiceId Id of the Invoice.
      * @param role Contributor's role.
      * @return JsonArray.
      * @checkstyle ParameterNumber (10 lines)
      */
     @PutMapping(
-        value = "/projects/{owner}/{name}/contracts/{username}/invoice/pay",
+        value = "/projects/{owner}/{name}/contracts/{username}/invoices"
+        + "/{invoiceId}",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<String> pay(
+    public ResponseEntity<String> payInvoice(
         @PathVariable final String owner,
         @PathVariable final String name,
         @PathVariable final String username,
+        @PathVariable final int invoiceId,
         @RequestParam("role") final String role
     ) {
         final ResponseEntity<String> resp;
@@ -458,16 +510,22 @@ public class ContractsApi extends BaseApiController {
             if(contract == null) {
                 resp = ResponseEntity.badRequest().build();
             } else {
-                final Invoice active = contract.invoices().active();
-                final Wallet wallet = project.wallets().active();
-                wallet.pay(active);
-                resp = ResponseEntity.ok(
-                    Json.createObjectBuilder()
-                        .add("wallet", wallet.type())
-                        .add("status", "ok")
-                        .build()
-                        .toString()
-                );
+                final Invoice found = contract.invoices().getById(invoiceId);
+                if(found == null){
+                    resp = ResponseEntity.noContent().build();
+                } else {
+                    if (!found.isPaid()) {
+                        final Wallet wallet = project.wallets().active();
+                        wallet.pay(found);
+                    }
+                    resp = ResponseEntity.ok(
+                        Json.createObjectBuilder()
+                            .add("invoiceId", found.invoiceId())
+                            .add("paid", Boolean.TRUE)
+                            .build()
+                            .toString()
+                    );
+                }
             }
         }
         return resp;

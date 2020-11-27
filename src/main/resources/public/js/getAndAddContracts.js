@@ -15,8 +15,6 @@
 (function getAndAddContracts($, contractsService, usersService, confirmDialog){
 
     function getTasksOfContract(contract) {
-        console.log("GET TASKS:");
-        console.log(contract);
         $("#tasksTable").dataTable().fnDestroy();
         $("#tasksTable").find("tbody").html('');
         $("#tasksTitle").html(
@@ -77,118 +75,103 @@
         }
         return "<tr>" +
             "<td><a href='" + issueLink + "' target='_blank'>#" + task.issueId + "</a></td>" +
-            "<td>" + task.assignmentDate + "</td>"  +
-            "<td>" + task.deadline + "</td>" +
+            "<td>" + task.assignmentDate.split('T')[0] + "</td>"  +
+            "<td>" + task.deadline.split('T')[0] + "</td>" +
             "<td>" + task.estimation + "min</td>" +
             "</tr>"
     }
 
-    function activeInvoiceToPdf(contract) {
-        $.ajax( //API call to get the active Invoice.
+    function getInvoicesOfContract(contract) {
+        $("#invoicesTable").dataTable().fnDestroy();
+        $("#invoicesTable").find("tbody").html('');
+        $("#invoicesTitle").html(
+            " Invoices of " + contract.id.contributorUsername
+            + " (" + contract.id.role + ")"
+        )
+        $("#loadingInvoices").show();
+        $.ajax( //API call to get the Tasks.
             "/api/projects/"
             + contract.id.repoFullName
-            + "/contracts/" + contract.id.contributorUsername + "/invoice?role=" + contract.id.role,
+            + "/contracts/" + contract.id.contributorUsername
+            + "/invoices?role=" + contract.id.role,
             {
                 type: "GET",
                 statusCode: {
-                    200: function (fullInvoice) {
-                        console.log("INVOICE: ");
-                        console.log(fullInvoice);
-                        window.jsPDF = window.jspdf.jsPDF; // add this line of code
-
-                        const doc = new jsPDF();
-
-                        doc.addImage("/images/self-xdsd.png", "png", 170, 10, 20, 20);
-                        doc.text("Invoice", 105, 20, null, null, "center");
-                        doc.text("Invoice #" + fullInvoice.id + " from " + fullInvoice.createdAt, 20, 35);
-                        doc.text("Contributor: " + contract.id.contributorUsername, 20, 42);
-                        doc.text("Project: " + contract.id.repoFullName + " at " + contract.id.provider, 20, 49);
-                        doc.text("Role: " + contract.id.role, 20, 56);
-                        doc.text("Hourly Rate: " + contract.hourlyRate.replace("€", "EUR"), 20, 63);
-                        doc.text("______________________________", 20, 67);
-
-                        doc.text("Total Due: " + fullInvoice.totalAmount.replace("€", "EUR"), 20, 74);
-                        var toContributor = function() {
-                            var toContributor = 0;
-                            fullInvoice.tasks.forEach(
-                                function(task){
-                                    toContributor += task.value
+                    200: function (invoices) {
+                        $("#loadingInvoices").hide();
+                        invoices.forEach(
+                            function(invoice, index) {
+                                $("#invoicesTable").find("tbody").append(
+                                    invoiceAsTableRow(contract, invoice)
+                                );
+                                $($(".downloadInvoice")[$(".downloadInvoice").length -1]).on(
+                                    "click",
+                                    function(event) {
+                                        event.preventDefault();
+                                        invoiceToPdf(
+                                            "/api/projects/"
+                                            + contract.id.repoFullName
+                                            + "/contracts/" + contract.id.contributorUsername + "/invoices/"
+                                            + invoice.id
+                                            + "?role=" + contract.id.role,
+                                            invoice,
+                                            contract
+                                        );
+                                    }
+                                );
+                                if(invoice.paymentTime == "null" && invoice.transactionId == "null") {
+                                    $($(".payInvoice")[$(".payInvoice").length -1]).on(
+                                        "click",
+                                        function(event) {
+                                            event.preventDefault();
+                                            payInvoice(invoice, contract, $(this));
+                                        }
+                                    );
                                 }
-                            )
-                            return toContributor;
-                        }.call();
-                        doc.text("to Contributor: " + toContributor + " EUR", 23, 81);
-                        var toPm = function() {
-                            var toPm = 0;
-                            fullInvoice.tasks.forEach(
-                                function (task) {
-                                    toPm += task.commission
-                                }
-                            )
-                            return toPm;
-                        }.call();
-                        doc.text("to Project Manager: " + toPm + " EUR", 23, 88);
-                        if(fullInvoice.isPaid) {
-                            doc.text("Status: paid", 20, 95)
-                            doc.text("paid at: " + fullInvoice.paymentTime, 23, 102)
-                            doc.text("transaction id: " + fullInvoice.transactionId, 23, 109)
-                        } else {
-                            doc.text("Status: active (not paid)", 20, 95)
-                            doc.text("payment due: next Monday", 23, 102)
-                        }
-                        doc.text("Invoiced tasks bellow.", 20, 116);
-
-                        doc.text("______________________________", 20, 120);
-
-                        function createHeaders(keys) {
-                            var result = [];
-                            for (var i = 0; i < keys.length; i += 1) {
-                                result.push({
-                                    id: keys[i],
-                                    name: keys[i],
-                                    prompt: keys[i],
-                                    width: 30,
-                                    align: "center",
-                                    padding: 0
-                                });
-                            }
-                            return result;
-                        }
-
-                        var headers = createHeaders([
-                            "Issue ID",
-                            "Estimation",
-                            "Value",
-                            "Commission"
-                        ]);
-
-                        var generateData = function(invoicedTasks) {
-                            var result = [];
-                            for (var i = 0; i < invoicedTasks.length; i += 1) {
-                                var task = {
-                                    "Issue ID": invoicedTasks[i].issueId,
-                                    Estimation: invoicedTasks[i].estimation + "min",
-                                    Value: invoicedTasks[i].value + " EUR",
-                                    Commission: invoicedTasks[i].commission + " EUR"
-                                };
-                                result.push(Object.assign({}, task));
-                            }
-                            return result;
-                        };
-                        doc.table(
-                            55, 127,
-                            generateData(fullInvoice.tasks),
-                            headers,
-                            {
-                                autoSize: true
                             }
                         );
+                        $("#invoicesTable").dataTable();
+                        $("#invoicesBody").show();
+                    },
+                    204: function (data) {
+                        $("#loadingInvoices").hide();
+                        $("#invoicesTable").dataTable();
+                        $("#invoicesBody").show();
+                    },
 
-                        doc.save("self_invoice_" + fullInvoice.id + ".pdf");
-                    }
                 }
             }
         );
+    }
+
+    /**
+     * Turn an Invoice into a table row.
+     * @param invoice Invoice.
+     */
+    function invoiceAsTableRow(contract, invoice) {
+        var status;
+        var payIcon;
+        if(invoice.paymentTime == "null" && invoice.transactionId == "null") {
+            status = "Active";
+            payIcon = "<a href='#' title='Pay Invoice' class='payInvoice'>"
+                + "<i class='fa fa-credit-card fa-lg'></i>"
+                + "</a>";
+        } else {
+            status = "Paid";
+            payIcon = "";
+        }
+        return "<tr>" +
+            "<td>" + invoice.id + "</td>" +
+            "<td>" + invoice.createdAt.split('T')[0] + "</td>"  +
+            "<td>" + invoice.totalAmount + "</td>" +
+            "<td>" + status + "</td>" +
+            "<td>"
+            + "<a href='#' title='Download Invoice' class='downloadInvoice'>"
+            + "<i class='fa fa-file-pdf-o fa-lg'></i>"
+            + "</a>  "
+            + payIcon
+            + "</td>" +
+            "</tr>"
     }
 
     function handleError(error){
@@ -287,12 +270,6 @@
                                         "<a href='#tasks' title='See Tasks' class='contractAgenda'>"
                                         +"<i class='fa fa-laptop fa-lg'></i>"
                                         +"</a>  "
-                                        + "<a href='#' title='Download Invoice' class='downloadInvoice'>"
-                                        +"<i class='fa fa-file-pdf-o fa-lg'></i>"
-                                        +"</a>  "
-                                        +"<a href='#' title='Pay Invoice' class='payContract'>"
-                                        +"<i class='fa fa-euro fa-lg'></i>"
-                                        +"</a>  "
                                         +"<a href='#' title='Edit Contract' class='editContract'>"
                                         +"<i class='fa fa-edit fa-lg'></i>"
                                         +"</a>  "
@@ -311,6 +288,7 @@
                                             var repo = $("#owner").text() + "/" + $("#name").text();
                                             var contributor = $(this).parent().parent().children()[0].innerText;
                                             var role = $(this).parent().parent().children()[1].innerText;
+                                            var hourlyRate = $(this).parent().parent().children()[2].innerText;
                                             var provider = "github";
                                             var contract = {
                                                 id: {
@@ -318,9 +296,11 @@
                                                     contributorUsername: contributor,
                                                     role: role,
                                                     provider: provider
-                                                }
+                                                },
+                                                hourlyRate: hourlyRate
                                             }
                                             getTasksOfContract(contract);
+                                            getInvoicesOfContract(contract);
                                         }
                                     )
                                 }
@@ -376,58 +356,6 @@
                                     )
                                 }
                             )
-                            $(".downloadInvoice").each(
-                                function() {
-                                    $(this).on(
-                                        "click",
-                                        function(event) {
-                                            event.preventDefault();
-
-                                            var repo = $("#owner").text() + "/" + $("#name").text();
-                                            var contributor = $(this).parent().parent().children()[0].innerText;
-                                            var role = $(this).parent().parent().children()[1].innerText;
-                                            var hourly = $(this).parent().parent().children()[2].innerText;
-                                            var provider = "github";
-                                            var contract = {
-                                                id: {
-                                                    repoFullName: repo,
-                                                    contributorUsername: contributor,
-                                                    role: role,
-                                                    provider: provider
-                                                },
-                                                hourlyRate: hourly
-                                            }
-                                            activeInvoiceToPdf(contract);
-                                        }
-                                    )
-                                }
-                            );
-                            $(".payContract").each(
-                                function() {
-                                    $(this).on(
-                                        "click",
-                                        function(event) {
-                                            event.preventDefault();
-
-                                            var repo = $("#owner").text() + "/" + $("#name").text();
-                                            var contributor = $(this).parent().parent().children()[0].innerText;
-                                            var role = $(this).parent().parent().children()[1].innerText;
-                                            var hourly = $(this).parent().parent().children()[2].innerText;
-                                            var provider = "github";
-                                            var contract = {
-                                                id: {
-                                                    repoFullName: repo,
-                                                    contributorUsername: contributor,
-                                                    role: role,
-                                                    provider: provider
-                                                },
-                                                hourlyRate: hourly
-                                            }
-                                            payContract(repo, contract);
-                                        }
-                                    )
-                                }
-                            );
                         })
                         .catch(handleError)
                         .finally(hideLoading);

@@ -189,7 +189,7 @@
                                 <table id="contracts" class="display" style="width:100%">
                                     <thead>
                                     <tr>
-                                        <th>Username</th>
+                                        <th>Contributor</th>
                                         <th>Role</th>
                                         <th>Hourly Rate</th>
                                         <th>
@@ -309,29 +309,60 @@
                 </div>
             </div>
         </div>
-        <div class="mt-4" id="tasks">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h4 class="m-0 font-weight-bold card-title" id="tasksTitle">Tasks</h4>
+        <div class="row mt-4">
+            <div class="col-lg-6" id="tasks">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h4 class="m-0 font-weight-bold card-title" id="tasksTitle">Tasks</h4>
+                    </div>
+                    <div id="loadingTasks" class="text-center" style="display: none;">
+                        <img src="/images/loading.svg">
+                    </div>
+                    <div class="card-body" id="tasksBody" style="display: none;">
+                        <div class="table-responsive">
+                            <div id="tasksTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                <table id="tasksTable" class="display">
+                                    <thead>
+                                    <tr>
+                                        <th>Issue</th>
+                                        <th>Assigned</th>
+                                        <th>Deadline</th>
+                                        <th>Estimation</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div id="loadingTasks" class="text-center" style="display: none;">
-                    <img src="/images/loading.svg">
-                </div>
-                <div class="card-body" id="tasksBody" style="display: none;">
-                    <div class="table-responsive">
-                        <div id="tasksTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
-                            <table id="tasksTable" class="display">
-                                <thead>
-                                <tr>
-                                    <th>Issue</th>
-                                    <th>Assigned</th>
-                                    <th>Deadline</th>
-                                    <th>Estimation</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
+            </div>
+            <div class="col-lg-6" id="invoices">
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h4 class="m-0 font-weight-bold card-title" id="invoicesTitle">Invoices</h4>
+                    </div>
+                    <div id="loadingInvoices" class="text-center" style="display: none;">
+                        <img src="/images/loading.svg">
+                    </div>
+                    <div class="card-body" id="invoicesBody" style="display: none;">
+                        <div class="table-responsive">
+                            <div id="invoicesTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                <table id="invoicesTable" class="display">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Created</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Options</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -593,6 +624,7 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.1.1/jspdf.umd.min.js"></script>
 </body>
 <script src="/js/confirmDialog.js"></script>
+<script src="/js/invoiceToPdf.js"></script>
 <script src="/js/paymentMethods.js"></script>
 <script src="/js/wallets.js"></script>
 <script src="/js/getProject.js"></script>
