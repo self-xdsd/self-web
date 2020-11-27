@@ -507,7 +507,7 @@
                 + contract.id.repoFullName
                 + "/contracts/" + contract.id.contributorUsername + "/mark?role=" + contract.id.role,
                 {
-                    type: "DELETE",
+                    type: "PUT",
                     success: function() {
                         loadContracts();
                     },

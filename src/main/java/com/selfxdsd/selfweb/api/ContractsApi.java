@@ -57,13 +57,10 @@ import java.util.function.Function;
  *  a Project Contract is available, remove the placeholder `restoreContractApi`
  *  and use the real api call. Also test constructor needs to be removed and
  *  "restore contract" unit tests updated.
- * @todo #176:15min Change the endpoint mapping for `markContractForRemoval()`
- *  with `@PutMapping /projects/{owner}/{name}/contracts/{username}/mark`
- *  and for `restoreContract()` with
- *  `@DeleteMapping /projects/{owner}/{name}/contracts/{username}/mark`.
- *  Also update frontend
- *  `getAndAddContracts.js#markContractForRemoval(contract)` ajax call with type
- *  with "PUT" (line 482).
+ * @todo #200:30min On frontend. in `getAndAddContracts.js`, implement
+ *  `restoreContract(...)` function. This will call
+ *  `DELETE "/projects/{owner}/{name}/contracts/{username}/mark" endpoint,
+ *  and on success will reset the corresponding contract table row.
  */
 @RestController
 public class ContractsApi extends BaseApiController {
@@ -337,7 +334,7 @@ public class ContractsApi extends BaseApiController {
      * @return JsonResponse.
      * @checkstyle ParameterNumber (10 lines)
      */
-    @DeleteMapping(
+    @PutMapping(
         value = "/projects/{owner}/{name}/contracts/{username}/mark",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -383,8 +380,8 @@ public class ContractsApi extends BaseApiController {
      * @return JsonResponse.
      * @checkstyle ParameterNumber (10 lines)
      */
-    @PutMapping(
-        value = "/projects/{owner}/{name}/contracts/{username}/restore",
+    @DeleteMapping(
+        value = "/projects/{owner}/{name}/contracts/{username}/mark",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<String> restoreContract(
