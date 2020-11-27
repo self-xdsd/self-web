@@ -20,13 +20,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.selfweb;
+package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.PaymentMethod;
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.Wallet;
-import com.selfxdsd.selfweb.api.BaseApiController;
 import com.selfxdsd.selfweb.api.output.JsonPaymentMethod;
 import com.stripe.model.SetupIntent;
 import org.slf4j.Logger;
