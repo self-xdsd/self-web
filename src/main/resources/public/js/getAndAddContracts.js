@@ -363,7 +363,7 @@
             });
         }
 
-        loadContracts();
+        $("#projectContractsButton").click(()=> loadContracts());
 
         $("#updateContractForm").submit(
             function(e) {
