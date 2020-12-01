@@ -534,6 +534,11 @@
                                     <div class="card-body" id="payment-method-element">
                                     </div>
                                     <div id="addNewCardButtons" class="ml-3 form-group">
+                                        <div th:if="${testEnvironment}" class="alert alert-danger mr-3" role="alert">
+                                            We are in Test, do not add a real card!<br>
+                                            You can use card number 4242 4242 4242 4242 with any CVC, future date and zipcode,
+                                            to simulate the whole Stripe flow.
+                                        </div>
                                         <button type="button" id="addNewCardButton" class="btn btn-primary bg" aria-describedby="addCardInfo">Add</button>
                                         <button type="button" id="cancelNewCardButton" class="btn btn-secondary bg">Cancel</button>
                                         <span id="loadingAddNewCard" class="text-center" style="display: none;">
