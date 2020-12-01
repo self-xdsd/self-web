@@ -37,6 +37,8 @@ import javax.json.Json;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.function.Function;
 
 /**
@@ -48,8 +50,6 @@ import java.util.function.Function;
  * @since 0.0.1
  * @todo #84:30min. Start implementing ContributorsApi method contributors GET.
  *  This will list all contributors.
- * @todo #142:30min As soon as we have this logic implemented in the core,
- *  provide a proper implementation for methods updateContract(...) here.
  * @todo #175:15min Once self-core 'Restore Contract' functionality for
  *  a Project Contract is available, remove the placeholder `restoreContractApi`
  *  and use the real api call. Also test constructor needs to be removed and
@@ -363,15 +363,53 @@ public class ContractsApi extends BaseApiController {
 
         @RequestParam("newHourlyRate")
         @Positive(message = "Hourly rate must be a positive number!")
-        final String newHourlyRate
+        final double newHourlyRate
     ) {
-        System.out.println("NEW HOURLY RATE: " + newHourlyRate);
-        return ResponseEntity.ok(
-            Json.createObjectBuilder()
-                .add("status", "ok")
-                .build()
-                .toString()
+        final ResponseEntity<String> resp;
+        final Project project = this.user.projects().getProjectById(
+            owner + "/" + name, this.user.provider().name()
         );
+        if(project == null) {
+            resp = ResponseEntity.noContent().build();
+        } else {
+            final Contract contract = project.contracts().findById(
+                new Contract.Id(
+                    owner + "/" + name,
+                    username,
+                    project.provider(),
+                    role
+                )
+            );
+            if(contract == null) {
+                resp = ResponseEntity.noContent().build();
+            } else {
+                final Contract updated = contract.update(
+                    BigDecimal
+                        .valueOf(newHourlyRate)
+                        .multiply(BigDecimal.valueOf(100))
+                );
+                resp = ResponseEntity.ok(
+                    Json.createObjectBuilder()
+                        .add("id", Json.createObjectBuilder()
+                            .add("repoFullName", updated.contractId()
+                                .getRepoFullName())
+                            .add("contributorUsername", updated.contractId()
+                                .getContributorUsername())
+                            .add("provider", updated.contractId().getProvider())
+                            .add("role", updated.contractId().getRole())
+                            .build())
+                        .add("hourlyRate", NumberFormat
+                            .getCurrencyInstance(Locale.GERMANY)
+                            .format(
+                                updated.hourlyRate()
+                                    .divide(BigDecimal.valueOf(100))
+                            )
+                        ).build()
+                        .toString()
+                );
+            }
+        }
+        return resp;
     }
 
     /**
