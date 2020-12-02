@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.json.Json;
@@ -60,6 +61,7 @@ import java.util.function.Function;
  *  and on success will reset the corresponding contract table row.
  */
 @RestController
+@Validated
 public class ContractsApi extends BaseApiController {
 
     /**
@@ -75,11 +77,6 @@ public class ContractsApi extends BaseApiController {
     private final User user;
 
     /**
-     * Self's core.
-     */
-    private final Self self;
-
-    /**
      * Placeholder until Contract/Contracts API has a way to
      * restore a Contract from removal.
      */
@@ -88,11 +85,10 @@ public class ContractsApi extends BaseApiController {
     /**
      * Ctor.
      * @param user Authenticated user.
-     * @param self Self's core.
      */
     @Autowired
-    public ContractsApi(final User user, final Self self) {
-        this(user, self, contract -> {
+    public ContractsApi(final User user) {
+        this(user, contract -> {
             LOG.warn("Contract " + contract.contractId()
                 + " can't be restored from removal."
                 +" API method not available yet.");
@@ -103,15 +99,12 @@ public class ContractsApi extends BaseApiController {
     /**
      * Ctor.
      * @param user Authenticated user.
-     * @param self Self's core.
      * @param restoreContractApi Placeholder until Contract/Contracts API
      * has a way to restore a Contract from removal.
      */
     ContractsApi(final User user,
-                 final Self self,
                  final Function<Contract, Contract> restoreContractApi) {
         this.user = user;
-        this.self = self;
         this.restoreContractApi = restoreContractApi;
     }
 

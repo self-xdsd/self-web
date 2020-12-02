@@ -23,6 +23,7 @@
 package com.selfxdsd.selfweb.api.input;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 /**
  * Input for registering a repo as a new project in Self.
@@ -37,12 +38,14 @@ public class RepoInput {
      * Repo's owner.
      */
     @NotBlank(message = "Repo owner is mandatory.")
+    @Pattern(regexp = "^[a-zA-Z0-9\\-_]{1,256}$")
     private String owner;
 
     /**
      * Repo's name.
      */
     @NotBlank(message = "Repo name is mandatory.")
+    @Pattern(regexp = "^[a-zA-Z0-9\\-_\\.]{1,256}$")
     private String name;
 
     public String getOwner() {

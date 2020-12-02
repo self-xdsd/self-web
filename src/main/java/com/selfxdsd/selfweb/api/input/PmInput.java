@@ -23,6 +23,7 @@
 package com.selfxdsd.selfweb.api.input;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 
 /**
@@ -38,24 +39,28 @@ public class PmInput {
      * User ID from the Provider.
      */
     @NotBlank(message = "PM's userId is mandatory!")
+    @Pattern(regexp = "^[a-zA-Z0-9\\-_]{1,256}$")
     private String userId;
 
     /**
      * User name from the Provider.
      */
     @NotBlank(message = "PM's username is mandatory!")
+    @Pattern(regexp = "^[a-zA-Z0-9\\-_]{1,256}$")
     private String username;
 
     /**
      * Provider name.
      */
     @NotBlank(message = "PM's provider is mandatory!")
+    @Pattern(regexp = "^[a-zA-Z0-9\\-_]{1,256}$")
     private String provider;
 
     /**
      * Provider access token.
      */
     @NotBlank(message = "PM's token is mandatory!")
+    @Pattern(regexp = "^[a-zA-Z0-9\\-_]{1,256}$")
     private String token;
 
     /**

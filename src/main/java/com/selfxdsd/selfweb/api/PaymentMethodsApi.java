@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.validation.constraints.Pattern;
 import java.io.StringReader;
 
 /**
@@ -144,7 +145,9 @@ public class PaymentMethodsApi extends BaseApiController {
     public ResponseEntity<String> saveStripePaymentMethod(
         @PathVariable final String owner,
         @PathVariable final String name,
-        @RequestBody final String body
+        @RequestBody
+        @Pattern(regexp = "[a-zA-Z0-9\\-_\\{\\}\" :,]{1,256}")
+        final String body
     ) {
         ResponseEntity<String> response;
         final Project found = this.user.projects().getProjectById(

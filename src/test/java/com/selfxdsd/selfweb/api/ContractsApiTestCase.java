@@ -84,10 +84,7 @@ public final class ContractsApiTestCase {
         Mockito.when(user.provider()).thenReturn(provider);
         Mockito.when(user.projects()).thenReturn(projects);
 
-        final ContractsApi api = new ContractsApi(
-            user,
-            Mockito.mock(Self.class)
-        );
+        final ContractsApi api = new ContractsApi(user);
 
         ResponseEntity<String> resp = api.contracts("mihai", "test");
         MatcherAssert.assertThat(
@@ -136,10 +133,7 @@ public final class ContractsApiTestCase {
         Mockito.when(user.provider()).thenReturn(provider);
         Mockito.when(user.projects()).thenReturn(Mockito.mock(Projects.class));
 
-        final ContractsApi api = new ContractsApi(
-            user,
-            Mockito.mock(Self.class)
-        );
+        final ContractsApi api = new ContractsApi(user);
 
         ResponseEntity<String> resp = api.contracts("mihai", "test");
         MatcherAssert.assertThat(
@@ -193,10 +187,7 @@ public final class ContractsApiTestCase {
                     BigDecimal.valueOf(25));
             });
 
-        final ContractsApi api = new ContractsApi(
-            user,
-            Mockito.mock(Self.class)
-        );
+        final ContractsApi api = new ContractsApi(user);
 
         final ContractInput input = new ContractInput();
         input.setUsername("john");
@@ -237,10 +228,7 @@ public final class ContractsApiTestCase {
             Mockito.anyString()))
             .thenThrow(new IllegalStateException("Contract not created!"));
 
-        final ContractsApi api = new ContractsApi(
-            user,
-            Mockito.mock(Self.class)
-        );
+        final ContractsApi api = new ContractsApi(user);
 
         final ContractInput input = new ContractInput();
         input.setUsername("john");
@@ -275,10 +263,7 @@ public final class ContractsApiTestCase {
             Mockito.anyString()))
             .thenThrow(new IllegalStateException("Contract not created!"));
 
-        final ContractsApi api = new ContractsApi(
-            user,
-            Mockito.mock(Self.class)
-        );
+        final ContractsApi api = new ContractsApi(user);
 
         final ContractInput input = new ContractInput();
         input.setUsername("john");
@@ -339,7 +324,6 @@ public final class ContractsApiTestCase {
 
         final ContractsApi api = new ContractsApi(
             user,
-            Mockito.mock(Self.class),
             restoreApi
         );
 
@@ -391,7 +375,6 @@ public final class ContractsApiTestCase {
 
         final ContractsApi api = new ContractsApi(
             user,
-            Mockito.mock(Self.class),
             Mockito.mock(Function.class)
         );
 
@@ -424,7 +407,6 @@ public final class ContractsApiTestCase {
 
         final ContractsApi api = new ContractsApi(
             user,
-            Mockito.mock(Self.class),
             Mockito.mock(Function.class)
         );
 
@@ -451,7 +433,6 @@ public final class ContractsApiTestCase {
 
         final ContractsApi api = new ContractsApi(
             user,
-            Mockito.mock(Self.class),
             Mockito.mock(Function.class)
         );
 
