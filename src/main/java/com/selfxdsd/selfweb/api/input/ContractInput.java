@@ -25,6 +25,7 @@ package com.selfxdsd.selfweb.api.input;
 import com.selfxdsd.selfweb.api.input.validators.Role;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 
 /**
@@ -40,6 +41,7 @@ public final class ContractInput {
      * Contributor username.
      */
     @NotBlank(message = "Contributor's username is mandatory!")
+    @Pattern(regexp = "^[a-zA-Z0-9-_]{1,256}$")
     private String username;
 
     /**
