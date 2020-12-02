@@ -9,6 +9,7 @@ $(document).ready(
 function getOrgRepos() {
     $("#orgReposTable").find("tbody").html('');
     $("#loadingOrgRepos").show();
+    $("#github-org-info").hide();
     $.get(
         "/api/repositories/orgs",
         function(repos) {
@@ -28,6 +29,7 @@ function getOrgRepos() {
                 }
             )
             $("#loadingOrgRepos").hide();
+            $("#github-org-info").show();
             $('#orgReposTable').dataTable();
         }
     );
