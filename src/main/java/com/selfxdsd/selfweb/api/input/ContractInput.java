@@ -24,9 +24,7 @@ package com.selfxdsd.selfweb.api.input;
 
 import com.selfxdsd.selfweb.api.input.validators.Role;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.*;
 
 /**
  * Input for a Contract.
@@ -47,7 +45,8 @@ public final class ContractInput {
     /**
      * Contributor hourly rate in dollars.
      */
-    @Positive(message = "Hourly rate must be a positive number!")
+    @Min(value = 8)
+    @Max(value = 300)
     private double hourlyRate;
 
     /**
