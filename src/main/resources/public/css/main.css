@@ -4,6 +4,9 @@ body {
   font-family:"Roboto", "Times New Roman", serif;
   height: 100%;
 }
+main {
+    padding-bottom: 75px;
+}
 #header {
     border-bottom-style: solid;
     border-bottom-width: 1px;
@@ -30,12 +33,6 @@ footer {
 }
 ul {
     list-style: none;
-}
-.padding-header-navbar {
-    padding-top: 10px;
-    padding-right: 10%;
-    padding-bottom: 10px;
-    padding-left: 10%;
 }
 
 .btn-outline-primary {
@@ -109,6 +106,15 @@ body {
         padding-bottom: 136px;
 }
 
+@media (min-width: 768px) {
+    .padding-header-navbar, .page-footer {
+        padding-top: 10px;
+        padding-right: 10%;
+        padding-bottom: 10px;
+        padding-left: 10%;
+    }
+}
+
 @media (max-width:767px)
 {
     body {
@@ -125,6 +131,11 @@ body {
 
     #how-it-works .bg-light{
         display: none;
+    }
+
+    .padding-header-navbar, .page-footer {
+        padding-top: 10px;
+        padding-bottom: 10px;
     }
 }
 

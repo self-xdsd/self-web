@@ -3,168 +3,170 @@
 <head th:replace="head.html :: head"></head>
 <body>
 <header th:replace="header.html :: header"></header>
-<section id="headline" class="headline-box">
-    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center">
-        <div class="col-md-5 p-lg-5 mx-auto my-5">
-            <h1 class="display-5 font-weight-normal">Let your project manage itself</h1>
-            <p class="lead font-weight-normal">
-                Self XDSD is the platform for automated project management of OSS projects.
-            </p>
-            <a class="btn btn-outline-primary" href="#how-it-works">How it works</a>
-        </div>
-        <div class="product-device box-shadow d-none d-md-block"></div>
-        <div class="product-device product-device-2 box-shadow d-none d-md-block"></div>
-    </div>
-    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center">
-        <img src="/images/self-xdsd-screenshot.png" style="width: 100%" alt="Self XDSD Screenshot">
-        <div class="product-device box-shadow d-none d-md-block"></div>
-        <div class="product-device product-device-2 box-shadow d-none d-md-block"></div>
-    </div>
-</section>
-<section id="how-it-works">
-    <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
-        <div class="about-self w-50 mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-            <div class="my-3 py-3">
-                <div class="list-check-container">
-                    <h2>What is Self?</h2>
-                    <p class="lead">
-                        Self is a platform which helps you implement the <a href="https://www.xdsd.org/" target="_blank">XDSD</a>
-                        management principles in your project. In essence, this means:
-                    </p>
-                    <ul>
-                        <li>Everyone gets paid for closed Issues/PRs.</li>
-                        <li>Micro-tasking is recommended.</li>
-                        <li>No meetings or video conferences needed,
-                            all communication happens inside the tickets. </li>
-                        <li>
-                            Code Quality Gates should be automated as part of the CI process.
-                        </li>
-                        <li>Payment/invoicing happens automatically after a ticket is closed.</li>
-                    </ul>
-                    <br><br>
-                    <p class="lead">
-                        At the moment, our PMs work at <b>Github</b>, but we have plans to extend to GitLab and others soon.
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="w-50 mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-            <img src="/images/illustrations/The_Laptop_Preview_App_1.png" style="width: 100%" alt="Self XDSD Screenshot">
-        </div>
-    </div>
-
-
-    <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
-        <div class="w-50 mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-            <img src="/images/illustrations/feature3.png" style="width: 100%" alt="Self XDSD Screenshot">
-        </div>
-        <div class="register-repo w-50 mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-            <div class="my-3 py-3">
-                <h2 class="display-5">
-                    <svg class="octicon octicon-repo mr-2 text-gray flex-shrink-0" viewBox="0 0 16 16" version="1.1" width="25" height="25" aria-hidden="true"><path style="color: #701516" fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"></path></svg>
-                    Register your repository
-                </h2>
-                <br>
-                <p class="lead">
-                    Once registered, your repository will be assigned to one
-                    of our Project Managers.
+<main role="main">
+    <section id="headline" class="headline-box">
+        <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center">
+            <div class="col-md-5 p-lg-5 mx-auto my-5">
+                <h1 class="display-5 font-weight-normal">Let your project manage itself</h1>
+                <p class="lead font-weight-normal">
+                    Self XDSD is the platform for automated project management of OSS projects.
                 </p>
-                <p class="lead">
-                    Choose your contributors, assign them roles (developer, code-reviewer, qa etc)
-                    and set their hourly rates.
-                </p>
-                <p class="lead">
-                    From there on, the PM will take care of the project for you.
-                </p>
+                <a class="btn btn-outline-primary" href="#how-it-works">How it works</a>
             </div>
-            <div class="unauthenticated">
-                <a class="btn btn-outline-primary" href="/oauth2/authorization/github">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" height="14"><path d="M14 0C6.27 0 0 6.43 0 14.36c0 6.34 4.01 11.72 9.57 13.62.7.13.96-.31.96-.69 0-.34-.01-1.24-.02-2.44-3.89.87-4.72-1.92-4.72-1.92-.64-1.66-1.55-2.1-1.55-2.1-1.27-.89.1-.87.1-.87 1.4.1 2.14 1.48 2.14 1.48 1.25 2.19 3.28 1.56 4.07 1.19.13-.93.49-1.56.89-1.92-3.11-.36-6.38-1.59-6.38-7.09 0-1.57.55-2.85 1.44-3.85-.14-.36-.62-1.82.14-3.8 0 0 1.18-.39 3.85 1.47a12.8 12.8 0 013.5-.48c1.19.01 2.39.16 3.5.48 2.67-1.86 3.85-1.47 3.85-1.47.76 1.98.28 3.44.14 3.8.9 1 1.44 2.28 1.44 3.85 0 5.51-3.27 6.73-6.39 7.08.5.44.95 1.32.95 2.66 0 1.92-.02 3.47-.02 3.94 0 .38.25.83.96.69C23.99 26.07 28 20.7 28 14.36 28 6.43 21.73 0 14 0z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
-                    Github Login
-                </a>
-            </div>
+            <div class="product-device box-shadow d-none d-md-block"></div>
+            <div class="product-device product-device-2 box-shadow d-none d-md-block"></div>
         </div>
-    </div>
-
-    <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
-        <div class="features w-50 mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-            <div class="my-3 py-3">
-                <div class="list-check-container">
-                    <h2>Features</h2>
-                    <p>Here is what Self XDSD has to offer:</p>
-                    <ul class="list-check">
-                        <li>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="green"><path d="M17.28 9.28a.75.75 0 00-1.06-1.06l-5.97 5.97-2.47-2.47a.75.75 0 00-1.06 1.06l3 3a.75.75 0 001.06 0l6.5-6.5z"></path><path fill-rule="evenodd" d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1zM2.5 12a9.5 9.5 0 1119 0 9.5 9.5 0 01-19 0z"></path></svg>
-                            A smart chatbot Project Manager.
-                        </li>
-                        <li>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="green"><path d="M17.28 9.28a.75.75 0 00-1.06-1.06l-5.97 5.97-2.47-2.47a.75.75 0 00-1.06 1.06l3 3a.75.75 0 001.06 0l6.5-6.5z"></path><path fill-rule="evenodd" d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1zM2.5 12a9.5 9.5 0 1119 0 9.5 9.5 0 01-19 0z"></path></svg>
-                            Issue Assignment
-                        </li>
-                        <li>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="green"><path d="M17.28 9.28a.75.75 0 00-1.06-1.06l-5.97 5.97-2.47-2.47a.75.75 0 00-1.06 1.06l3 3a.75.75 0 001.06 0l6.5-6.5z"></path><path fill-rule="evenodd" d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1zM2.5 12a9.5 9.5 0 1119 0 9.5 9.5 0 01-19 0z"></path></svg>
-                            PR Assignment
-                        </li>
-                        <li>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="green"><path d="M17.28 9.28a.75.75 0 00-1.06-1.06l-5.97 5.97-2.47-2.47a.75.75 0 00-1.06 1.06l3 3a.75.75 0 001.06 0l6.5-6.5z"></path><path fill-rule="evenodd" d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1zM2.5 12a9.5 9.5 0 1119 0 9.5 9.5 0 01-19 0z"></path></svg>
-                            Open/close Issues based on "to-do" and "fix-me" code comments.
-                        </li>
-                        <li>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="green"><path d="M17.28 9.28a.75.75 0 00-1.06-1.06l-5.97 5.97-2.47-2.47a.75.75 0 00-1.06 1.06l3 3a.75.75 0 001.06 0l6.5-6.5z"></path><path fill-rule="evenodd" d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1zM2.5 12a9.5 9.5 0 1119 0 9.5 9.5 0 01-19 0z"></path></svg>
-                            Automatic invoicing and payments
-                        </li>
-                    </ul>
-                </div>
-            </div>
+        <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center">
+            <img src="/images/self-xdsd-screenshot.png" style="width: 100%" alt="Self XDSD Screenshot">
+            <div class="product-device box-shadow d-none d-md-block"></div>
+            <div class="product-device product-device-2 box-shadow d-none d-md-block"></div>
         </div>
-        <div class="w-50 mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-            <img src="/images/illustrations/features2.png" style="width: 100%" alt="Self XDSD Screenshot">
-        </div>
-    </div>
-</section>
-<section id="plans">
-    <div class="text-center">
-        <div class="container">
-            <div class="row pt-6">
-                <div class="col-md-6">
-                    <div class="card mb-6 box-shadow">
-                        <div class="card-header">
-                            <h4 class="my-0 font-weight-normal">
-                                Dry Run, No Card Required
-                            </h4>                            
-                        </div>
-                        <div class="card-body">
-                        <h1>No Cash, No Problem</h1>
-                        <ul class="list-unstyled mt-3 mb-4">
-                            <li>When you activate a new repo, we assign it a <b>fake wallet with 100.000 €.</b></li>
-                            <li>You can work with it until you decide to register a real wallet.</li>
-                            <li>The business flow and functionalities of Self XDSD are the same, except there are no real payments performed.</li>
-                        </ul> <button type="button" class="btn btn-outline-primary">Read more</button>
-                            
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card mb-6 box-shadow">
-                        <div class="card-header">
-                            <h4 class="my-0 font-weight-normal">
-                                Real Payments
-                            </h4>                            
-                        </div>
-                        <div class="card-body">
-                        <h1>8% per Invoiced Task</h1>
-                        <ul class="list-unstyled mt-3 mb-4">
-                            <li>Self XDSD charges a commission for each invoiced task.</li>
-                            <li>Commission is charged only for tasks finished, closed and invoiced.</li>
-                            <li>For each 1000 € invested in development, you pay 80 € for the management.</li>
-                        </ul> <button type="button" class="btn btn-outline-primary">Read more</button>
-                        </div>
+    </section>
+    <section id="how-it-works">
+        <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
+            <div class="about-self w-50 mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+                <div class="my-3 py-3">
+                    <div class="list-check-container">
+                        <h2>What is Self?</h2>
+                        <p class="lead">
+                            Self is a platform which helps you implement the <a href="https://www.xdsd.org/" target="_blank">XDSD</a>
+                            management principles in your project. In essence, this means:
+                        </p>
+                        <ul>
+                            <li>Everyone gets paid for closed Issues/PRs.</li>
+                            <li>Micro-tasking is recommended.</li>
+                            <li>No meetings or video conferences needed,
+                                all communication happens inside the tickets. </li>
+                            <li>
+                                Code Quality Gates should be automated as part of the CI process.
+                            </li>
+                            <li>Payment/invoicing happens automatically after a ticket is closed.</li>
+                        </ul>
+                        <br><br>
+                        <p class="lead">
+                            At the moment, our PMs work at <b>Github</b>, but we have plans to extend to GitLab and others soon.
+                        </p>
                     </div>
                 </div>
             </div>
+            <div class="w-50 mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+                <img src="/images/illustrations/The_Laptop_Preview_App_1.png" style="width: 100%" alt="Self XDSD Screenshot">
+            </div>
         </div>
-    </div>
-</section>
+
+
+        <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
+            <div class="w-50 mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+                <img src="/images/illustrations/feature3.png" style="width: 100%" alt="Self XDSD Screenshot">
+            </div>
+            <div class="register-repo w-50 mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+                <div class="my-3 py-3">
+                    <h2 class="display-5">
+                        <svg class="octicon octicon-repo mr-2 text-gray flex-shrink-0" viewBox="0 0 16 16" version="1.1" width="25" height="25" aria-hidden="true"><path style="color: #701516" fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"></path></svg>
+                        Register your repository
+                    </h2>
+                    <br>
+                    <p class="lead">
+                        Once registered, your repository will be assigned to one
+                        of our Project Managers.
+                    </p>
+                    <p class="lead">
+                        Choose your contributors, assign them roles (developer, code-reviewer, qa etc)
+                        and set their hourly rates.
+                    </p>
+                    <p class="lead">
+                        From there on, the PM will take care of the project for you.
+                    </p>
+                </div>
+                <div class="unauthenticated">
+                    <a class="btn btn-outline-primary" href="/oauth2/authorization/github">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" height="14"><path d="M14 0C6.27 0 0 6.43 0 14.36c0 6.34 4.01 11.72 9.57 13.62.7.13.96-.31.96-.69 0-.34-.01-1.24-.02-2.44-3.89.87-4.72-1.92-4.72-1.92-.64-1.66-1.55-2.1-1.55-2.1-1.27-.89.1-.87.1-.87 1.4.1 2.14 1.48 2.14 1.48 1.25 2.19 3.28 1.56 4.07 1.19.13-.93.49-1.56.89-1.92-3.11-.36-6.38-1.59-6.38-7.09 0-1.57.55-2.85 1.44-3.85-.14-.36-.62-1.82.14-3.8 0 0 1.18-.39 3.85 1.47a12.8 12.8 0 013.5-.48c1.19.01 2.39.16 3.5.48 2.67-1.86 3.85-1.47 3.85-1.47.76 1.98.28 3.44.14 3.8.9 1 1.44 2.28 1.44 3.85 0 5.51-3.27 6.73-6.39 7.08.5.44.95 1.32.95 2.66 0 1.92-.02 3.47-.02 3.94 0 .38.25.83.96.69C23.99 26.07 28 20.7 28 14.36 28 6.43 21.73 0 14 0z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                        Github Login
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
+            <div class="features w-50 mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+                <div class="my-3 py-3">
+                    <div class="list-check-container">
+                        <h2>Features</h2>
+                        <p>Here is what Self XDSD has to offer:</p>
+                        <ul class="list-check">
+                            <li>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="green"><path d="M17.28 9.28a.75.75 0 00-1.06-1.06l-5.97 5.97-2.47-2.47a.75.75 0 00-1.06 1.06l3 3a.75.75 0 001.06 0l6.5-6.5z"></path><path fill-rule="evenodd" d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1zM2.5 12a9.5 9.5 0 1119 0 9.5 9.5 0 01-19 0z"></path></svg>
+                                A smart chatbot Project Manager.
+                            </li>
+                            <li>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="green"><path d="M17.28 9.28a.75.75 0 00-1.06-1.06l-5.97 5.97-2.47-2.47a.75.75 0 00-1.06 1.06l3 3a.75.75 0 001.06 0l6.5-6.5z"></path><path fill-rule="evenodd" d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1zM2.5 12a9.5 9.5 0 1119 0 9.5 9.5 0 01-19 0z"></path></svg>
+                                Issue Assignment
+                            </li>
+                            <li>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="green"><path d="M17.28 9.28a.75.75 0 00-1.06-1.06l-5.97 5.97-2.47-2.47a.75.75 0 00-1.06 1.06l3 3a.75.75 0 001.06 0l6.5-6.5z"></path><path fill-rule="evenodd" d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1zM2.5 12a9.5 9.5 0 1119 0 9.5 9.5 0 01-19 0z"></path></svg>
+                                PR Assignment
+                            </li>
+                            <li>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="green"><path d="M17.28 9.28a.75.75 0 00-1.06-1.06l-5.97 5.97-2.47-2.47a.75.75 0 00-1.06 1.06l3 3a.75.75 0 001.06 0l6.5-6.5z"></path><path fill-rule="evenodd" d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1zM2.5 12a9.5 9.5 0 1119 0 9.5 9.5 0 01-19 0z"></path></svg>
+                                Open/close Issues based on "to-do" and "fix-me" code comments.
+                            </li>
+                            <li>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="green"><path d="M17.28 9.28a.75.75 0 00-1.06-1.06l-5.97 5.97-2.47-2.47a.75.75 0 00-1.06 1.06l3 3a.75.75 0 001.06 0l6.5-6.5z"></path><path fill-rule="evenodd" d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1zM2.5 12a9.5 9.5 0 1119 0 9.5 9.5 0 01-19 0z"></path></svg>
+                                Automatic invoicing and payments
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="w-50 mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+                <img src="/images/illustrations/features2.png" style="width: 100%" alt="Self XDSD Screenshot">
+            </div>
+        </div>
+    </section>
+    <section id="plans">
+        <div class="text-center">
+            <div class="container">
+                <div class="row pt-6">
+                    <div class="col-md-6">
+                        <div class="card mb-6 box-shadow">
+                            <div class="card-header">
+                                <h4 class="my-0 font-weight-normal">
+                                    Dry Run, No Card Required
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                            <h1>No Cash, No Problem</h1>
+                            <ul class="list-unstyled mt-3 mb-4">
+                                <li>When you activate a new repo, we assign it a <b>fake wallet with 100.000 €.</b></li>
+                                <li>You can work with it until you decide to register a real wallet.</li>
+                                <li>The business flow and functionalities of Self XDSD are the same, except there are no real payments performed.</li>
+                            </ul> <button type="button" class="btn btn-outline-primary">Read more</button>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-6 box-shadow">
+                            <div class="card-header">
+                                <h4 class="my-0 font-weight-normal">
+                                    Real Payments
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                            <h1>8% per Invoiced Task</h1>
+                            <ul class="list-unstyled mt-3 mb-4">
+                                <li>Self XDSD charges a commission for each invoiced task.</li>
+                                <li>Commission is charged only for tasks finished, closed and invoiced.</li>
+                                <li>For each 1000 € invested in development, you pay 80 € for the management.</li>
+                            </ul> <button type="button" class="btn btn-outline-primary">Read more</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
 <footer th:replace="footer.html :: footer"></footer>
 </body>
 </html>
