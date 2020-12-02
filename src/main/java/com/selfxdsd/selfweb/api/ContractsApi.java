@@ -36,7 +36,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.json.Json;
 import javax.validation.Valid;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -355,7 +356,8 @@ public class ContractsApi extends BaseApiController {
         @RequestParam("role") final String role,
 
         @RequestParam("newHourlyRate")
-        @Positive(message = "Hourly rate must be a positive number!")
+        @Min(value = 8)
+        @Max(value = 300)
         final double newHourlyRate
     ) {
         final ResponseEntity<String> resp;
