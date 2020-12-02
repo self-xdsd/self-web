@@ -146,7 +146,7 @@ public class PaymentMethodsApi extends BaseApiController {
         @PathVariable final String owner,
         @PathVariable final String name,
         @RequestBody
-        @Pattern(regexp = "[a-zA-Z0-9\\-_\\{\\}\"\" :,]{1,256}")
+        @Pattern(regexp = "[a-zA-Z0-9\\-_\\{\\}\" :,]{1,256}")
         final String body
     ) {
         ResponseEntity<String> response;
