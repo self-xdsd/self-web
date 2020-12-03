@@ -158,9 +158,10 @@ function taskAsTableRow(contract, task) {
     }
     return "<tr>" +
         "<td><a href='" + issueLink + "' target='_blank'>#" + task.issueId + "</a></td>" +
-        "<td>" + task.assignmentDate + "</td>"  +
-        "<td>" + task.deadline + "</td>" +
+        "<td>" + task.assignmentDate.split('T')[0] + "</td>"  +
+        "<td>" + task.deadline.split('T')[0] + "</td>" +
         "<td>" + task.estimation + "min</td>" +
+        "<td>" + task.value + " €</td>" +
         "</tr>"
 }
 
@@ -244,7 +245,7 @@ function invoiceAsTableRow(contract, invoice) {
     }
     return "<tr>" +
         "<td>" + invoice.id + "</td>" +
-        "<td>" + invoice.createdAt + "</td>"  +
+        "<td>" + invoice.createdAt.split('T')[0] + "</td>"  +
         "<td>" + invoice.totalAmount + "</td>" +
         "<td>" + status + "</td>" +
         "<td><a href='#' class='downloadInvoice'>" + "<i class='fa fa-file-pdf-o fa-lg'></i>" + "</a></td>" +

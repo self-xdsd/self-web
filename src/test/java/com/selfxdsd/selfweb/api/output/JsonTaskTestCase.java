@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import javax.json.JsonObject;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -49,6 +50,7 @@ public final class JsonTaskTestCase {
         Mockito.when(task.assignmentDate()).thenReturn(LocalDateTime.now());
         Mockito.when(task.deadline()).thenReturn(LocalDateTime.now());
         Mockito.when(task.estimation()).thenReturn(60);
+        Mockito.when(task.value()).thenReturn(BigDecimal.valueOf(100));
 
         final JsonObject jsonTask = new JsonTask(task);
 
@@ -70,6 +72,7 @@ public final class JsonTaskTestCase {
         Mockito.when(task.assignmentDate()).thenReturn(now);
         Mockito.when(task.deadline()).thenReturn(LocalDateTime.now());
         Mockito.when(task.estimation()).thenReturn(60);
+        Mockito.when(task.value()).thenReturn(BigDecimal.valueOf(100));
 
         final JsonObject jsonTask = new JsonTask(task);
 
@@ -91,7 +94,8 @@ public final class JsonTaskTestCase {
         Mockito.when(task.assignmentDate()).thenReturn(LocalDateTime.now());
         Mockito.when(task.deadline()).thenReturn(now);
         Mockito.when(task.estimation()).thenReturn(60);
-        
+        Mockito.when(task.value()).thenReturn(BigDecimal.valueOf(100));
+
         final JsonObject jsonTask = new JsonTask(task);
         MatcherAssert.assertThat(
             jsonTask.getString("deadline"),
@@ -110,15 +114,35 @@ public final class JsonTaskTestCase {
         Mockito.when(task.assignmentDate()).thenReturn(LocalDateTime.now());
         Mockito.when(task.deadline()).thenReturn(LocalDateTime.now());
         Mockito.when(task.estimation()).thenReturn(60);
-        
+        Mockito.when(task.value()).thenReturn(BigDecimal.valueOf(100));
+
         final JsonObject jsonTask = new JsonTask(task);
         MatcherAssert.assertThat(
             jsonTask.getInt("estimation"),
             Matchers.equalTo(60)
         );
-        
     }
-    
+
+    /**
+     * JsonTask has value.
+     */
+    @Test
+    public void hasValue(){
+        final Task task = Mockito.mock(Task.class);
+        Mockito.when(task.issueId()).thenReturn("123");
+        Mockito.when(task.assignmentDate()).thenReturn(LocalDateTime.now());
+        Mockito.when(task.deadline()).thenReturn(LocalDateTime.now());
+        Mockito.when(task.estimation()).thenReturn(60);
+        Mockito.when(task.value()).thenReturn(BigDecimal.valueOf(100));
+
+        final JsonObject jsonTask = new JsonTask(task);
+        MatcherAssert.assertThat(
+            jsonTask.getInt("value"),
+            Matchers.equalTo(1)
+        );
+    }
+
+
     /**
      * JsonTask hasn't assignmentDate.
      */
@@ -130,6 +154,7 @@ public final class JsonTaskTestCase {
         Mockito.when(task.assignmentDate()).thenReturn(null);
         Mockito.when(task.deadline()).thenReturn(LocalDateTime.now());
         Mockito.when(task.estimation()).thenReturn(60);
+        Mockito.when(task.value()).thenReturn(BigDecimal.valueOf(100));
 
         final JsonObject jsonTask = new JsonTask(task);
 
@@ -150,6 +175,7 @@ public final class JsonTaskTestCase {
         Mockito.when(task.assignmentDate()).thenReturn(LocalDateTime.now());
         Mockito.when(task.deadline()).thenReturn(null);
         Mockito.when(task.estimation()).thenReturn(60);
+        Mockito.when(task.value()).thenReturn(BigDecimal.valueOf(100));
 
         final JsonObject jsonTask = new JsonTask(task);
 
