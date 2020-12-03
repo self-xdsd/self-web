@@ -52,7 +52,7 @@ public final class ContractInput {
     /**
      * Contributor's role.
      */
-    @Role(oneOf = {"DEV", "REV", "PO", "ARCH"})
+    @Role(oneOf = {"DEV", "REV", "PO", "ARCH", "QA"})
     private String role;
 
     /**
