@@ -20,18 +20,23 @@
     <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
     <script src="http://js.stripe.com/v3/"></script>
     <script type="text/javascript">
+        $("#loginLoading").show();
         $.ajax("/api/users/self", {
             type: "GET",
-            statusCode: {
-                200: function (data) {
-                    $(".user_login").html('@' + data.login);
-                    $(".user_name").html(data.name);
-                    $(".user_avatar").attr("src", data.avatar_url);
-                    $(".unauthenticated").hide()
-                    $(".authenticated").show()
-                    if (data.role == 'admin') {
-                        $(".admin-only").show()
-                    }
+            complete: function(response){
+                switch(response.status){
+                    case 200:
+                        var data = response.responseJSON;
+                        $(".user_login").html('@' + data.login);
+                        $(".user_name").html(data.name);
+                        $(".user_avatar").attr("src", data.avatar_url);
+                        $(".unauthenticated").hide()
+                        $(".authenticated").show()
+                        if (data.role == 'admin') {
+                            $(".admin-only").show()
+                        }
+                    default:
+                        $("#loginLoading").hide();
                 }
             }
         });
