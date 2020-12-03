@@ -198,6 +198,24 @@
          $(".hourlyRate-error").hide();
     }
 
+    /**
+     * Show loading indicator in a data table.
+     * @param {String} tableId Table id (ex: #myTable).
+     * @param {Number} [size = 100] Optional loading icon size in pixels.
+     * @param {String} [path = /images/loading.svg] Optional path of loading icon. 
+     */
+    function dataTableShowLoading(tableId, size, path){
+        var size = size || 100
+        var path = path || '/images/loading.svg'
+        $(tableId+' > tbody').html(
+            '<tr class="odd" style= "height:'+ size +'px">' 
+                + '<td valign="center" colspan="6" class="dataTables_empty">' 
+                   + '<img src="'+ path +'" height=' + size +'px">'
+                +'</td>'
+            +'</tr>'
+        );
+    }
+
     $(document).ready(function(){
 
          var project = {
@@ -205,22 +223,7 @@
             name: $("#name").text()
          }
 
-        //while there is still something loading, keep showing the loading animation.
-        //increments when there is a remote request ongoing (fetch a page, submit new contract)
-        //decrements when a request is done (even with an error).
-        //if reaches '0' the loading indicator will hide.
-        var loadingQueue = 0;
-        function showLoading(){
-            if(loadingQueue++ === 0){
-                $("#loadingContracts").show();
-            }
-        }
-        function hideLoading(){
-            if(--loadingQueue === 0){
-                 $("#loadingContracts").hide();
-            }
-        }
-
+    
         function loadContracts() {
             $("#contracts").dataTable().fnDestroy();
             $("#contracts").dataTable({
@@ -230,6 +233,8 @@
                 ordering:    false,//same for ordering
                 //adapt DataTable request to Self-Paged API specification.
                 ajax: function(data, callback){
+                    dataTableShowLoading("#contracts");
+                   
                     var draw = data.draw; // draw counter that ensure the page draw ordering is respected
                     var page = {
                         no: Math.ceil(data.start/data.length) + 1,
@@ -237,7 +242,7 @@
                     }
                     //fetch the page from server
                     contractsService
-                        .getAll(project, page, showLoading)
+                        .getAll(project, page)
                         .then(function(contracts){
                             //convert contracts page to DataTable "page" specification
                             var total = contracts.paged.totalPages * contracts.paged.current.size;
@@ -357,8 +362,7 @@
                                 }
                             )
                         })
-                        .catch(handleError)
-                        .finally(hideLoading);
+                        .catch(handleError);
                 }
             });
         }
@@ -506,7 +510,7 @@
                  clearTimeout(debounce);
                  debounce = setTimeout(function() {
                     usersService
-                        .findUsers(query, "github", showLoading)
+                        .findUsers(query, "github")
                         .then(function(users){
                             done({
                                 suggestions: users.map(function(user){
@@ -515,7 +519,6 @@
                             });
                         })
                         .catch(handleError)
-                        .finally(hideLoading);
                  }, 500)
             },
             onSelect: function(suggestion){
