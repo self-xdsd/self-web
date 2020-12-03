@@ -59,6 +59,14 @@ public final class JsonInvoice extends AbstractJsonObject {
                     .add("createdAt", String.valueOf(invoice.createdAt()))
                     .add("isPaid", invoice.isPaid())
                     .add(
+                        "amount",
+                        NumberFormat
+                            .getCurrencyInstance(Locale.GERMANY)
+                            .format(
+                                invoice.amount()
+                                    .divide(BigDecimal.valueOf(100))
+                            )
+                    ).add(
                         "totalAmount",
                         NumberFormat
                             .getCurrencyInstance(Locale.GERMANY)
@@ -66,7 +74,8 @@ public final class JsonInvoice extends AbstractJsonObject {
                                 invoice.totalAmount()
                                     .divide(BigDecimal.valueOf(100))
                             )
-                    ).add(
+                    )
+                    .add(
                         "paymentTime",
                         String.valueOf(invoice.paymentTime())
                     ).add(
@@ -79,6 +88,15 @@ public final class JsonInvoice extends AbstractJsonObject {
                     .add("createdAt", String.valueOf(invoice.createdAt()))
                     .add("isPaid", invoice.isPaid())
                     .add("tasks", new JsonInvoicedTasks(invoice.tasks()))
+                    .add(
+                        "amount",
+                        NumberFormat
+                            .getCurrencyInstance(Locale.GERMANY)
+                            .format(
+                                invoice.amount()
+                                    .divide(BigDecimal.valueOf(100))
+                            )
+                    )
                     .add(
                         "totalAmount",
                         NumberFormat
