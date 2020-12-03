@@ -258,7 +258,8 @@
                                             +"<i class='fa fa-trash fa-lg'></i>"
                                             +"</a>";
                                     } else {
-                                        var toolTipMessage = "This contract has been marked for removal on " + c.markedForRemoval + ". "
+                                        var toolTipMessage = "This contract has been marked for removal on "
+                                        + c.markedForRemoval.split('T')[0] + ". "
                                         + "No more tasks will be assigned to it and it will be removed after 30 days.";
                                         removeRestoreIcon = "<a href='#' title='Restore Contract' class='restoreContract'>"
                                             +"<i class='fa fa-recycle fa-lg'></i>"
@@ -362,6 +363,32 @@
                                     )
                                 }
                             )
+                            $(".restoreContract").each(
+                                function() {
+                                    $(this).on(
+                                        "click",
+                                        function(event) {
+                                            event.preventDefault();
+
+                                            var repo = $("#owner").text() + "/" + $("#name").text();
+                                            var contributor = $(this).parent().parent().children()[0].innerText;
+                                            var role = $(this).parent().parent().children()[1].innerText;
+                                            var provider = "github";
+                                            var contract = {
+                                                id: {
+                                                    repoFullName: repo,
+                                                    contributorUsername: contributor,
+                                                    role: role,
+                                                    provider: provider
+                                                }
+                                            }
+                                            confirmDialog
+                                                .create("Are you sure you want to restore this contract?")
+                                                .then(() => restoreContract(contract));
+                                        }
+                                    )
+                                }
+                            )
                         })
                         .catch(handleError);
                 }
@@ -441,6 +468,27 @@
                 + "/contracts/" + contract.id.contributorUsername + "/mark?role=" + contract.id.role,
                 {
                     type: "PUT",
+                    success: function() {
+                        loadContracts();
+                    },
+                    error: function () {
+                        alert("Something went wrong. Please refresh the page and try again.")
+                    }
+                }
+            );
+        }
+
+        /**
+         * Restore a contract.
+         * @param contract Contract.
+         */
+        function restoreContract(contract) {
+            $.ajax( //API call to get the active Invoice.
+                "/api/projects/"
+                + contract.id.repoFullName
+                + "/contracts/" + contract.id.contributorUsername + "/mark?role=" + contract.id.role,
+                {
+                    type: "DELETE",
                     success: function() {
                         loadContracts();
                     },
