@@ -20,26 +20,34 @@
     <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
     <script src="http://js.stripe.com/v3/"></script>
     <script type="text/javascript">
-        $("#loginLoading").show();
-        $.ajax("/api/users/self", {
-            type: "GET",
-            complete: function(response){
-                switch(response.status){
-                    case 200:
-                        var data = response.responseJSON;
-                        $(".user_login").html('@' + data.login);
-                        $(".user_name").html(data.name);
-                        $(".user_avatar").attr("src", data.avatar_url);
-                        $(".unauthenticated").hide()
-                        $(".authenticated").show()
-                        if (data.role == 'admin') {
-                            $(".admin-only").show()
+        $(document).ready(
+            function () {
+                $("#loginLoading").show();
+                $(".unauthenticated .btn").hide();
+                $.ajax("/api/users/self", {
+                    type: "GET",
+                    complete: function(response){
+                        switch(response.status){
+                            case 200:
+                                var data = response.responseJSON;
+                                $(".user_login").html('@' + data.login);
+                                $(".user_name").html(data.name);
+                                $(".user_avatar").attr("src", data.avatar_url);
+                                $(".unauthenticated").hide()
+                                $(".authenticated").show()
+                                if (data.role == 'admin') {
+                                    $(".admin-only").show()
+                                }
+                                $("#loginLoading").hide();
+                                break;
+                            default:
+                                $("#loginLoading").hide();
+                                $(".unauthenticated .btn").show();
                         }
-                    default:
-                        $("#loginLoading").hide();
-                }
+                    }
+                });
             }
-        });
+        );
         var logout = function() {
             $.post("/logout", function() {
                 window.location = "/"
