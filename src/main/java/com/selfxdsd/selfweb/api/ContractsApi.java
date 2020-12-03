@@ -41,7 +41,6 @@ import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Locale;
-import java.util.function.Function;
 
 /**
  * This controller offers HTTP endpoints regarding a Project's contracts.
@@ -52,14 +51,6 @@ import java.util.function.Function;
  * @since 0.0.1
  * @todo #84:30min. Start implementing ContributorsApi method contributors GET.
  *  This will list all contributors.
- * @todo #175:15min Once self-core 'Restore Contract' functionality for
- *  a Project Contract is available, remove the placeholder `restoreContractApi`
- *  and use the real api call. Also test constructor needs to be removed and
- *  "restore contract" unit tests updated.
- * @todo #200:30min On frontend. in `getAndAddContracts.js`, implement
- *  `restoreContract(...)` function. This will call
- *  `DELETE "/projects/{owner}/{name}/contracts/{username}/mark" endpoint,
- *  and on success will reset the corresponding contract table row.
  */
 @RestController
 @Validated
@@ -78,35 +69,12 @@ public class ContractsApi extends BaseApiController {
     private final User user;
 
     /**
-     * Placeholder until Contract/Contracts API has a way to
-     * restore a Contract from removal.
-     */
-    private final Function<Contract, Contract> restoreContractApi;
-
-    /**
      * Ctor.
      * @param user Authenticated user.
      */
     @Autowired
-    public ContractsApi(final User user) {
-        this(user, contract -> {
-            LOG.warn("Contract " + contract.contractId()
-                + " can't be restored from removal."
-                +" API method not available yet.");
-            return contract;
-        });
-    }
-
-    /**
-     * Ctor.
-     * @param user Authenticated user.
-     * @param restoreContractApi Placeholder until Contract/Contracts API
-     * has a way to restore a Contract from removal.
-     */
-    ContractsApi(final User user,
-                 final Function<Contract, Contract> restoreContractApi) {
+    ContractsApi(final User user) {
         this.user = user;
-        this.restoreContractApi = restoreContractApi;
     }
 
     /**
@@ -490,8 +458,7 @@ public class ContractsApi extends BaseApiController {
             if(contract == null || contract.markedForRemoval() == null) {
                 resp = ResponseEntity.noContent().build();
             } else {
-                final Contract restored = this.restoreContractApi
-                    .apply(contract);
+                final Contract restored = contract.restore();
                 resp = ResponseEntity.ok(
                     new JsonContract(restored).toString()
                 );

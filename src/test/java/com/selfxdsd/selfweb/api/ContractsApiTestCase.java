@@ -36,11 +36,9 @@ import javax.json.JsonArray;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.function.Function;
 
 /**
  * Unit tests for {@link ContractsApi}.
@@ -282,70 +280,6 @@ public final class ContractsApiTestCase {
     }
 
     /**
-     * ContractsApi.restoreContract(...) can restore Contract from being marked
-     * for removal.
-     */
-    @Test
-    public void restoresContract(){
-        final User user = Mockito.mock(User.class);
-        final Provider provider = Mockito.mock(Provider.class);
-        final Projects projects = Mockito.mock(Projects.class);
-        final Project project = this.mockActiveProject("mihai",
-            "mihai", "test");
-        final Contracts contracts = Mockito.mock(Contracts.class);
-        final Contract.Id contractId = new Contract.Id(
-            "mihai/test",
-            "john",
-            "github",
-            "DEV"
-        );
-        final Contract contract = this.mockContract(
-            contractId,
-            project,
-            BigDecimal.TEN,
-            BigDecimal.TEN
-        );
-        final Function<Contract, Contract> restoreApi = Mockito
-            .mock(Function.class);
-
-        Mockito.when(user.username()).thenReturn("mihai");
-        Mockito.when(provider.name()).thenReturn("github");
-        Mockito.when(user.provider()).thenReturn(provider);
-        Mockito.when(user.projects()).thenReturn(projects);
-        Mockito.when(projects.getProjectById("mihai/test", "github"))
-            .thenReturn(project);
-        Mockito.when(project.contracts()).thenReturn(contracts);
-        Mockito.when(contracts.findById(contractId)).thenReturn(contract);
-        Mockito.when(contract.markedForRemoval())
-            .thenReturn(LocalDateTime.now());
-        Mockito.when(restoreApi.apply(contract)).thenAnswer(inv -> {
-            final Contract invoked = inv.getArgument(0);
-            return this.mockContract(
-                invoked.contractId(),
-                invoked.project(),
-                invoked.hourlyRate(),
-                invoked.value()
-            );
-        });
-
-        final ContractsApi api = new ContractsApi(
-            user,
-            restoreApi
-        );
-
-        ResponseEntity<String> resp = api
-            .restoreContract("mihai", "test", "john", "DEV");
-        MatcherAssert.assertThat(resp.getStatusCode(),
-            Matchers.is(HttpStatus.OK));
-        MatcherAssert.assertThat(Json
-            .createReader(new StringReader(resp.getBody()))
-            .readObject()
-            .getString("markedForRemoval"),
-            Matchers.equalTo("null")
-        );
-    }
-
-    /**
      * ContractsApi.restoreContract(...) ignores restoring if Contract is not
      * marked for removal.
      */
@@ -379,10 +313,7 @@ public final class ContractsApiTestCase {
         Mockito.when(project.contracts()).thenReturn(contracts);
         Mockito.when(contracts.findById(contractId)).thenReturn(contract);
 
-        final ContractsApi api = new ContractsApi(
-            user,
-            Mockito.mock(Function.class)
-        );
+        final ContractsApi api = new ContractsApi(user);
 
         ResponseEntity<String> resp = api
             .restoreContract("mihai", "test", "john", "DEV");
@@ -411,10 +342,7 @@ public final class ContractsApiTestCase {
             .thenReturn(project);
         Mockito.when(project.contracts()).thenReturn(contracts);
 
-        final ContractsApi api = new ContractsApi(
-            user,
-            Mockito.mock(Function.class)
-        );
+        final ContractsApi api = new ContractsApi(user);
 
         ResponseEntity<String> resp = api
             .restoreContract("mihai", "test", "john", "DEV");
@@ -437,10 +365,7 @@ public final class ContractsApiTestCase {
         Mockito.when(user.provider()).thenReturn(provider);
         Mockito.when(user.projects()).thenReturn(projects);
 
-        final ContractsApi api = new ContractsApi(
-            user,
-            Mockito.mock(Function.class)
-        );
+        final ContractsApi api = new ContractsApi(user);
 
         ResponseEntity<String> resp = api
             .restoreContract("mihai", "test", "john", "DEV");
