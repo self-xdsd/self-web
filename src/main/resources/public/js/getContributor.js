@@ -73,7 +73,8 @@ function contractAsTableRow(contract) {
             +"<i class='fa fa-trash fa-lg'></i>"
             +"</a>";
     } else {
-        var toolTipMessage = "This contract has been marked for removal on " + contract.markedForRemoval + ". "
+        var toolTipMessage = "This contract has been marked for removal on "
+            + contract.markedForRemoval.split('T')[0] + ". "
             + "No more tasks will be assigned to it and it will be removed after 30 days. "
             + "Contact the PO if you want to have it reactivated.";
         removeIcon = "<i class='fa fa-exclamation-circle fa-lg' style='color:red;' aria-hidden='true' "
