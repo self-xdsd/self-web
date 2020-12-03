@@ -114,7 +114,13 @@ public final class ContractsApiTestCase {
                         NumberFormat
                             .getCurrencyInstance(Locale.GERMANY)
                             .format(100)
-                    ).add("markedForRemoval", "null")
+                    ).add(
+                        "revenue",
+                        NumberFormat
+                            .getCurrencyInstance(Locale.GERMANY)
+                            .format(90)
+                    )
+                    .add("markedForRemoval", "null")
                     .build())
                 .build())
         );
@@ -504,6 +510,7 @@ public final class ContractsApiTestCase {
         Mockito.when(contract.project()).thenReturn(project);
         Mockito.when(contract.hourlyRate()).thenReturn(hourlyRate);
         Mockito.when(contract.value()).thenReturn(value);
+        Mockito.when(contract.revenue()).thenReturn(BigDecimal.valueOf(9000));
         return contract;
     }
 

@@ -32,6 +32,7 @@ import org.springframework.http.ResponseEntity;
 
 import javax.json.Json;
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -263,6 +264,7 @@ public final class ContributorApiTestCase {
         Mockito.when(task.assignmentDate()).thenReturn(assigned);
         Mockito.when(task.deadline()).thenReturn(assigned.plusDays(10));
         Mockito.when(task.estimation()).thenReturn(estimation);
+        Mockito.when(task.value()).thenReturn(BigDecimal.TEN);
         return task;
     }
 }

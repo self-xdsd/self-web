@@ -35,6 +35,9 @@ public final class JsonContract extends AbstractJsonObject{
             .add("value", NumberFormat
                 .getCurrencyInstance(Locale.GERMANY)
                 .format(contract.value().divide(BigDecimal.valueOf(100))))
+            .add("revenue", NumberFormat
+                .getCurrencyInstance(Locale.GERMANY)
+                .format(contract.revenue().divide(BigDecimal.valueOf(100))))
             .add(
                 "markedForRemoval",
                 String.valueOf(contract.markedForRemoval())

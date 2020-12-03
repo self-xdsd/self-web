@@ -61,6 +61,8 @@ public class JsonContractTestCase {
             .thenReturn(BigDecimal.valueOf(5000));
         Mockito.when(contract.value())
             .thenReturn(BigDecimal.valueOf(2000));
+        Mockito.when(contract.revenue())
+            .thenReturn(BigDecimal.valueOf(1800));
         Mockito.when(contract.markedForRemoval())
             .thenReturn(LocalDateTime.now());
     
@@ -96,6 +98,8 @@ public class JsonContractTestCase {
             .thenReturn(BigDecimal.valueOf(5000));
         Mockito.when(contract.value())
             .thenReturn(BigDecimal.valueOf(2000));
+        Mockito.when(contract.revenue())
+            .thenReturn(BigDecimal.valueOf(1800));
         Mockito.when(contract.markedForRemoval())
             .thenReturn(LocalDateTime.now());
         
@@ -130,6 +134,8 @@ public class JsonContractTestCase {
             .thenReturn(BigDecimal.valueOf(5000));
         Mockito.when(contract.value())
             .thenReturn(BigDecimal.valueOf(2000));
+        Mockito.when(contract.revenue())
+            .thenReturn(BigDecimal.valueOf(1800));
         Mockito.when(contract.markedForRemoval())
             .thenReturn(LocalDateTime.now());
         
@@ -143,6 +149,42 @@ public class JsonContractTestCase {
                     .format(20)
             )
         );       
+    }
+
+    /**
+     * JsonContract has revenue.
+     */
+    @Test
+    public void hasRevenue(){
+        final Contract contract = Mockito.mock(Contract.class);
+
+        Id id = Mockito.mock(Id.class);
+
+        Mockito.when(id.getRepoFullName()).thenReturn("Lumi/Test");
+        Mockito.when(id.getContributorUsername()).thenReturn("Lumi3011");
+        Mockito.when(id.getProvider()).thenReturn("Github");
+        Mockito.when(id.getRole()).thenReturn("dev");
+
+        Mockito.when(contract.contractId()).thenReturn(id);
+        Mockito.when(contract.hourlyRate())
+            .thenReturn(BigDecimal.valueOf(5000));
+        Mockito.when(contract.value())
+            .thenReturn(BigDecimal.valueOf(2000));
+        Mockito.when(contract.revenue())
+            .thenReturn(BigDecimal.valueOf(1800));
+        Mockito.when(contract.markedForRemoval())
+            .thenReturn(LocalDateTime.now());
+
+        final JsonObject jsonContract = new JsonContract(contract);
+
+        MatcherAssert.assertThat(
+            jsonContract.getString("revenue"),
+            Matchers.equalTo(
+                NumberFormat
+                    .getCurrencyInstance(Locale.GERMANY)
+                    .format(18)
+            )
+        );
     }
     
     /**
@@ -167,6 +209,8 @@ public class JsonContractTestCase {
             .thenReturn(BigDecimal.valueOf(5000));
         Mockito.when(contract.value())
             .thenReturn(BigDecimal.valueOf(2000));
+        Mockito.when(contract.revenue())
+            .thenReturn(BigDecimal.valueOf(1800));
         Mockito.when(contract.markedForRemoval()).thenReturn(now);
         
         final JsonObject jsonContract = new JsonContract(contract);
@@ -196,6 +240,8 @@ public class JsonContractTestCase {
             .thenReturn(BigDecimal.valueOf(5000));
         Mockito.when(contract.value())
             .thenReturn(BigDecimal.valueOf(2000));
+        Mockito.when(contract.revenue())
+            .thenReturn(BigDecimal.valueOf(1800));
         Mockito.when(contract.markedForRemoval()).thenReturn(null);
         
         final JsonObject jsonContract = new JsonContract(contract);
