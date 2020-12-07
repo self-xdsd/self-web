@@ -58,16 +58,11 @@ a.btn-outline-primary:hover {
     height: 67px;
 }
 
-.gravatar img {
-    padding: 3px;
-    width: 100%;
-    border: 1px solid #ddd;
-    box-shadow: 1px 1px 3px #ccc;
-}
-
 .gravatar_header img {
     padding: 3px;
-    width: 100%;
+    width: 48px;
+    width: 48px;
+    object-fit: cover;
     border: 1px solid #ddd;
     box-shadow: 1px 1px 3px #ccc;
 }
