@@ -29,18 +29,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.validation.ConstraintViolationException;
+import javax.validation.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.StreamSupport;
 
 /**
  * Base API Controller.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #175:15min Implement a validation exceptions handler for
- *  `ConstraintViolationException`. This is needed for `@Validated` Controllers,
- *  otherwise it will be caught by `handleInternalSeverExceptions` handler
- *  and returned as "Something went wrong while executing this request."
  */
 @RequestMapping("/api")
 public class BaseApiController {
@@ -61,6 +60,35 @@ public class BaseApiController {
                 ((FieldError) error).getField(),
                 error.getDefaultMessage()
             )
+        );
+        return errors;
+    }
+
+    /**
+     * Handle constraint violation errors, send back a map
+     * of the fields and their errors.
+     * @param exception Constraint violation exception.
+     * @return Map of errors.
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public Map<String, String> handleConstraintViolationExceptions(
+        final ConstraintViolationException exception) {
+        final Map<String, String> errors = new HashMap<>();
+        exception.getConstraintViolations().forEach(
+            error -> {
+                //the "field" is last the last node in path
+                //ex: for path ".updateCash.limit", field will be "limit"
+                final String field = StreamSupport
+                    .stream(error.getPropertyPath().spliterator(), false)
+                    .map(Path.Node::getName)
+                    .reduce((prev, curr) -> curr)
+                    .orElse("unknown_field_" + error.hashCode());
+                errors.put(
+                    field,
+                    error.getMessage()
+                );
+            }
         );
         return errors;
     }
