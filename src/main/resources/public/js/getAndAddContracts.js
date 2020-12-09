@@ -125,7 +125,15 @@
                                         "click",
                                         function(event) {
                                             event.preventDefault();
-                                            payInvoice(invoice, contract, $(this));
+                                            var message = "Are you sure you want to make this payment?"
+                                            if(activeWallet.type == 'FAKE') {
+                                                message += ' You are using a fake wallet, the payment will be fictive.'
+                                            }
+                                            confirmDialog
+                                                .create(message)
+                                                .then(
+                                                    () => payInvoice(invoice, contract, $(this))
+                                                );
                                         }
                                     );
                                 }
