@@ -67,6 +67,13 @@ a.btn-outline-primary:hover {
     box-shadow: 1px 1px 3px #ccc;
 }
 
+.gravatar_contributor_card img {
+    padding: 3px;
+    width: 100%;
+    border: 1px solid #ddd;
+    box-shadow: 1px 1px 3px #ccc;
+}
+
 .card-user-header {
     background: -moz-linear-gradient(top,#fff 0,#f4f4f4 100%);
     background: -webkit-gradient(linear,left top,left bottom,color-stop(0%,#fff),color-stop(100%,#f4f4f4));
