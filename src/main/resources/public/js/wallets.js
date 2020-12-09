@@ -1,9 +1,16 @@
 /**
+ * Global variable to have the wallet type everywhere on the Project
+ * page (all tabs).
+ */
+var walletPieChart;
+var activeWallet;
+
+/**
  * Functions handling a Project's Wallets.
  */
-
 function getProjectWallets() {
     $("#loadingWallets").show();
+    $("#wallets").hide();
     var owner =$("#owner").text();
     var name =$("#name").text();
     $.get(
@@ -172,6 +179,7 @@ function activateWallet(owner, name, type) {
                     $("#activateFakeWalletButton").removeClass("disabled");
                     $("#loadingActivateFakeWalletButton").hide();
                 }
+                walletAsPieChart(activatedWallet);
             },
             error: function(jqXHR, error, errorThrown) {
                 if(type == 'stripe') {
@@ -256,4 +264,65 @@ function cashLimitColor(cashEl, wallet){
     }
     cashEl.addClass(colorClass);
     cashEl.data('limitColor', colorClass);
+}
+
+/**
+ * Display the wallet as a pie chart on the Project Overview tab.
+ * @param wallet Wallet.
+ */
+function walletAsPieChart(wallet) {
+    activeWallet = wallet;
+    if(walletPieChart != undefined) {
+        walletPieChart.destroy();
+        $("#walletPieChart").removeAttr("height");
+        $("#walletPieChart").removeAttr("width");
+    }
+    var ctx = document.getElementById("walletPieChart");
+    walletPieChart = new Chart(
+        ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ["Available (€)", "Debt (€)"],
+                datasets: [{
+                    data: [wallet.available, wallet.debt],
+                    backgroundColor: ['#701516', '#FFB6C1'],
+                    hoverBorderColor: "rgba(234, 236, 244, 1)",
+                }],
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false,
+                tooltips: {
+                    backgroundColor: "rgb(255,255,255)",
+                    bodyFontColor: "#858796",
+                    borderColor: '#dddfeb',
+                    borderWidth: 1,
+                    xPadding: 15,
+                    yPadding: 15,
+                    displayColors: false,
+                    caretPadding: 10,
+                },
+                legend: {
+                    display: true
+                },
+                cutoutPercentage: 80,
+            },
+        });
+    $("#walletCash").html(wallet.cash + " €");
+    $("#walletDebt").html(wallet.debt + " €");
+    $("#walletAvailable").html(wallet.available + " €");
+    if(wallet.type == 'FAKE') {
+        $("#walletCardTitle").html(
+            'Fake Wallet <i class="fa fa-question-circle-o fa-lg fakeWalletInfo"'
+                + 'aria-hidden="true"'
+                + 'data-toggle="tooltip"'
+                + 'data-placement="top"'
+                + 'title="We assigned you a fake wallet with 100.000 €. You can work with it'
+                + 'until you decide to register a real wallet. The business flow is the same,'
+                + 'except the payments are fictive."></i>'
+        );
+        $('[data-toggle="tooltip"]').tooltip();
+    } else {
+        $("#walletCardTitle").html("Stripe Wallet");
+    }
 }

@@ -43,44 +43,7 @@ function displayProject(userLogin, project) {
     $("#projectOverview").addClass("show");
     if(project.selfOwner == userLogin) {
         $("#ownerCard").hide();
-        // Wallet Pie Chart
-        var ctx = document.getElementById("walletPieChart");
-        var walletChart = new Chart(
-            ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ["Available (€)", "Debt (€)"],
-                    datasets: [{
-                        data: [project.wallet.available, project.wallet.debt],
-                        backgroundColor: ['#701516', '#FFB6C1'],
-                        hoverBorderColor: "rgba(234, 236, 244, 1)",
-                    }],
-                },
-                options: {
-                    responsive: false,
-                    maintainAspectRatio: false,
-                    tooltips: {
-                        backgroundColor: "rgb(255,255,255)",
-                        bodyFontColor: "#858796",
-                        borderColor: '#dddfeb',
-                        borderWidth: 1,
-                        xPadding: 15,
-                        yPadding: 15,
-                        displayColors: false,
-                        caretPadding: 10,
-                    },
-                    legend: {
-                        display: true
-                    },
-                    cutoutPercentage: 80,
-                },
-            });
-            $("#walletCash").html(project.wallet.cash + " €");
-            $("#walletDebt").html(project.wallet.debt + " €");
-            $("#walletAvailable").html(project.wallet.available + " €");
-            if(project.wallet.type == 'FAKE') {
-                $(".fakeWalletInfo").show();
-            }
+        walletAsPieChart(project.wallet);
     } else {
         $("#ownerCard .selfOwner").html(project.selfOwner);
         $("#walletCard").hide();

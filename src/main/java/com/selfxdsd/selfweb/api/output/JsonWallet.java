@@ -32,6 +32,9 @@ import java.math.BigDecimal;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @checkstyle LineLength (100 lines)
+ * @checkstyle Indentation (100 lines)
+ * @checkstyle ReturnCount (100 lines)
  */
 public final class JsonWallet extends AbstractJsonObject {
 
@@ -40,20 +43,43 @@ public final class JsonWallet extends AbstractJsonObject {
      * @param wallet Wallet to be converted to JSON.
      */
     public JsonWallet(final Wallet wallet) {
+        this(wallet, Boolean.TRUE);
+    }
+
+    /**
+     * Ctor.
+     * @param wallet Wallet to be converted to JSON.
+     * @param addPaymentMethods Should we also add the PaymentMethods?
+     */
+    public JsonWallet(final Wallet wallet, final boolean addPaymentMethods) {
         super(
-            Json.createObjectBuilder()
-                .add("type", wallet.type())
-                .add("active", wallet.active())
-                .add("cash", wallet.cash().divide(BigDecimal.valueOf(100)))
-                .add("debt", wallet.debt().divide(BigDecimal.valueOf(100)))
-                .add(
-                    "available",
-                    wallet.available().divide(BigDecimal.valueOf(100))
-                )
-                .add(
-                    "paymentMethods",
-                    new JsonPaymentMethods(wallet.paymentMethods())
-                ).build()
+            () -> {
+                if(addPaymentMethods) {
+                    return Json.createObjectBuilder()
+                        .add("type", wallet.type())
+                        .add("active", wallet.active())
+                        .add("cash", wallet.cash().divide(BigDecimal.valueOf(100)))
+                        .add("debt", wallet.debt().divide(BigDecimal.valueOf(100)))
+                        .add(
+                            "available",
+                            wallet.available().divide(BigDecimal.valueOf(100))
+                        )
+                        .add(
+                            "paymentMethods",
+                            new JsonPaymentMethods(wallet.paymentMethods())
+                        ).build();
+                } else {
+                    return Json.createObjectBuilder()
+                        .add("type", wallet.type())
+                        .add("active", wallet.active())
+                        .add("cash", wallet.cash().divide(BigDecimal.valueOf(100)))
+                        .add("debt", wallet.debt().divide(BigDecimal.valueOf(100)))
+                        .add(
+                            "available",
+                            wallet.available().divide(BigDecimal.valueOf(100))
+                        ).build();
+                }
+            }
         );
     }
 }

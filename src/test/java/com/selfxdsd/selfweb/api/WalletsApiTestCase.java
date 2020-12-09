@@ -256,6 +256,9 @@ public final class WalletsApiTestCase {
                 Json.createObjectBuilder()
                     .add("type", Wallet.Type.STRIPE)
                     .add("active", true)
+                    .add("cash", 0.1)
+                    .add("debt", 0)
+                    .add("available", 0.1)
                     .build()
             )
         );

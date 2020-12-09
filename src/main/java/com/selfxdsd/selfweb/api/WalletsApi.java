@@ -34,7 +34,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.json.Json;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -233,11 +232,7 @@ public class WalletsApi extends BaseApiController {
                     activated = wallets.activate(wallet);
                 }
                 response = ResponseEntity.ok(
-                    Json.createObjectBuilder()
-                        .add("type", activated.type())
-                        .add("active", activated.active())
-                        .build()
-                        .toString()
+                    new JsonWallet(activated, Boolean.FALSE).toString()
                 );
             }
         }
