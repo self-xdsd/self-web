@@ -446,8 +446,8 @@ public final class ContractsApiTestCase {
      */
     private Contracts mockContracts(final Contract... contract){
         final Contracts contracts = Mockito.mock(Contracts.class);
-        Mockito.when(contracts.spliterator())
-            .thenReturn(Arrays.asList(contract).spliterator());
+        Mockito.when(contracts.iterator())
+            .thenReturn(Arrays.asList(contract).iterator());
         return contracts;
     }
 

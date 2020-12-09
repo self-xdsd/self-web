@@ -24,6 +24,14 @@ public abstract class AbstractJsonArray implements JsonArray {
 
     /**
      * Ctor.
+     * @param delegate Delegate supplier.
+     */
+    public AbstractJsonArray(final Supplier<JsonArray> delegate) {
+        this(delegate.get());
+    }
+
+    /**
+     * Ctor.
      * @param delegate JsonArray delegate.
      */
     public AbstractJsonArray(final JsonArray delegate) {

@@ -42,8 +42,10 @@ public final class JsonContributor extends AbstractJsonObject {
             Json.createObjectBuilder()
                 .add("username", contributor.username())
                 .add("provider", contributor.provider())
-                .add("contracts", new JsonContracts(contributor.contracts()))
-                .build()
+                .add(
+                    "contracts",
+                    new JsonContracts(contributor.contracts(), Boolean.TRUE)
+                ).build()
         );
     }
 }
