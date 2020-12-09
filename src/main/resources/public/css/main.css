@@ -61,7 +61,7 @@ a.btn-outline-primary:hover {
 .gravatar_header img {
     padding: 3px;
     width: 48px;
-    width: 48px;
+    height: 48px;
     object-fit: cover;
     border: 1px solid #ddd;
     box-shadow: 1px 1px 3px #ccc;
