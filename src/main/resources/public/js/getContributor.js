@@ -82,6 +82,21 @@ function contractAsTableRow(contract) {
             + "data-original-title='" + toolTipMessage + "'>"
             +"</i>"
     }
+    var walletIcon;
+    if(contract.projectWalletType === 'STRIPE') {
+        var toolTipMessage = "The project uses a real Stripe Wallet. "
+            + "Make sure to completely set up your Payout Method in order to be paid."
+        walletIcon = "<i class='fa fa-euro fa-lg' style='color:green;' aria-hidden='true' "
+            + "data-toggle='tooltip' data-placement='top' "
+            + "data-original-title='" + toolTipMessage + "'>"
+            +"</i>"
+    } else {
+        var toolTipMessage = "The project uses a fake Wallet, you will not be paid.";
+        walletIcon = "<i class='fa fa-euro fa-lg' style='color:red;' aria-hidden='true' "
+            + "data-toggle='tooltip' data-placement='top' "
+            + "data-original-title='" + toolTipMessage + "'>"
+            +"</i>"
+    }
     return "<tr>" +
         "<td><a href='" + link + "' target='_blank'>" + contract.id.repoFullName + "</a></td>" +
         "<td>" + contract.id.role + "</td>"  +
@@ -90,7 +105,7 @@ function contractAsTableRow(contract) {
         "<td><a href='#tasks' title='See Tasks & Invoices' class='contractAgenda'>" +
             "<i class='fa fa-laptop fa-lg'></i>" +
         "</a>  "
-        + removeIcon +
+        + removeIcon + " " + walletIcon +
         "</td>" +
         "</tr>"
 }
