@@ -259,6 +259,9 @@
             $("#contractsButton").on(
                 "click",
                 function(){
+                    if($(this).hasClass("active")) {
+                        return;
+                    }
                     $(this).addClass("active");
                     $("#payoutMethodsButton").removeClass("active");
 
@@ -276,7 +279,9 @@
             $("#payoutMethodsButton").on(
                 "click",
                 function(){
-                    console.log("CLICK HAPPENED! YAY!");
+                    if($(this).hasClass("active")) {
+                        return;
+                    }
                     $(this).addClass("active");
                     $("#contractsButton").removeClass("active");
 

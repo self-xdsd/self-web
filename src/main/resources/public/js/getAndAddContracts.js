@@ -403,7 +403,24 @@
             });
         }
 
-        $("#projectContractsButton").click(()=> loadContracts());
+        $("#projectContractsButton").click(
+            ()=> {
+                if($("#projectContractsButton").hasClass("active")) {
+                    return;
+                }
+                loadContracts();
+                $("#projectContractsButton").addClass("active");
+                $("#projectContracts").addClass("show");
+
+                $("#projectOverviewButton").removeClass("active");
+                $("#projectWalletsButton").removeClass("active");
+                $("#projectOverview").removeClass("show");
+                $("#projectWallets").removeClass("show");
+                //otherwise when tab is showing, table headers will be
+                //initially squashed at start
+                $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+            }
+        );
 
         $("#updateContractForm").submit(
             function(e) {

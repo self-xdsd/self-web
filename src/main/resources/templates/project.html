@@ -650,25 +650,16 @@
                     $("#projectWallets").removeClass("show");
                 }
             );
-            $("#projectContractsButton").on(
-                "click",
-                function(){
-                    $(this).addClass("active");
-                    $("#projectContracts").addClass("show");
 
-                    $("#projectOverviewButton").removeClass("active");
-                    $("#projectWalletsButton").removeClass("active");
-                    $("#projectOverview").removeClass("show");
-                    $("#projectWallets").removeClass("show");
-                    //otherwise when tab is showing, table headers will be
-                    //initially squashed at start
-                    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
-                }
-            );
+            //logic for projectContractsButton is inside getAndAddContracts.js
 
             $("#projectWalletsButton").on(
                 "click",
                 function(){
+                    if($(this).hasClass("active")) {
+                        return;
+                    }
+
                     getProjectWallets();
 
                     $(this).addClass("active");
