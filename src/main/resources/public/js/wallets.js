@@ -25,9 +25,9 @@ function getProjectWallets() {
                 var realWalletFound = false;
                 wallets.forEach(function(wallet) {
                     if(wallet.type == "FAKE") {
-                        $("#fakeCash").html(wallet.cash + " €");
-                        $("#fakeDebt").html(wallet.debt + " €");
-                        $("#fakeAvailable").html(wallet.available + " €");
+                        $("#fakeCash").html(formatEuro(wallet.cash));
+                        $("#fakeDebt").html(formatEuro(wallet.debt));
+                        $("#fakeAvailable").html(formatEuro(wallet.available));
                         if(wallet.active) {
                             $("#fakeWalletBadge").addClass("badge-success")
                             $("#fakeWalletBadge").html("active")
@@ -38,9 +38,9 @@ function getProjectWallets() {
                     }
                     if(wallet.type == "STRIPE") {
                         realWalletFound = true;
-                        $("#stripeCash").html(wallet.cash + " €");
-                        $("#stripeDebt").html(wallet.debt + " €");
-                        $("#stripeAvailable").html(wallet.available + " €");
+                        $("#stripeCash").html(formatEuro(wallet.cash));
+                        $("#stripeDebt").html(formatEuro(wallet.debt));
+                        $("#stripeAvailable").html(formatEuro(wallet.available));
                         cashLimitColor($("#stripeCash"), wallet);
                         if(wallet.active) {
                             $("#stripeWalletBadge").addClass("badge-success")
@@ -113,9 +113,9 @@ function getProjectWallets() {
                             $("#stripeCash"),
                             wallet.type,
                             (updatedWallet) => {
-                                $("#stripeCash").html(updatedWallet.cash + " €");
-                                $("#stripeDebt").html(updatedWallet.debt + " €");
-                                $("#stripeAvailable").html(updatedWallet.available + " €");
+                                $("#stripeCash").html(formatEuro(updatedWallet.cash));
+                                $("#stripeDebt").html(formatEuro(updatedWallet.debt));
+                                $("#stripeAvailable").html(formatEuro(updatedWallet.available));
                                 cashLimitColor($("#stripeCash"), updatedWallet);
                             }
                         );
@@ -312,9 +312,9 @@ function walletAsPieChart(wallet) {
                 cutoutPercentage: 80,
             },
         });
-    $("#walletCash").html(wallet.cash + " €");
-    $("#walletDebt").html(wallet.debt + " €");
-    $("#walletAvailable").html(wallet.available + " €");
+    $("#walletCash").html(formatEuro(wallet.cash));
+    $("#walletDebt").html(formatEuro(wallet.debt));
+    $("#walletAvailable").html(formatEuro(wallet.available));
     if(wallet.type == 'FAKE') {
         $("#walletCardTitle").html(
             'Fake Wallet <i class="fa fa-question-circle-o fa-lg fakeWalletInfo"'
