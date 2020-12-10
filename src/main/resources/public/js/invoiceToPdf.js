@@ -33,7 +33,7 @@ function invoiceToPdf(invoiceUri, invoice, contract) {
                         )
                         return toContributor;
                     }.call();
-                    doc.text("to Contributor: " + toContributor + " EUR", 23, 81);
+                    doc.text("to Contributor: " + formatEuro(toContributor).replace("€", "EUR"), 23, 81);
                     var toPm = function() {
                         var toPm = 0;
                         fullInvoice.tasks.forEach(
@@ -43,7 +43,7 @@ function invoiceToPdf(invoiceUri, invoice, contract) {
                         )
                         return toPm;
                     }.call();
-                    doc.text("to Project Manager: " + toPm + " EUR", 23, 88);
+                    doc.text("to Project Manager: " + formatEuro(toPm).replace("€", "EUR"), 23, 88);
                     if(fullInvoice.isPaid) {
                         doc.text("Status: paid", 20, 95)
                         doc.text("paid at: " + fullInvoice.paymentTime, 23, 102)
@@ -83,9 +83,9 @@ function invoiceToPdf(invoiceUri, invoice, contract) {
                         for (var i = 0; i < invoicedTasks.length; i += 1) {
                             var task = {
                                 "Issue ID": invoicedTasks[i].issueId,
-                                Estimation: invoicedTasks[i].estimation + "min",
-                                Value: invoicedTasks[i].value + " EUR",
-                                Commission: invoicedTasks[i].commission + " EUR"
+                                Estimation: invoicedTasks[i].estimation + " min",
+                                Value: formatEuro(invoicedTasks[i].value).replace("€", "EUR"),
+                                Commission: formatEuro(invoicedTasks[i].commission).replace("€", "EUR")
                             };
                             result.push(Object.assign({}, task));
                         }
