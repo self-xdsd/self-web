@@ -285,7 +285,7 @@
                                         "<a href='#tasks' title='See Tasks' class='contractAgenda'>"
                                         +"<i class='fa fa-laptop fa-lg'></i>"
                                         +"</a>  "
-                                        +"<a href='#' title='Edit Contract' class='editContract'>"
+                                        +"<a href='#updateContractCard' title='Edit Contract' class='editContract'>"
                                         +"<i class='fa fa-edit fa-lg'></i>"
                                         +"</a>  "
                                         + removeRestoreIcon
@@ -328,7 +328,6 @@
                                     $(this).on(
                                         "click",
                                         function(event) {
-                                            event.preventDefault();
                                             var contributor = $(this).parent().parent().children()[0].innerText;
                                             var role = $(this).parent().parent().children()[1].innerText;
 
