@@ -77,8 +77,8 @@
             "<td><a href='" + issueLink + "' target='_blank'>#" + task.issueId + "</a></td>" +
             "<td>" + task.assignmentDate.split('T')[0] + "</td>"  +
             "<td>" + task.deadline.split('T')[0] + "</td>" +
-            "<td>" + task.estimation + "min</td>" +
-            "<td>" + task.value + " €</td>" +
+            "<td>" + task.estimation + " min</td>" +
+            "<td>" + formatEuro(task.value) + "</td>" +
             "</tr>"
     }
 

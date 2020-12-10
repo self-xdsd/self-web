@@ -751,9 +751,9 @@
                             success: function (wallet) {
                                 $("#noRealWallet").hide();
 
-                                $("#stripeCash").html(wallet.cash + " €");
-                                $("#stripeDebt").html(wallet.debt + " €");
-                                $("#stripeAvailable").html(wallet.available + " €");
+                                $("#stripeCash").html(formatEuro(wallet.cash));
+                                $("#stripeDebt").html(formatEuro(wallet.debt));
+                                $("#stripeAvailable").html(formatEuro(wallet.available));
                                 cashLimitColor($("#stripeCash"), updatedWallet);
                                 if(wallet.active) {
                                     $("#stripeWalletBadge").addClass("badge-success")
@@ -773,9 +773,9 @@
                                     $("#stripeCash"),
                                     wallet.type,
                                     (updatedWallet) => {
-                                        $("#stripeCash").html(updatedWallet.cash + " €");
-                                        $("#stripeDebt").html(updatedWallet.debt + " €");
-                                        $("#stripeAvailable").html(updatedWallet.available + " €");
+                                        $("#stripeCash").html(formatEuro(updatedWallet.cash));
+                                        $("#stripeDebt").html(formatEuro(updatedWallet.debt));
+                                        $("#stripeAvailable").html(formatEuro(updatedWallet.available));
                                         cashLimitColor($("#stripeCash"), updatedWallet);
                                     }
                                 );
