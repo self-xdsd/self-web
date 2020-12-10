@@ -235,10 +235,14 @@ function payInvoice(invoice, contract, payButton) {
             error: function(jqXHR, error, errorThrown) {
                 console.log("Server error status: " + jqXHR.status);
                 console.log("Server error: " + jqXHR.responseText);
-                alert(
-                    "Something went wrong (" + jqXHR.status + ")." +
-                    "Please, refresh the page and try again."
-                );
+                if(jqXHR.status == 412) {
+                    alert(JSON.parse(jqXHR.responseText).message);
+                } else {
+                    alert(
+                        "Something went wrong (" + jqXHR.status + ")." +
+                        "Please, refresh the page and try again."
+                    );
+                }
             }
         }
     );

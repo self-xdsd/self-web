@@ -22,6 +22,8 @@
  */
 package com.selfxdsd.selfweb.api;
 
+import com.selfxdsd.api.exceptions.InvoiceException;
+import com.selfxdsd.api.exceptions.WalletPaymentException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -93,6 +95,31 @@ public class BaseApiController {
         return errors;
     }
 
+    /**
+     * Return any WalletPaymentException as PRECONDITION FAILED.
+     * @param exception Exception.
+     * @return Exception toString returns it in JSON format.
+     */
+    @ResponseStatus(HttpStatus.PRECONDITION_FAILED)
+    @ExceptionHandler(WalletPaymentException.class)
+    public String handlePaymentException(
+        final WalletPaymentException exception
+    ) {
+        return exception.toString();
+    }
+
+    /**
+     * Invoice already paid exception as PRECONDITION FAILED.
+     * @param exception Exception.
+     * @return Exception toString returns it in JSON format.
+     */
+    @ResponseStatus(HttpStatus.PRECONDITION_FAILED)
+    @ExceptionHandler(InvoiceException.AlreadyPaid.class)
+    public String handleInvoiceAlreadyPaidException(
+        final InvoiceException.AlreadyPaid exception
+    ) {
+        return exception.toString();
+    }
     /**
      * Custom exception message for internal server errors (500) to prevent
      * leaking to frontend exception messages that might contain sensitive
