@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.selfweb.api;
 
+import com.selfxdsd.api.exceptions.WalletPaymentException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -91,6 +92,17 @@ public class BaseApiController {
             }
         );
         return errors;
+    }
+
+    /**
+     * Return any WalletPaymentException as PRECONDITION FAILED.
+     * @param exception Exception.
+     * @return Exception toString returns it in JSON format.
+     */
+    @ResponseStatus(HttpStatus.PRECONDITION_FAILED)
+    @ExceptionHandler(WalletPaymentException.class)
+    public String handlePaymentException(final WalletPaymentException exception) {
+        return exception.toString();
     }
 
     /**
