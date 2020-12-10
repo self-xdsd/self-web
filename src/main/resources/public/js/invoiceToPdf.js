@@ -16,7 +16,7 @@ function invoiceToPdf(invoiceUri, invoice, contract) {
 
                     doc.addImage("/images/self-xdsd.png", "png", 170, 10, 20, 20);
                     doc.text("Invoice", 105, 20, null, null, "center");
-                    doc.text("Invoice #" + fullInvoice.id + " from " + fullInvoice.createdAt, 20, 35);
+                    doc.text("Invoice #" + fullInvoice.id + " from " + fullInvoice.createdAt.split('T')[0], 20, 35);
                     doc.text("Contributor: " + contract.id.contributorUsername, 20, 42);
                     doc.text("Project: " + contract.id.repoFullName + " at " + contract.id.provider, 20, 49);
                     doc.text("Role: " + contract.id.role, 20, 56);
@@ -46,7 +46,7 @@ function invoiceToPdf(invoiceUri, invoice, contract) {
                     doc.text("to Project Manager: " + formatEuro(toPm).replace("€", "EUR"), 23, 88);
                     if(fullInvoice.isPaid) {
                         doc.text("Status: paid", 20, 95)
-                        doc.text("paid at: " + fullInvoice.paymentTime, 23, 102)
+                        doc.text("paid at: " + fullInvoice.paymentTime.split('T')[0], 23, 102)
                         doc.text("transaction id: " + fullInvoice.transactionId, 23, 109)
                     } else {
                         doc.text("Status: active (not paid)", 20, 95)
