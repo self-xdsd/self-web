@@ -24,6 +24,15 @@ function getProject() {
                             "https://self-xdsd.com/p/" + owner + "/" + name
                             + "?provider=" + project.provider
                         )
+                        if(project.provider == 'github') {
+                            var inviteLink = 'https://github.com/' + owner + "/" + name + "/settings/access";
+                            $("#addNewContractInfo").html(
+                                "Don't forget to also "
+                                + "<a href='"+ inviteLink + "' target='_blank'>invite</a>"
+                                + " the contributor to the repository."
+
+                            )
+                        }
                     }
                 }
             );

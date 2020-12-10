@@ -252,7 +252,9 @@
                             </div>
                             <div class="form-group">
                                 <button type="submit" id="add"
-                                        class="btn btn-primary bg">Add
+                                        class="btn btn-primary bg"
+                                        aria-describedby="addNewContractInfo">
+                                    Add
                                 </button>
                                 <span id="addContractLoading"
                                      class="bg-light align-self-center"
@@ -260,6 +262,9 @@
                                     <img src="/images/loading.svg" width="36"
                                          height="36">
                                 </span>
+                                <small id="addNewContractInfo" class="form-text text-muted">
+                                    Don't forget to also invite the contributor to the repository.
+                                </small>
                             </div>
                         </form>
                     </div>
