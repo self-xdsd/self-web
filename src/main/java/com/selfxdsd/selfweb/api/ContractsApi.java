@@ -518,10 +518,11 @@ public class ContractsApi extends BaseApiController {
                         final Wallet wallet = project.wallets().active();
                         wallet.pay(found);
                     }
+                    final Invoice active = contract.invoices().active();
                     resp = ResponseEntity.ok(
                         Json.createObjectBuilder()
-                            .add("invoiceId", found.invoiceId())
-                            .add("paid", Boolean.TRUE)
+                            .add("paid", found.invoiceId())
+                            .add("active", new JsonInvoice(active))
                             .build()
                             .toString()
                     );

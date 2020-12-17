@@ -209,6 +209,42 @@ function activateWallet(owner, name, type) {
  *  if the payment is successful.
  */
 function payInvoice(invoice, contract, payButton) {
+
+    /**
+     * Turn an Invoice into a table row.
+     * @param invoice Invoice.
+     */
+    function invoiceAsTableRow(invoice) {
+        var status;
+        var payIcon = "";
+        var downloadLink = "";
+        if (invoice.paymentTime == "null" && invoice.transactionId == "null") {
+            status = "Active";
+            if (parseFloat(invoice.totalAmount) > 0.0) {
+                payIcon = "<a href='#' title='Pay Invoice' class='payInvoice'>"
+                    + "<i class='fa fa-credit-card fa-lg'></i>"
+                    + "</a>";
+            }
+        } else {
+            status = "Paid";
+        }
+        if (parseFloat(invoice.totalAmount) > 0.0) {
+            downloadLink = "<a href='#' title='Download Invoice' class='downloadInvoice'>"
+                + "<i class='fa fa-file-pdf-o fa-lg'></i>"
+                + "</a>  "
+        }
+        return "<tr>" +
+            "<td>" + invoice.id + "</td>" +
+            "<td>" + invoice.createdAt.split('T')[0] + "</td>"  +
+            "<td>" + invoice.totalAmount + "</td>" +
+            "<td>" + status + "</td>" +
+            "<td>"
+            + downloadLink
+            + payIcon
+            + "</td>" +
+            "</tr>"
+    }
+
     $.ajax(
         {
             type: "PUT",
@@ -222,13 +258,12 @@ function payInvoice(invoice, contract, payButton) {
                 payButton.hide();
                 $('#invoicesTable > tbody  > tr').each(
                     function(index, row) {
-                        if($(row).find("td:eq(0)").text() == invoice.id){
+                        if($(row).find("td:eq(0)").text() == json.paid){
                             $(row).find("td:eq(3)").text("Paid");
                         }
                     }
                 );
-                $("#invoicesTable").dataTable().fnDestroy();
-                $("#invoicesTable").dataTable();
+                $("#invoicesTable").DataTable().row.add($(invoiceAsTableRow(json.active))[0]).draw();
                 $("#loadingInvoices").hide();
                 $("#invoicesBody").show();
             },
