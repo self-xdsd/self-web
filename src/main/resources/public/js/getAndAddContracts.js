@@ -578,6 +578,9 @@
             triggerSelectOnValidInput: false,
             orientation: top,
             maxHeight: 100,
+            onSearchStart: function(){
+                $(".username-error").hide();
+            },
             lookup: function(query, done){
                  console.log(query)
                  clearTimeout(debounce);
