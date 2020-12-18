@@ -124,6 +124,16 @@ function installUpdateCashLimitPopover(anchor, currentLimit, walletType, onLimit
         var submit = content.find("#updateCashSubmit");
         var refreshIcon = content.find("#updateCashSubmit i");
 
+        //register namespaced ("popover-autoclose") click handler when clicking outside the popover
+        $(document).on("click.popover-autoclose", (e) => {
+            //hide if target is not child of popover,
+            //note: checks if content DOM el contains target DOM el,
+            //comparing jQuery elements will not work.
+            if(!$.contains(content[0], e.target)){
+                anchor.popover("hide");
+            }
+        });
+
         //check updating state
         switch (anchor.data("updating") || IDLE) {
             case UPDATING: {
@@ -208,6 +218,8 @@ function installUpdateCashLimitPopover(anchor, currentLimit, walletType, onLimit
     });
     //on hide
     anchor.on('hidden.bs.popover', function () {
+        //unregister namespaced ("popover-autoclose") click handler to avoid leaks
+        $(document).off("click.popover-autoclose");
         anchor.data("showing", false);
     });
 }
