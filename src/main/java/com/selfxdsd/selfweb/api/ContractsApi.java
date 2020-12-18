@@ -327,7 +327,7 @@ public class ContractsApi extends BaseApiController {
         @RequestParam("role") final String role,
 
         @RequestParam("newHourlyRate")
-        @Min(value = 8)
+        @Min(value = 15)
         @Max(value = 300)
         final double newHourlyRate
     ) {
