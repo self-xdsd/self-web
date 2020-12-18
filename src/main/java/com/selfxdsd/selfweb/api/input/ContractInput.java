@@ -45,7 +45,7 @@ public final class ContractInput {
     /**
      * Contributor hourly rate in dollars.
      */
-    @Min(value = 8)
+    @Min(value = 15)
     @Max(value = 300)
     private double hourlyRate;
 
