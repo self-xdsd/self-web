@@ -217,7 +217,9 @@ function payInvoice(invoice, contract, payButton) {
     function invoiceAsTableRow(invoice) {
         var status;
         var payIcon = "";
-        var downloadLink = "";
+        var downloadLink = "<a href='#' title='Download Invoice' class='downloadInvoice'>"
+            + "<i class='fa fa-file-pdf-o fa-lg'></i>"
+            + "</a>  ";
         if (invoice.paymentTime == "null" && invoice.transactionId == "null") {
             status = "Active";
             if (parseFloat(invoice.totalAmount) > 0.0) {
@@ -227,11 +229,6 @@ function payInvoice(invoice, contract, payButton) {
             }
         } else {
             status = "Paid";
-        }
-        if (parseFloat(invoice.totalAmount) > 0.0) {
-            downloadLink = "<a href='#' title='Download Invoice' class='downloadInvoice'>"
-                + "<i class='fa fa-file-pdf-o fa-lg'></i>"
-                + "</a>  "
         }
         return "<tr>" +
             "<td>" + invoice.id + "</td>" +
