@@ -22,6 +22,10 @@ main {
   border: 0 !important
 }
 
+.dropdown-menu {
+    font-size: 12px !important;
+}
+
 .card-title {
     color: #701516 !important;
 }
@@ -145,6 +149,10 @@ body {
     .padding-header-navbar, .page-footer {
         padding-top: 10px;
         padding-bottom: 10px;
+    }
+
+    .dropdown-menu {
+        left: unset !important;
     }
 }
 
