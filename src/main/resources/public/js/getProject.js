@@ -175,19 +175,9 @@ function installUpdateCashLimitPopover(anchor, currentLimit, walletType, onLimit
                     contentType: 'application/json',
                     data: inputValue,
                 }).done(wallet => {
-
-                    var isPopoverVisible = anchor.data("showing") || false;
-                    if (isPopoverVisible) {
-                        content.find("#updateCashInput").val(wallet.cash);
-                        var currentLimitLen = currentLimit.text().length - 1; // ignore $ sign
-                        //reposition if new limit.text length is different than current.
-                        //this way the popover it will always be relative to its anchor.
-                        if (currentLimitLen !== inputValue.length) {
-                            anchor.popover('show');
-                        }
-                    }
                     onLimitUpdate(wallet);
                     anchor.data("updating", IDLE);
+                    anchor.popover('hide');
                 }).fail(() => {
                     var isPopoverVisible = anchor.data("showing") || false;
                     if (isPopoverVisible) {
