@@ -218,7 +218,7 @@ function payInvoice(invoice, contract, payButton) {
         var status = "Active"
         var downloadLink = "<a href='#' title='Download Invoice' class='downloadInvoice'>"
             + "<i class='fa fa-file-pdf-o fa-lg'></i>"
-            + "</a>T";
+            + "</a>";
         return "<tr>" +
             "<td>" + invoice.id + "</td>" +
             "<td>" + invoice.createdAt.split('T')[0] + "</td>"  +
@@ -229,7 +229,12 @@ function payInvoice(invoice, contract, payButton) {
             + "</td>" +
             "</tr>"
     }
-
+    payButton.unbind("click");
+    payButton.on(
+        "click",
+        function(event) {event.preventDefault();}
+    );
+    payButton.html('<img src="/images/loading.svg" width="25" height="25">');
     $.ajax(
         {
             type: "PUT",
@@ -257,6 +262,22 @@ function payInvoice(invoice, contract, payButton) {
             error: function(jqXHR, error, errorThrown) {
                 console.log("Server error status: " + jqXHR.status);
                 console.log("Server error: " + jqXHR.responseText);
+                payButton.html('<i class="fa fa-credit-card fa-lg"></i>');
+                payButton.on(
+                    "click",
+                    function(event) {
+                        event.preventDefault();
+                        var message = "Are you sure you want to make this payment?"
+                        if(activeWallet.type == 'FAKE') {
+                            message += ' You are using a fake wallet, the payment will be fictive.'
+                        }
+                        confirmDialog
+                            .create(message)
+                            .then(
+                                () => payInvoice(invoice, contract, $(this))
+                            );
+                    }
+                );
                 if(jqXHR.status == 412) {
                     alert(JSON.parse(jqXHR.responseText).message);
                 } else {

@@ -120,7 +120,7 @@
                                         );
                                     }
                                 );
-                                if(invoice.paymentTime == "null" && invoice.transactionId == "null") {
+                                if(invoice.paymentTime == "null" && invoice.transactionId == "null" && parseFloat(invoice.totalAmount) > 0.0) {
                                     $($(".payInvoice")[$(".payInvoice").length -1]).on(
                                         "click",
                                         function(event) {
