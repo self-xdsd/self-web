@@ -159,15 +159,22 @@
      */
     function invoiceAsTableRow(contract, invoice) {
         var status;
-        var payIcon;
-        if(invoice.paymentTime == "null" && invoice.transactionId == "null") {
+        var payIcon = "";
+        var downloadLink = "";
+        if (invoice.paymentTime == "null" && invoice.transactionId == "null") {
             status = "Active";
-            payIcon = "<a href='#' title='Pay Invoice' class='payInvoice'>"
-                + "<i class='fa fa-credit-card fa-lg'></i>"
-                + "</a>";
+            if (parseFloat(invoice.totalAmount) > 0.0) {
+                payIcon = "<a href='#' title='Pay Invoice' class='payInvoice'>"
+                    + "<i class='fa fa-credit-card fa-lg'></i>"
+                    + "</a>";
+            }
         } else {
             status = "Paid";
-            payIcon = "";
+        }
+        if (parseFloat(invoice.totalAmount) > 0.0) {
+            downloadLink = "<a href='#' title='Download Invoice' class='downloadInvoice'>"
+                + "<i class='fa fa-file-pdf-o fa-lg'></i>"
+                + "</a>  "
         }
         return "<tr>" +
             "<td>" + invoice.id + "</td>" +
@@ -175,9 +182,7 @@
             "<td>" + invoice.totalAmount + "</td>" +
             "<td>" + status + "</td>" +
             "<td>"
-            + "<a href='#' title='Download Invoice' class='downloadInvoice'>"
-            + "<i class='fa fa-file-pdf-o fa-lg'></i>"
-            + "</a>  "
+            + downloadLink
             + payIcon
             + "</td>" +
             "</tr>"
