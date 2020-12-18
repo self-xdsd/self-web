@@ -211,25 +211,14 @@ function activateWallet(owner, name, type) {
 function payInvoice(invoice, contract, payButton) {
 
     /**
-     * Turn an Invoice into a table row.
+     * Turn a new Invoice (active) into a table row.
      * @param invoice Invoice.
      */
-    function invoiceAsTableRow(invoice) {
-        var status;
-        var payIcon = "";
+    function newInvoiceAsTableRow(invoice) {
+        var status = "Active"
         var downloadLink = "<a href='#' title='Download Invoice' class='downloadInvoice'>"
             + "<i class='fa fa-file-pdf-o fa-lg'></i>"
-            + "</a>  ";
-        if (invoice.paymentTime == "null" && invoice.transactionId == "null") {
-            status = "Active";
-            if (parseFloat(invoice.totalAmount) > 0.0) {
-                payIcon = "<a href='#' title='Pay Invoice' class='payInvoice'>"
-                    + "<i class='fa fa-credit-card fa-lg'></i>"
-                    + "</a>";
-            }
-        } else {
-            status = "Paid";
-        }
+            + "</a>T";
         return "<tr>" +
             "<td>" + invoice.id + "</td>" +
             "<td>" + invoice.createdAt.split('T')[0] + "</td>"  +
@@ -237,7 +226,6 @@ function payInvoice(invoice, contract, payButton) {
             "<td>" + status + "</td>" +
             "<td>"
             + downloadLink
-            + payIcon
             + "</td>" +
             "</tr>"
     }
@@ -260,7 +248,9 @@ function payInvoice(invoice, contract, payButton) {
                         }
                     }
                 );
-                $("#invoicesTable").DataTable().row.add($(invoiceAsTableRow(json.active))[0]).draw();
+                $("#invoicesTable").DataTable().row.add(
+                    $(newInvoiceAsTableRow(json.active))[0]
+                ).draw();
                 $("#loadingInvoices").hide();
                 $("#invoicesBody").show();
             },
