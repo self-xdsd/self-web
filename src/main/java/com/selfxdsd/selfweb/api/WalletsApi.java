@@ -24,6 +24,7 @@ package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.exceptions.WalletAlreadyExistsException;
+import com.selfxdsd.selfweb.api.input.StripeWalletInput;
 import com.selfxdsd.selfweb.api.output.JsonWallet;
 import com.selfxdsd.selfweb.api.output.JsonWallets;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -99,6 +101,7 @@ public class WalletsApi extends BaseApiController {
      * Create a Stripe Wallet for one of the authenticated user's projects.
      * @param owner Owner of the project (login of user or org name).
      * @param name Repo name.
+     * @param billingInfo Billing information.
      * @return Stripe Wallet as JSON string.
      */
     @PostMapping(
@@ -107,8 +110,8 @@ public class WalletsApi extends BaseApiController {
     )
     public ResponseEntity<String> createStripeWallet(
         @PathVariable final String owner,
-        @PathVariable final String name
-    ) {
+        @PathVariable final String name,
+        @Valid final StripeWalletInput billingInfo) {
         ResponseEntity<String> response;
         final Project found = this.user.projects().getProjectById(
             owner + "/" + name, user.provider().name()

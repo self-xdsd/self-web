@@ -373,3 +373,356 @@ function walletAsPieChart(wallet) {
         $("#walletCardTitle").html("Stripe Wallet");
     }
 }
+
+$(document).ready(
+    function() {
+
+        $("#stripeCustomerForm").submit(
+            function(e) {
+                e.preventDefault();
+
+                var valid = true;
+                $.each($("#stripeCustomerForm .required"), function(index, element) {
+                    if($(element).val().trim() == '') {
+                        $(element).addClass("is-invalid");
+                        valid = false;
+                    } else {
+                        $(element).removeClass("is-invalid");
+                    }
+                });
+                $.each($("#stripeCustomerForm input"), function(index, element) {
+                    if(hasSpecialChars($(element).val())) {
+                        $("." + $(element).attr("name") + "-error").html(
+                            "The only special characters allowed are ,.-_&@#'"
+                        );
+                        $(element).addClass("is-invalid");
+                        valid =  false;
+                    }
+                });
+                $.each($("#stripeCustomerForm textarea"), function(index, element) {
+                    if(hasSpecialChars($(element).val())) {
+                        $("." + $(element).attr("name") + "-error").html(
+                            "The only special characters allowed are ,.-_&@#'"
+                        );
+                        $(element).addClass("is-invalid");
+                        valid =  false;
+                    } else {
+                        $(element).removeClass("is-invalid");
+                    }
+                });
+
+                if(valid) {
+                    $("#stripeCustomerButton").addClass("disabled");
+                    $("#loadingStripeCustomerForm").show();
+                    var owner = $("#owner").text();
+                    var name = $("#name").text();
+                    var form = $(this);
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: "/api/projects/" + owner + "/" + name + "/wallets/stripe",
+                            data: form.serialize(),
+                            success: function (wallet) {
+                                $("#noRealWallet").hide();
+
+                                $("#stripeCash").html(formatEuro(wallet.cash));
+                                $("#stripeDebt").html(formatEuro(wallet.debt));
+                                $("#stripeAvailable").html(formatEuro(wallet.available));
+                                cashLimitColor($("#stripeCash"), updatedWallet);
+                                if (wallet.active) {
+                                    $("#stripeWalletBadge").addClass("badge-success")
+                                    $("#stripeWalletBadge").html("active")
+                                    $("#activateStripeWallet").hide();
+                                } else {
+                                    $("#activateStripeWallet").show();
+                                }
+
+                                $("#stripeCustomerButton").removeClass("disabled");
+                                $("#loadingStripeCustomerForm").hide();
+
+                                $("#realWalletOverview").show();
+
+                                installUpdateCashLimitPopover(
+                                    $("#stripeUpdateCashLimitAction"),
+                                    $("#stripeCash"),
+                                    wallet.type,
+                                    (updatedWallet) => {
+                                        $("#stripeCash").html(formatEuro(updatedWallet.cash));
+                                        $("#stripeDebt").html(formatEuro(updatedWallet.debt));
+                                        $("#stripeAvailable").html(formatEuro(updatedWallet.available));
+                                        cashLimitColor($("#stripeCash"), updatedWallet);
+                                    }
+                                );
+                            },
+                            error: function (jqXHR, error, errorThrown) {
+                                $("#stripeCustomerButton").removeClass("disabled");
+                                $("#loadingStripeCustomerForm").hide();
+                                if (jqXHR.status && jqXHR.status == 400) {
+                                    console.error("Bad Request: " + jqXHR.responseText);
+                                    $("#setupCustomerError").show();
+                                } else {
+                                    console.log("Server error status: " + jqXHR.status);
+                                    console.log("Server error: " + jqXHR.responseText);
+                                    alert(
+                                        "Something went wrong (" + jqXHR.status + ")." +
+                                        "Please, try again later."
+                                    );
+                                }
+                            }
+                        }
+                    );
+                }
+            }
+        );
+
+        $("#addStripePaymentMethodForm").submit(
+            function(e) {
+                e.preventDefault();
+                $("#addStripePaymentMethodButton").addClass("disabled");
+                $("#loadingStripePaymentForm").show();
+                var owner =$("#owner").text();
+                var name =$("#name").text();
+                var form = $(this);
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: "/api/projects/" + owner + "/" + name +
+                            "/wallets/stripe/paymentMethods/setup",
+                        data: form.serialize(),
+                        success: function (setupIntent) {
+                            $("#addStripePaymentMethodButton").removeClass("disabled");
+                            $("#loadingStripePaymentForm").hide();
+                            var stripe = Stripe('pk_test_51HFJACFQ8qkNTW7CcB9UoOCrCPBcipFuU0UnsuuaOT4zCxB3217kBgWCIN0cRnJ7ETJazRxMILYHyV0fUBqd5Kca00ClMmHcO0');
+
+                            var elements = stripe.elements();
+                            var cardElement = elements.create('card');
+                            cardElement.mount('#payment-method-element');
+                            $("#addStripePaymentMethodButton").hide();
+                            $("#payment-method-element-card").show();
+
+
+                            $("#addNewCardButton").on(
+                                "click",
+                                function(event) {
+                                    event.preventDefault();
+                                    $("#addNewCardButton").addClass("disabled");
+                                    $("#cancelNewCardButton").addClass("disabled");
+                                    $("#loadingAddNewCard").show();
+
+                                    stripe.confirmCardSetup(
+                                        setupIntent.clientSecret,
+                                        {
+                                            payment_method: {
+                                                card: cardElement,
+                                                billing_details: {},
+                                            },
+                                        }
+                                    ).then(function(result) {
+                                        console.log("STRIPE RESULT: " + JSON.stringify(result));
+                                        if(result.error) {
+                                            var message;
+                                            if(result.error.message) {
+                                                message = result.error.message;
+                                            } else {
+                                                message = "Something went wrong. Please refresh the page and try again.";
+                                            }
+                                            $("#addNewCardErrorMessage").html(message);
+                                            $("#addNewCardError").show();
+                                        } else {
+                                            $("#addNewCardErrorMessage").html("");
+                                            $("#addNewCardError").hide();
+
+                                            console.log('Send paymentmethodid to server...');
+                                            var paymentMethodInfo = {
+                                                paymentMethodId: result.setupIntent.payment_method
+                                            }
+                                            $.ajax(
+                                                {
+                                                    type: "POST",
+                                                    contentType: "application/json",
+                                                    url: "/api/projects/" + owner + "/" + name +
+                                                        "/wallets/stripe/paymentMethods",
+                                                    data: JSON.stringify(paymentMethodInfo),
+                                                    success: function (paymentMethod) {
+                                                        var active;
+                                                        if(paymentMethod.self.active) {
+                                                            activePaymentMethodFound = true;
+                                                            active = "<input class='pmToggle' type='checkbox' checked data-toggle=\"toggle\">";
+                                                        } else {
+                                                            active = "<input class='pmToggle' type='checkbox' data-toggle='toggle'>";
+                                                        }                                                            var issuer = paymentMethod.stripe.card.brand;
+                                                        issuer = issuer.substr(0,1).toUpperCase() + issuer.substr(1);
+                                                        $('#realPaymentMethodsTable > tbody').append(
+                                                            "<tr>"
+                                                            + "<td>"
+                                                            + issuer
+                                                            + "</td>"
+                                                            + "<td>"
+                                                            + "****** " + paymentMethod.stripe.card.last4
+                                                            + "</td>"
+                                                            + "<td>"
+                                                            + paymentMethod.stripe.card.exp_month + "/" + paymentMethod.stripe.card.exp_year
+                                                            + "</td>"
+                                                            + "<td>"
+                                                            + active
+                                                            + "</td>"
+                                                            + "</tr>"
+                                                        )
+                                                        $('.pmToggle').bootstrapToggle({
+                                                            on: 'Active',
+                                                            off: 'Inactive',
+                                                            width: '45%'
+                                                        });
+                                                        $($('input.pmToggle')[$('input.pmToggle').length - 1]).on(
+                                                            'change',
+                                                            function() {
+                                                                if($(this).prop('checked')) {
+                                                                    $('input.pmToggle').not(this).prop('checked', false);
+                                                                    let parent = $('input.pmToggle').not(this).parent();
+                                                                    parent.removeClass('btn-primary');
+                                                                    parent.addClass('btn-default');
+                                                                    parent.addClass('off');
+                                                                    activatePaymentMethod(owner, name, paymentMethod);
+                                                                    $("#activateStripeWalletButton").removeClass("disabled");
+                                                                } else { //we don't allow manual inactivation of a PaymentMethod
+                                                                    $(this).bootstrapToggle('on');
+                                                                }
+                                                            }
+                                                        );
+                                                        $("#noRealPaymentMethods").hide();
+                                                        $("#realPaymentMethods").show();
+                                                    },
+                                                    error: function(jqXHR, error, errorThrown) {
+                                                        $("#addStripePaymentMethodButton").removeClass("disabled");
+                                                        $("#loadingStripePaymentForm").hide();
+                                                        if(jqXHR.status && jqXHR.status == 400){
+                                                            console.error("Bad Request: " + jqXHR.responseText);
+                                                            $("#stripePaymentMethodFormError").show();
+                                                        } else {
+                                                            console.log("Server error status: " + jqXHR.status);
+                                                            console.log("Server error: " + jqXHR.responseText);
+                                                            alert(
+                                                                "Something went wrong (" + jqXHR.status + ")." +
+                                                                "Please, try again later."
+                                                            );
+                                                        }
+                                                    }
+                                                }
+                                            );
+
+
+                                            $("#cancelNewCardButton").trigger("click");
+                                        }
+                                        $("#addNewCardButton").removeClass("disabled");
+                                        $("#cancelNewCardButton").removeClass("disabled");
+                                        $("#loadingAddNewCard").hide();
+                                    });
+                                }
+                            )
+
+                        },
+                        error: function(jqXHR, error, errorThrown) {
+                            $("#addStripePaymentMethodButton").removeClass("disabled");
+                            $("#loadingStripePaymentForm").hide();
+                            if(jqXHR.status && jqXHR.status == 400){
+                                console.error("Bad Request: " + jqXHR.responseText);
+                                $("#stripePaymentMethodFormError").show();
+                            } else {
+                                console.log("Server error status: " + jqXHR.status);
+                                console.log("Server error: " + jqXHR.responseText);
+                                alert(
+                                    "Something went wrong (" + jqXHR.status + ")." +
+                                    "Please, try again later."
+                                );
+                            }
+                        }
+                    }
+                );
+            }
+        );
+
+        $("#cancelNewCardButton").on(
+            "click",
+            function(event) {
+                event.preventDefault();
+                $("#payment-method-element").html('');
+                $("#addNewCardErrorMessage").html("");
+                $("#addNewCardError").hide();
+                $("#addStripePaymentMethodButton").show();
+                $("#payment-method-element-card").hide();
+            }
+        )
+        $("#activateFakeWalletButton").on(
+            "click",
+            function(event) {
+                event.preventDefault();
+                activateWallet(
+                    $("#owner").text(),
+                    $("#name").text(),
+                    "fake"
+                )
+            }
+        )
+        $("#activateStripeWalletButton").on(
+            "click",
+            function(event) {
+                if(!$(this).hasClass("disabled")) {
+                    event.preventDefault();
+                    activateWallet(
+                        $("#owner").text(),
+                        $("#name").text(),
+                        "stripe"
+                    )
+                }
+            }
+        )
+
+        // $("#addContractForm").submit(
+        //     function(e) {
+        //         e.preventDefault();
+        //         var valid = true;
+        //         $.each($("#addContractForm .required"), function(index, element) {
+        //             if($(element).val() == '') {
+        //                 $(element).addClass("is-invalid");
+        //                 valid = valid && false;
+        //             } else {
+        //                 $(element).removeClass("is-invalid");
+        //                 valid = valid && true;
+        //             }
+        //         });
+        //         if(valid) {
+        //             var formData = $(this).serialize();
+        //             //check if username exists before submit
+        //             usersService.exists(
+        //                 $("#username").val(),
+        //                 "github",
+        //                 function(){
+        //                     $("#addContractLoading").show();
+        //                     clearFormErrors();
+        //                     disableForm(true);
+        //                 }
+        //             ).then(
+        //                 function(){
+        //                     return contractsService.add(project, formData)
+        //                 }
+        //             ).then(
+        //                 function(contract){
+        //                     $("#addContractForm input").val('');
+        //                     $('#addContractForm option:first').prop('selected',true);
+        //                     //we check the current page (0 based) displayed in table.
+        //                     //if is last page, we're adding the contract to table.
+        //                     //since it's the latest contract created.
+        //                     loadContracts();
+        //                 }
+        //             ).catch(handleError)
+        //                 .finally(
+        //                     function(){
+        //                         disableForm(false);
+        //                         $("#addContractLoading").hide();
+        //                     });
+        //             return false;
+        //         }
+        //     }
+        // );
+    }
+)

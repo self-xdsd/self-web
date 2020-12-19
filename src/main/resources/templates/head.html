@@ -85,6 +85,15 @@
         function formatEuro(amount) {
             return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(amount);
         }
+        function hasSpecialChars(text) {
+            var chars="\"[](){};<>/\\`!%^*$?"
+            for (var i = 0; i < chars.length; i++) {
+                if(text.includes(chars.charAt(i))) {
+                    return true;
+                };
+            }
+            return false;
+        }
     </script>
 </head>
 </html>
