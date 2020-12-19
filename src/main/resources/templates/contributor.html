@@ -384,7 +384,9 @@
                             data: form.serialize(),
                             success: function (payoutMethod) {
                                 console.log("Opening SCA Dashboard page: " + payoutMethod.stripeLoginLink)
-                                window.location.replace(payoutMethod.stripeLoginLink);
+                                $("<a href=" + payoutMethod.stripeLoginLink + " target='_blank'></a>")[0].click();
+                                $("#stripeDashboardButton").removeClass("disabled");
+                                $("#loadingStripeDashboardForm").hide();
                             },
                             error: function(jqXHR, error, errorThrown) {
                                 $("#stripeDashboardButton").removeClass("disabled");
