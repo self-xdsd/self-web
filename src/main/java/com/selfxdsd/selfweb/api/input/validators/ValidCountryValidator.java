@@ -53,7 +53,7 @@ public final class ValidCountryValidator
             return false;
         }
         for(final String country : Locale.getISOCountries()) {
-            if(value.equalsIgnoreCase(country)) {
+            if(country.equals(value)) {
                 return true;
             }
         }
