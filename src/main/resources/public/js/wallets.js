@@ -139,8 +139,6 @@ function getProjectWallets() {
  * @param owner Owner of the repo/project.
  * @param name Name of the repo.
  * @param type Type of the wallet (fake or stripe).
- * @todo #253:30min On frontend, enable wallet activation.
- *  Right now `activateWallet()` function is not used ('activate' button doesn't work).
  */
 function activateWallet(owner, name, type) {
     if(type == 'stripe') {
