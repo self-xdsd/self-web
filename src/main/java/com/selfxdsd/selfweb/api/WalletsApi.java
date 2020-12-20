@@ -25,6 +25,7 @@ package com.selfxdsd.selfweb.api;
 import com.selfxdsd.api.*;
 import com.selfxdsd.api.exceptions.WalletAlreadyExistsException;
 import com.selfxdsd.selfweb.api.input.StripeWalletInput;
+import static com.selfxdsd.selfweb.api.input.StripeWalletInput.*;
 import com.selfxdsd.selfweb.api.output.JsonWallet;
 import com.selfxdsd.selfweb.api.output.JsonWallets;
 import org.slf4j.Logger;
@@ -122,7 +123,11 @@ public class WalletsApi extends BaseApiController {
             try {
                 response = ResponseEntity.ok(
                     new JsonWallet(
-                        found.createStripeWallet()
+                        found.createStripeWallet(
+                            new StripeBillingInfo(
+                                billingInfo
+                            )
+                        )
                     ).toString()
                 );
             } catch (final WalletAlreadyExistsException ex) {

@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.selfweb.api.input;
 
+import com.selfxdsd.api.BillingInfo;
 import com.selfxdsd.selfweb.api.input.validators.NoSpecialChars;
 import com.selfxdsd.selfweb.api.input.validators.ValidCountry;
 
@@ -122,5 +123,59 @@ public final class StripeWalletInput {
 
     public void setOther(final String other) {
         this.other = other;
+    }
+
+    /**
+     * Billing info from Stripe input form.
+     */
+    public static final class StripeBillingInfo implements BillingInfo {
+
+        /**
+         * Input from the Stripe wallet formular.
+         */
+        private StripeWalletInput input;
+
+        /**
+         * Ctor.
+         * @param input Input from the Stripe wallet form.
+         */
+        public StripeBillingInfo(final StripeWalletInput input) {
+            this.input = input;
+        }
+
+        @Override
+        public String legalName() {
+            return this.input.getLegalName();
+        }
+
+        @Override
+        public String country() {
+            return this.input.getCountry();
+        }
+
+        @Override
+        public String address() {
+            return this.input.getAddress();
+        }
+
+        @Override
+        public String city() {
+            return this.input.getCity();
+        }
+
+        @Override
+        public String zipcode() {
+            return this.input.getZipcode();
+        }
+
+        @Override
+        public String email() {
+            return this.input.getEmail();
+        }
+
+        @Override
+        public String other() {
+            return this.input.getOther();
+        }
     }
 }
