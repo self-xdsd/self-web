@@ -26,6 +26,7 @@ import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.PayoutMethod;
 import com.selfxdsd.api.User;
 import com.selfxdsd.selfweb.api.input.BillingInfoInput;
+import static com.selfxdsd.selfweb.api.input.BillingInfoInput.*;
 import com.selfxdsd.selfweb.api.output.JsonPayoutMethods;
 import com.stripe.exception.StripeException;
 import com.stripe.model.AccountLink;
@@ -117,7 +118,9 @@ public final class PayoutMethodsApi extends BaseApiController {
             resp = ResponseEntity.badRequest().build();
         } else {
             try {
-                final PayoutMethod created = contributor.createStripeAccount();
+                final PayoutMethod created = contributor.createStripeAccount(
+                    new StripeBillingInfo(billingInfo)
+                );
                 resp = ResponseEntity.ok(
                     Json.createObjectBuilder()
                         .add(

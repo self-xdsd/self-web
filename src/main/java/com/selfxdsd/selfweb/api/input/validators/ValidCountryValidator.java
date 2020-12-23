@@ -25,7 +25,6 @@ package com.selfxdsd.selfweb.api.input.validators;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Validator for {@link ValidCountry}.

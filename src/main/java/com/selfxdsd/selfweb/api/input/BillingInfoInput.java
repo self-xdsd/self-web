@@ -236,8 +236,41 @@ public final class BillingInfoInput {
         }
 
         @Override
+        public boolean isCompany() {
+            return "company".equalsIgnoreCase(this.input.getBusinessType());
+        }
+
+        @Override
         public String legalName() {
-            return this.input.getLegalName();
+            final String legalName;
+            if(this.isCompany()) {
+                legalName = this.input.getLegalName();
+            } else {
+                legalName = "";
+            }
+            return legalName;
+        }
+
+        @Override
+        public String firstName() {
+            final String firstName;
+            if(this.isCompany()) {
+                firstName = this.input.getFirstName();
+            } else {
+                firstName = "";
+            }
+            return firstName;
+        }
+
+        @Override
+        public String lastName() {
+            final String lastName;
+            if(this.isCompany()) {
+                lastName = this.input.getLastName();
+            } else {
+                lastName = "";
+            }
+            return lastName;
         }
 
         @Override
@@ -263,6 +296,11 @@ public final class BillingInfoInput {
         @Override
         public String email() {
             return this.input.getEmail();
+        }
+
+        @Override
+        public String taxId() {
+            return this.input.getTaxId();
         }
 
         @Override
