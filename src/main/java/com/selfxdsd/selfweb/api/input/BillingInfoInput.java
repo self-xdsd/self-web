@@ -93,7 +93,7 @@ public final class BillingInfoInput {
     @Size(max=512)
     private String other;
 
-    @AssertTrue(message = "Business type be either individual or company!")
+    @AssertTrue(message = "Business type either individual or company!")
     public boolean isValidBusinessType() {
         final boolean valid;
         if("company".equalsIgnoreCase(this.businessType)

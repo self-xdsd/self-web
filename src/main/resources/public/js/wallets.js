@@ -376,27 +376,43 @@ function walletAsPieChart(wallet) {
 
 $(document).ready(
     function() {
-
+        $('input:radio[name="businessType"]').change(
+            function(){
+                if ($(this).is(':checked') && $(this).val() == 'company') {
+                    $("#legalNameDiv").show();
+                    $("#firstNameDiv").hide();
+                    $("#lastNameDiv").hide();
+                } else if ($(this).is(':checked') && $(this).val() == 'individual') {
+                    $("#firstNameDiv").show();
+                    $("#lastNameDiv").show();
+                    $("#legalNameDiv").hide();
+                }
+            }
+        );
         $("#stripeCustomerForm").submit(
             function(e) {
                 e.preventDefault();
 
                 var valid = true;
                 $.each($("#stripeCustomerForm .required"), function(index, element) {
-                    if($(element).val().trim() == '') {
-                        $(element).addClass("is-invalid");
-                        valid = false;
-                    } else {
-                        $(element).removeClass("is-invalid");
+                    if($(element).is(":visible")) {
+                        if ($(element).val().trim() == '') {
+                            $(element).addClass("is-invalid");
+                            valid = false;
+                        } else {
+                            $(element).removeClass("is-invalid");
+                        }
                     }
                 });
                 $.each($("#stripeCustomerForm input"), function(index, element) {
-                    if(hasSpecialChars($(element).val())) {
-                        $("." + $(element).attr("name") + "-error").html(
-                            "The only special characters allowed are ,.-_&@#'"
-                        );
-                        $(element).addClass("is-invalid");
-                        valid =  false;
+                    if($(element).is(":visible")) {
+                        if (hasSpecialChars($(element).val())) {
+                            $("." + $(element).attr("name") + "-error").html(
+                                "The only special characters allowed are ,.-_&@#'"
+                            );
+                            $(element).addClass("is-invalid");
+                            valid = false;
+                        }
                     }
                 });
                 $.each($("#stripeCustomerForm textarea"), function(index, element) {
