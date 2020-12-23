@@ -415,6 +415,16 @@ $(document).ready(
                         }
                     }
                 });
+                $.each($("#stripeCustomerForm input[type=checkbox]"), function(index, element) {
+                    if($(element).is(":visible")) {
+                        if (!this.checked) {
+                            $(element).addClass("is-invalid");
+                            valid = false;
+                        } else {
+                            $(element).removeClass("is-invalid");
+                        }
+                    }
+                });
                 $.each($("#stripeCustomerForm textarea"), function(index, element) {
                     if(hasSpecialChars($(element).val())) {
                         $("." + $(element).attr("name") + "-error").html(

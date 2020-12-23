@@ -41,6 +41,16 @@ $(document).ready(
                         }
                     }
                 });
+                $.each($("#createStripeConnectAccountForm input[type=checkbox]"), function(index, element) {
+                    if($(element).is(":visible")) {
+                        if (!this.checked) {
+                            $(element).addClass("is-invalid");
+                            valid = false;
+                        } else {
+                            $(element).removeClass("is-invalid");
+                        }
+                    }
+                });
                 $.each($("#createStripeConnectAccountForm textarea"), function (index, element) {
                     if (hasSpecialChars($(element).val())) {
                         $("." + $(element).attr("name") + "-error").html(
