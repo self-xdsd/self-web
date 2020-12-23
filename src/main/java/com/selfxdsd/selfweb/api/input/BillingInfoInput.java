@@ -26,11 +26,13 @@ import com.selfxdsd.api.BillingInfo;
 import com.selfxdsd.selfweb.api.input.validators.NoSpecialChars;
 import com.selfxdsd.selfweb.api.input.validators.ValidCountry;
 
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 /**
- * Input for a new Stripe wallet (project billing info).
+ * Input for the BillingInfo of a Project or of a Contributor.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
@@ -38,11 +40,24 @@ import javax.validation.constraints.NotBlank;
  * @checkstyle JavadocVariable (200 lines)
  * @checkstyle JavadocMethod (200 lines)
  */
-public final class StripeWalletInput {
+public final class BillingInfoInput {
 
-    @NotBlank(message = "Legal name is mandatory!")
     @NoSpecialChars
+    @NotBlank(message = "Business type is mandatory!")
+    @Size(max=32)
+    private String businessType;
+
+    @NoSpecialChars
+    @Size(max=256)
     private String legalName;
+
+    @NoSpecialChars
+    @Size(max=256)
+    private String firstName;
+
+    @NoSpecialChars
+    @Size(max=256)
+    private String lastName;
 
     @NotBlank(message = "Country is mandatory!")
     @NoSpecialChars
@@ -51,23 +66,76 @@ public final class StripeWalletInput {
 
     @NotBlank(message = "Address is mandatory!")
     @NoSpecialChars
+    @Size(max=256)
     private String address;
 
     @NotBlank(message = "City is mandatory!")
     @NoSpecialChars
+    @Size(max=256)
     private String city;
 
     @NotBlank(message = "Zipcode is mandatory!")
     @NoSpecialChars
+    @Size(max=32)
     private String zipcode;
 
     @NotBlank(message = "E-Mail is mandatory!")
     @Email(message = "Please provide a valid e-mail address.")
     @NoSpecialChars
+    @Size(max=256)
     private String email;
 
     @NoSpecialChars
+    @Size(max=512)
+    private String taxId;
+
+    @NoSpecialChars
+    @Size(max=512)
     private String other;
+
+    @AssertTrue(message = "Business type be either individual or company!")
+    public boolean isValidBusinessType() {
+        final boolean valid;
+        if("company".equalsIgnoreCase(this.businessType)
+            || "individual".equalsIgnoreCase(this.businessType)) {
+            valid = true;
+        } else {
+            valid = false;
+        }
+        return valid;
+    }
+
+
+    @AssertTrue(message = "Company must have a legal name!")
+    public boolean isValidCompany() {
+        final boolean valid;
+        if("company".equalsIgnoreCase(this.businessType)) {
+            valid = this.legalName != null && !this.legalName.isEmpty();
+        } else {
+            valid = true;
+        }
+        return valid;
+    }
+
+    @AssertTrue(message = "Individual must have a first name and a last name!")
+    public boolean isValidIndividual() {
+        final boolean valid;
+        if("individual".equalsIgnoreCase(this.businessType)) {
+            valid = this.firstName != null && !this.firstName.isEmpty()
+                && this.lastName != null && !this.lastName.isEmpty();
+        } else {
+            valid = true;
+        }
+        return valid;
+    }
+
+    public String getBusinessType() {
+        return businessType;
+    }
+
+    public void setBusinessType(final String businessType) {
+        this.businessType = businessType;
+    }
 
     public String getLegalName() {
         return this.legalName;
@@ -75,6 +143,22 @@ public final class StripeWalletInput {
 
     public void setLegalName(final String legalName) {
         this.legalName = legalName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(final String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(final String lastName) {
+        this.lastName = lastName;
     }
 
     public String getCountry() {
@@ -117,6 +201,14 @@ public final class StripeWalletInput {
         this.email = email;
     }
 
+    public String getTaxId() {
+        return taxId;
+    }
+
+    public void setTaxId(final String taxId) {
+        this.taxId = taxId;
+    }
+
     public String getOther() {
         return this.other;
     }
@@ -126,20 +218,20 @@ public final class StripeWalletInput {
     }
 
     /**
-     * Billing info from Stripe input form.
+     * Billing info for Stripe.
      */
     public static final class StripeBillingInfo implements BillingInfo {
 
         /**
          * Input from the Stripe wallet formular.
          */
-        private StripeWalletInput input;
+        private BillingInfoInput input;
 
         /**
          * Ctor.
          * @param input Input from the Stripe wallet form.
          */
-        public StripeBillingInfo(final StripeWalletInput input) {
+        public StripeBillingInfo(final BillingInfoInput input) {
             this.input = input;
         }
 

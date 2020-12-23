@@ -19,7 +19,6 @@ $(document).ready(
         $("#createStripeConnectAccountForm").submit(
             function(e) {
                 e.preventDefault();
-
                 var valid = true;
                 $.each($("#createStripeConnectAccountForm .required"), function (index, element) {
                     if($(element).is(":visible")) {
