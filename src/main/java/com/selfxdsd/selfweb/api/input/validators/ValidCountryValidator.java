@@ -25,7 +25,6 @@ package com.selfxdsd.selfweb.api.input.validators;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Validator for {@link ValidCountry}.
@@ -38,10 +37,13 @@ public final class ValidCountryValidator
     implements ConstraintValidator<ValidCountry, String> {
 
     /**
-     * Forbidden countries (Stripe regulations): Syria, Iran, N. Korea, Cuba.
+     * Stripe countries. We can only work with countries supported by Stripe.
      */
-    private List<String> forbiddenCountries = List.of(
-        "SY", "IR", "KP", "CU"
+    private List<String> stripeCountries = List.of(
+        "AU", "AT", "BE", "BG", "CA", "CY", "CZ", "DK", "EE", "FI", "FR",
+        "DE", "GR", "HK", "HU", "IE", "IT", "JP", "LV", "LT", "LU", "MT",
+        "NL", "NZ", "NO", "PL", "PT", "RO", "SG", "SK", "SI", "ES", "SE",
+        "CH", "GB", "US"
     );
 
     @Override
@@ -49,11 +51,8 @@ public final class ValidCountryValidator
         final String value,
         final ConstraintValidatorContext context
     ) {
-        if(this.forbiddenCountries.contains(value)) {
-            return false;
-        }
-        for(final String country : Locale.getISOCountries()) {
-            if(country.equals(value)) {
+        for(final String country : this.stripeCountries) {
+            if(country.equalsIgnoreCase(value)) {
                 return true;
             }
         }

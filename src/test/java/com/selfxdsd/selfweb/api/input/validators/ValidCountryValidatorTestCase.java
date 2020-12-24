@@ -54,18 +54,16 @@ public final class ValidCountryValidatorTestCase {
     }
 
     /**
-     * A country code must always be in uppercase.
+     * A country code should work in small case as well.
      */
     @Test
-    public void smallCaseFails() {
+    public void smallCaseWorks() {
         final Validator validator = Validation.buildDefaultValidatorFactory()
             .getValidator();
         final StringCountry string = new StringCountry("us");
         MatcherAssert.assertThat(
             validator.validate(string),
-            Matchers.not(
-                Matchers.emptyIterable()
-            )
+            Matchers.emptyIterable()
         );
     }
 

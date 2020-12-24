@@ -25,6 +25,8 @@ package com.selfxdsd.selfweb.api;
 import com.selfxdsd.api.Contributor;
 import com.selfxdsd.api.PayoutMethod;
 import com.selfxdsd.api.User;
+import com.selfxdsd.selfweb.api.input.BillingInfoInput;
+import static com.selfxdsd.selfweb.api.input.BillingInfoInput.*;
 import com.selfxdsd.selfweb.api.output.JsonPayoutMethods;
 import com.stripe.exception.StripeException;
 import com.stripe.model.AccountLink;
@@ -42,6 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.validation.Valid;
 import java.util.HashMap;
 
 /**
@@ -99,20 +102,25 @@ public final class PayoutMethodsApi extends BaseApiController {
 
     /**
      * Create a SCA PayoutMethod for the authenticated Contributor.
+     * @param billingInfo Billing information form.
      * @return PayoutMethod as JSON string.
      */
     @PostMapping(
         value = "/contributor/payoutmethods/stripe",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<String> createStripeConnectAccount() {
+    public ResponseEntity<String> createStripeConnectAccount(
+        @Valid final BillingInfoInput billingInfo
+    ) {
         ResponseEntity<String> resp;
         final Contributor contributor = this.user.asContributor();
         if(contributor == null) {
             resp = ResponseEntity.badRequest().build();
         } else {
             try {
-                final PayoutMethod created = contributor.createStripeAccount();
+                final PayoutMethod created = contributor.createStripeAccount(
+                    new StripeBillingInfo(billingInfo)
+                );
                 resp = ResponseEntity.ok(
                     Json.createObjectBuilder()
                         .add(
