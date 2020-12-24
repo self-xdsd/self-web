@@ -28,6 +28,8 @@ import com.selfxdsd.selfweb.api.output.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +40,12 @@ import javax.json.Json;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -243,6 +250,66 @@ public class ContractsApi extends BaseApiController {
                     resp = ResponseEntity.ok(
                         new JsonInvoice(found, Boolean.TRUE).toString()
                     );
+                }
+            }
+        }
+        return resp;
+    }
+
+    /**
+     * Download the PDF Invoice of a specific Contract.
+     * @param owner Owner of the project (username or org name).
+     * @param name Simple name of the project.
+     * @param username Contributor's username.
+     * @param invoiceId If od the Invoice.
+     * @param role Contributor's role.
+     * @throws IOException If something goes wrong.
+     * @return Resource PDF.
+     * @checkstyle ParameterNumber (10 lines)
+     */
+    @GetMapping(
+        value = "/projects/{owner}/{name}/contracts/{username}/invoices"
+            + "/{invoiceId}/pdf",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Resource> invoicePdf(
+        @PathVariable final String owner,
+        @PathVariable final String name,
+        @PathVariable final String username,
+        @PathVariable final int invoiceId,
+        @RequestParam("role") final String role) throws IOException {
+        final ResponseEntity<Resource> resp;
+        final Project project = this.user.projects().getProjectById(
+            owner + "/" + name, this.user.provider().name()
+        );
+        if(project == null) {
+            resp = ResponseEntity.noContent().build();
+        } else {
+            final Contract contract = project.contracts().findById(
+                new Contract.Id(
+                    owner + "/" + name,
+                    username,
+                    project.provider(),
+                    role
+                )
+            );
+            if(contract == null) {
+                resp = ResponseEntity.noContent().build();
+            } else {
+                final Invoice found = contract.invoices().getById(invoiceId);
+                if(found == null){
+                    resp = ResponseEntity.noContent().build();
+                } else {
+                    final File pdf = found.toPdf();
+                    final ByteArrayResource resource = new ByteArrayResource(
+                        Files.readAllBytes(
+                            Paths.get(pdf.getAbsolutePath())
+                        )
+                    );
+                    resp = ResponseEntity.ok()
+                        .contentLength(pdf.length())
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .body(resource);
                 }
             }
         }
