@@ -93,7 +93,7 @@
             + " (" + contract.id.role + ")"
         )
         $("#loadingInvoices").show();
-        $.ajax( //API call to get the Tasks.
+        $.ajax(
             "/api/projects/"
             + contract.id.repoFullName
             + "/contracts/" + contract.id.contributorUsername
@@ -107,21 +107,6 @@
                             function(invoice, index) {
                                 $("#invoicesTable").find("tbody").append(
                                     invoiceAsTableRow(contract, invoice)
-                                );
-                                $($(".downloadInvoice")[$(".downloadInvoice").length -1]).on(
-                                    "click",
-                                    function(event) {
-                                        event.preventDefault();
-                                        invoiceToPdf(
-                                            "/api/projects/"
-                                            + contract.id.repoFullName
-                                            + "/contracts/" + contract.id.contributorUsername + "/invoices/"
-                                            + invoice.id
-                                            + "?role=" + contract.id.role,
-                                            invoice,
-                                            contract
-                                        );
-                                    }
                                 );
                                 if(invoice.paymentTime == "null" && invoice.transactionId == "null" && parseFloat(invoice.totalAmount) > 0.0) {
                                     $($(".payInvoice")[$(".payInvoice").length -1]).on(
@@ -163,7 +148,12 @@
     function invoiceAsTableRow(contract, invoice) {
         var status;
         var payIcon = "";
-        var downloadLink = "<a href='#' title='Download Invoice' class='downloadInvoice'>"
+        var pdfHref = "/api/projects/"
+            + contract.id.repoFullName
+            + "/contracts/" + contract.id.contributorUsername + "/invoices/"
+            + invoice.id
+            + "/pdf?role=" + contract.id.role;
+        var downloadLink = "<a href='"+pdfHref+"' target='_blank' title='Download Invoice' class='downloadInvoice'>"
             + "<i class='fa fa-file-pdf-o fa-lg'></i>"
             + "</a>  ";
         if (invoice.paymentTime == "null" && invoice.transactionId == "null") {
