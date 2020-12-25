@@ -153,7 +153,7 @@
             + "/contracts/" + contract.id.contributorUsername + "/invoices/"
             + invoice.id
             + "/pdf?role=" + contract.id.role;
-        var downloadLink = "<a href='"+pdfHref+"' target='_blank' title='Download Invoice' class='downloadInvoice'>"
+        var downloadLink = "<a href='"+pdfHref+"' title='Download Invoice' class='downloadInvoice'>"
             + "<i class='fa fa-file-pdf-o fa-lg'></i>"
             + "</a>  ";
         if (invoice.paymentTime == "null" && invoice.transactionId == "null") {

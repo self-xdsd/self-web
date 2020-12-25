@@ -309,6 +309,11 @@ public class ContractsApi extends BaseApiController {
                     resp = ResponseEntity.ok()
                         .contentLength(pdf.length())
                         .contentType(MediaType.APPLICATION_PDF)
+                        .header(
+                            "Content-Disposition",
+                             "attachment; filename="
+                                 + "invoice_slfx_" + found.invoiceId() + ".pdf"
+                        )
                         .body(resource);
                 }
             }
