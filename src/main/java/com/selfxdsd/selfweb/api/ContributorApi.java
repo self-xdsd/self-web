@@ -28,9 +28,16 @@ import com.selfxdsd.api.Invoice;
 import com.selfxdsd.api.User;
 import com.selfxdsd.selfweb.api.output.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Contributor endpoints.<br><br>
@@ -196,6 +203,65 @@ public class ContributorApi extends BaseApiController {
                     resp = ResponseEntity.ok(
                         new JsonInvoice(found, true).toString()
                     );
+                }
+            }
+        }
+        return resp;
+    }
+
+    /**
+     * Get one of the authenticated Contributor's invoices as PDF.
+     * @param owner Repo owner.
+     * @param name Repo name.
+     * @param invoiceId Invoice ID.
+     * @param role Contributor role (DEV, REV etc).
+     * @throws IOException If something goes wrong.
+     * @return Resource PDF.
+     * @checkstyle ParameterNumber (20 lines)
+     */
+    @GetMapping(
+        value = "/contributor/contracts/{owner}/{name}/invoices"
+            + "/{invoiceId}/pdf",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Resource> invoicePdf(
+        @PathVariable final String owner,
+        @PathVariable final String name,
+        @PathVariable final int invoiceId,
+        @RequestParam("role") final String role
+    ) throws IOException {
+        final ResponseEntity<Resource> resp;
+        final Contributor contributor = this.user.asContributor();
+        if(contributor == null) {
+            resp = ResponseEntity.noContent().build();
+        } else {
+            final Contract contract = contributor.contract(
+                owner + "/" + name,
+                this.user.provider().name(),
+                role
+            );
+            if(contract == null) {
+                resp = ResponseEntity.badRequest().build();
+            } else {
+                final Invoice found = contract.invoices().getById(invoiceId);
+                if(found == null){
+                    resp = ResponseEntity.badRequest().build();
+                } else {
+                    final File pdf = found.toPdf();
+                    final ByteArrayResource resource = new ByteArrayResource(
+                        Files.readAllBytes(
+                            Paths.get(pdf.getAbsolutePath())
+                        )
+                    );
+                    resp = ResponseEntity.ok()
+                        .contentLength(pdf.length())
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .header(
+                            "Content-Disposition",
+                            "attachment; filename="
+                            + "invoice_slfx_" + found.invoiceId() + ".pdf"
+                        )
+                        .body(resource);
                 }
             }
         }

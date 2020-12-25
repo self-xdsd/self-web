@@ -312,7 +312,7 @@ public class ContractsApi extends BaseApiController {
                         .header(
                             "Content-Disposition",
                              "attachment; filename="
-                                 + "invoice_slfx_" + found.invoiceId() + ".pdf"
+                             + "invoice_slfx_" + found.invoiceId() + ".pdf"
                         )
                         .body(resource);
                 }

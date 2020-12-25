@@ -206,20 +206,6 @@ function getInvoicesOfContract(contract) {
                             $("#invoicesTable").find("tbody").append(
                                 invoiceAsTableRow(contract, invoice)
                             );
-                            $($(".downloadInvoice")[$(".downloadInvoice").length -1]).on(
-                                "click",
-                                function(event) {
-                                    event.preventDefault();
-                                    invoiceToPdf(
-                                        "/api/contributor/contracts/"
-                                        + contract.id.repoFullName
-                                        + "/invoices/" + invoice.id
-                                        +"?role=" + contract.id.role,
-                                        invoice,
-                                        contract
-                                    );
-                                }
-                            );
                         }
                     );
                     $("#invoicesTable").dataTable();
@@ -241,12 +227,6 @@ function getInvoicesOfContract(contract) {
  * @param invoice Invoice.
  */
 function invoiceAsTableRow(contract, invoice) {
-    var paymentTimestamp;
-    if(invoice.paymentTime == "null") {
-        paymentTimestamp = "-";
-    } else {
-        paymentTimestamp = invoice.paymentTime;
-    }
     var transactionId;
     if(invoice.transactionId == "null") {
         transactionId = "-";
@@ -259,12 +239,16 @@ function invoiceAsTableRow(contract, invoice) {
     } else {
         status = "Paid";
     }
+    var pdfHref = "/api/contributor/contracts/"
+        + contract.id.repoFullName
+        + "/invoices/" + invoice.id
+        +"/pdf?role=" + contract.id.role;
     return "<tr>" +
         "<td>" + invoice.id + "</td>" +
         "<td>" + invoice.createdAt.split('T')[0] + "</td>"  +
         "<td>" + invoice.amount + "</td>" +
         "<td>" + status + "</td>" +
-        "<td><a href='#' class='downloadInvoice'>" + "<i class='fa fa-file-pdf-o fa-lg'></i>" + "</a></td>" +
+        "<td><a href='" +pdfHref+ "' class='downloadInvoice'>" + "<i class='fa fa-file-pdf-o fa-lg'></i>" + "</a></td>" +
         "</tr>"
 }
 
