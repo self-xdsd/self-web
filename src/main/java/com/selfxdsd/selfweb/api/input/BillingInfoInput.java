@@ -254,7 +254,7 @@ public final class BillingInfoInput {
         @Override
         public String firstName() {
             final String firstName;
-            if(this.isCompany()) {
+            if(!this.isCompany()) {
                 firstName = this.input.getFirstName();
             } else {
                 firstName = "";
@@ -265,7 +265,7 @@ public final class BillingInfoInput {
         @Override
         public String lastName() {
             final String lastName;
-            if(this.isCompany()) {
+            if(!this.isCompany()) {
                 lastName = this.input.getLastName();
             } else {
                 lastName = "";
