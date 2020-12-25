@@ -24,6 +24,8 @@ package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.exceptions.InvoiceException;
 import com.selfxdsd.api.exceptions.WalletPaymentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -45,6 +47,13 @@ import java.util.stream.StreamSupport;
  */
 @RequestMapping("/api")
 public class BaseApiController {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(
+        BaseApiController.class
+    );
 
     /**
      * Handle validation errors, send back a map
@@ -128,7 +137,10 @@ public class BaseApiController {
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public String handleInternalSeverExceptions(){
+    public String handleInternalSeverExceptions(
+        final Exception ex
+    ){
+        LOG.error("Caught unexpected exception", ex);
         return "Something went wrong while executing this request.";
     }
 
