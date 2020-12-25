@@ -133,14 +133,15 @@ public class BaseApiController {
      * Custom exception message for internal server errors (500) to prevent
      * leaking to frontend exception messages that might contain sensitive
      * information (like database internals).
+     * @param exception Caught exception.
      * @return String.
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public String handleInternalSeverExceptions(
-        final Exception ex
+        final Exception exception
     ){
-        LOG.error("Caught unexpected exception", ex);
+        LOG.error("Caught unexpected exception", exception);
         return "Something went wrong while executing this request.";
     }
 
