@@ -859,10 +859,7 @@
                     $("#projectSettings").addClass("show");
 
                     if(projectContractsCount == -1) {
-                        if(canDeleteProject()) {
-                            $("#deleteProjectButton").removeAttr("disabled");
-                            $("#deleteProjectButton").attr("aria-disabled", "false");
-                        }
+                        canDeleteProject();
                     }
 
                     $("#projectOverviewButton").removeClass("active");
