@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.json.Json;
 import javax.validation.Valid;
 
 /**
@@ -160,5 +161,37 @@ public class ProjectsApi extends BaseApiController {
                 .body(new JsonProject(activated).toString());
         }
         return resp;
+    }
+
+    /**
+     * Get the number of Contracts for this Project.
+     * @param owner Login or organization name.
+     * @param name Repository name.
+     * @return Response.
+     */
+    @GetMapping(
+        value = "/projects/{owner}/{name}/contracts/count",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> contractsCount(
+        @PathVariable("owner") final String owner,
+        @PathVariable("name") final String name
+    ) {
+        final ResponseEntity<String> response;
+        final Project project = this.user.projects().getProjectById(
+            owner + "/" + name, this.user.provider().name()
+        );
+        if(project == null) {
+            response = ResponseEntity.badRequest().build();
+        } else {
+            final Contracts contracts = project.contracts();
+            response = ResponseEntity.ok(
+                Json.createObjectBuilder()
+                    .add("contractsCount", contracts.count())
+                    .build()
+                    .toString()
+            );
+        }
+        return response;
     }
 }
