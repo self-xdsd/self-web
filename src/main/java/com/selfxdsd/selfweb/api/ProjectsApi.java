@@ -30,10 +30,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.json.Json;
 import javax.validation.Valid;
@@ -128,28 +125,8 @@ public class ProjectsApi extends BaseApiController {
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<String> activate(@Valid final RepoInput repo) {
-        final String username = this.user.username();
-        Repo found = null;
-        if(repo.getOwner().equalsIgnoreCase(username)) {
-            found = this.user.provider().repo(
-                repo.getOwner(),
-                repo.getName()
-            );
-        } else {
-            final Organizations orgs = this.user.provider().organizations();
-            for(final Organization org : orgs) {
-                for(final Repo orgRepo : org.repos()) {
-                    if(orgRepo.fullName().equalsIgnoreCase(repo.fullName())) {
-                        found = orgRepo;
-                        break;
-                    }
-                }
-                if(found != null) {
-                    break;
-                }
-            }
-        }
         final ResponseEntity<String> resp;
+        final Repo found = this.getRepo(repo.getOwner(), repo.getName());
         if(found == null) {
             resp = ResponseEntity
                 .status(HttpStatus.PRECONDITION_FAILED)
@@ -193,5 +170,73 @@ public class ProjectsApi extends BaseApiController {
             );
         }
         return response;
+    }
+
+    /**
+     * Get the number of Contracts for this Project.
+     * @param owner Login or organization name.
+     * @param name Repository name.
+     * @return Response.
+     */
+    @DeleteMapping("/projects/{owner}/{name}")
+    public ResponseEntity<String> deleteProject(
+        @PathVariable("owner") final String owner,
+        @PathVariable("name") final String name
+    ) {
+        ResponseEntity<String> response;
+        final Project project = this.user.projects().getProjectById(
+            owner + "/" + name, this.user.provider().name()
+        );
+        if(project == null) {
+            response = ResponseEntity.badRequest().body(
+                "Project " + owner + "/" + name + " not found."
+            );
+        } else {
+            final Repo repo = this.getRepo(owner, name);
+            if(repo == null) {
+                response = ResponseEntity.badRequest().body(
+                    "Repository " + owner + "/" + name + " not found."
+                );
+            } else {
+                try {
+                    project.deactivate(repo);
+                    response = ResponseEntity.ok().build();
+                } catch (final IllegalStateException ex) {
+                    response = ResponseEntity.badRequest()
+                        .body(ex.getMessage());
+                }
+            }
+        }
+        return response;
+    }
+
+    /**
+     * Get the Repo. It can be a personal repo or a repo
+     * from an Organization where the authenticated user has admin rights.
+     * @param owner Repo owner.
+     * @param name Repo name.
+     * @return Repo.
+     */
+    private Repo getRepo(final String owner, final String name) {
+        final String username = this.user.username();
+        Repo found = null;
+        if(owner.equalsIgnoreCase(username)) {
+            found = this.user.provider().repo(owner, name);
+        } else {
+            final Organizations orgs = this.user.provider().organizations();
+            for(final Organization org : orgs) {
+                for(final Repo orgRepo : org.repos()) {
+                    final String fullName = owner + "/" + name;
+                    if(orgRepo.fullName().equalsIgnoreCase(fullName)) {
+                        found = orgRepo;
+                        break;
+                    }
+                }
+                if(found != null) {
+                    break;
+                }
+            }
+        }
+        return found;
     }
 }
