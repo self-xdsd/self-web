@@ -25,6 +25,7 @@ var projectContractsCount = -1;
             " Tasks assigned to " + contract.id.contributorUsername
             + " (" + contract.id.role + ")"
         )
+        $("#tasks").show();
         $("#loadingTasks").show();
         $.ajax( //API call to get the Tasks.
             "/api/projects/"
@@ -93,6 +94,7 @@ var projectContractsCount = -1;
             " Invoices of " + contract.id.contributorUsername
             + " (" + contract.id.role + ")"
         )
+        $("#invoices").show();
         $("#loadingInvoices").show();
         $.ajax(
             "/api/projects/"
