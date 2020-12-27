@@ -25,6 +25,8 @@ package com.selfxdsd.selfweb.api;
 import com.selfxdsd.api.*;
 import com.selfxdsd.selfweb.api.input.RepoInput;
 import com.selfxdsd.selfweb.api.output.JsonProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,6 +46,13 @@ import javax.validation.Valid;
 @RestController
 @Validated
 public class ProjectsApi extends BaseApiController {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(
+        ProjectsApi.class
+    );
 
     /**
      * Authenticated user.
@@ -126,13 +135,16 @@ public class ProjectsApi extends BaseApiController {
     )
     public ResponseEntity<String> activate(@Valid final RepoInput repo) {
         final ResponseEntity<String> resp;
+        LOG.debug("Activating repo " + repo.fullName() + "... ");
         final Repo found = this.getRepo(repo.getOwner(), repo.getName());
         if(found == null) {
+            LOG.error("Repo " + repo.fullName() + " not found! Bad Request.");
             resp = ResponseEntity
                 .status(HttpStatus.PRECONDITION_FAILED)
                 .build();
         } else {
             final Project activated = found.activate();
+            LOG.debug("Repo " + repo.fullName() + " successfully activated.");
             resp = ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new JsonProject(activated).toString());
@@ -154,17 +166,29 @@ public class ProjectsApi extends BaseApiController {
         @PathVariable("owner") final String owner,
         @PathVariable("name") final String name
     ) {
+        LOG.debug(
+            "Fetching contracts count for Project "
+            + owner + "/" + name + "... "
+        );
         final ResponseEntity<String> response;
         final Project project = this.user.projects().getProjectById(
             owner + "/" + name, this.user.provider().name()
         );
         if(project == null) {
+            LOG.error(
+                "Project " + owner + "/" + name + " not found! Bad request."
+            );
             response = ResponseEntity.badRequest().build();
         } else {
             final Contracts contracts = project.contracts();
+            final int count = contracts.count();
+            LOG.debug(
+                "Project " + owner + "/" + name + " has "
+                + count + " contracts."
+            );
             response = ResponseEntity.ok(
                 Json.createObjectBuilder()
-                    .add("contractsCount", contracts.count())
+                    .add("contractsCount", count)
                     .build()
                     .toString()
             );
@@ -184,24 +208,40 @@ public class ProjectsApi extends BaseApiController {
         @PathVariable("name") final String name
     ) {
         ResponseEntity<String> response;
+        LOG.debug("Deleting Project " + owner + "/" + name + "... ");
         final Project project = this.user.projects().getProjectById(
             owner + "/" + name, this.user.provider().name()
         );
         if(project == null) {
+            LOG.error(
+                "Project " + owner + "/" + name + " not found! Bad request."
+            );
             response = ResponseEntity.badRequest().body(
                 "Project " + owner + "/" + name + " not found."
             );
         } else {
             final Repo repo = this.getRepo(owner, name);
             if(repo == null) {
+                LOG.error(
+                    "Repository " + owner + "/" + name + " not found! "
+                    + "Bad request."
+                );
                 response = ResponseEntity.badRequest().body(
                     "Repository " + owner + "/" + name + " not found."
                 );
             } else {
                 try {
                     project.deactivate(repo);
+                    LOG.debug(
+                        "Project " + owner + "/" + name
+                        + " successfully deleted!"
+                    );
                     response = ResponseEntity.ok().build();
                 } catch (final IllegalStateException ex) {
+                    LOG.error(
+                        "IllegalStateException while deleting Project "
+                        + owner + "/" + name + ". ", ex.getMessage()
+                    );
                     response = ResponseEntity.badRequest()
                         .body(ex.getMessage());
                 }
