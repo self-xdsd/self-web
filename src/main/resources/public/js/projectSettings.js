@@ -7,31 +7,37 @@ function enableDeleteProjectButton() {
     $("#deleteProjectForm").submit(
         function(e) {
             e.preventDefault();
-            $("#deleteProjectButton").attr("disabled");
-            $("#deleteProjectButton").attr("aria-disabled", "true");
-            $("#deleteProjectLoading").show();
-            var form = $(this);
-            $.ajax(
-                {
-                    type: "DELETE",
-                    url: "/api/projects/" + owner + "/" + name,
-                    data: form.serialize(),
-                    success: function (response) {
-                        location.reload();
-                    },
-                    error: function(jqXHR) {
-                        $("#deleteProjectButton").removeAttr("disabled");
-                        $("#deleteProjectButton").attr("aria-disabled", "false");
-                        $("#deleteProjectLoading").hide();
-                        console.log("Server error status: " + jqXHR.status);
-                        console.log("Server error: " + jqXHR.responseText);
-                        alert(
-                            "Something went wrong (" + jqXHR.status + ")." +
-                            "Please, try again later."
+            confirmDialog
+                .create("You are about to delete project " + owner + "/" + name + ". This cannot be undone.")
+                .then(
+                    () => {
+                        $("#deleteProjectButton").attr("disabled");
+                        $("#deleteProjectButton").attr("aria-disabled", "true");
+                        $("#deleteProjectLoading").show();
+                        var form = $(this);
+                        $.ajax(
+                            {
+                                type: "DELETE",
+                                url: "/api/projects/" + owner + "/" + name,
+                                data: form.serialize(),
+                                success: function (response) {
+                                    location.reload();
+                                },
+                                error: function(jqXHR) {
+                                    $("#deleteProjectButton").removeAttr("disabled");
+                                    $("#deleteProjectButton").attr("aria-disabled", "false");
+                                    $("#deleteProjectLoading").hide();
+                                    console.log("Server error status: " + jqXHR.status);
+                                    console.log("Server error: " + jqXHR.responseText);
+                                    alert(
+                                        "Something went wrong (" + jqXHR.status + ")." +
+                                        "Please, try again later."
+                                    );
+                                }
+                            }
                         );
                     }
-                }
-            );
+                );
         }
     );
 }
