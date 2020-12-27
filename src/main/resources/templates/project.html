@@ -855,6 +855,7 @@
                     if(projectContractsCount == 0) {
                         $("#deleteProjectButton").removeAttr("disabled");
                         $("#deleteProjectButton").attr("aria-disabled", "false");
+                        enableDeleteProjectButton();
                     }
                     $("#projectSettings").addClass("show");
 

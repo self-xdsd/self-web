@@ -138,7 +138,10 @@ public class ProjectsApi extends BaseApiController {
         LOG.debug("Activating repo " + repo.fullName() + "... ");
         final Repo found = this.getRepo(repo.getOwner(), repo.getName());
         if(found == null) {
-            LOG.error("Repo " + repo.fullName() + " not found! Bad Request.");
+            LOG.error(
+                "Repo " + repo.fullName()
+                + " not found! Precondition failed."
+            );
             resp = ResponseEntity
                 .status(HttpStatus.PRECONDITION_FAILED)
                 .build();
