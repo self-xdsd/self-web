@@ -24,6 +24,9 @@
                     <li class="nav-item project-owner-buttons">
                         <button class="nav-link" role="button" id="projectWalletsButton">Wallets</button>
                     </li>
+                    <li class="nav-item project-owner-buttons">
+                        <button class="nav-link" role="button" id="projectSettingsButton">Settings</button>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -170,9 +173,9 @@
             </div>
         </div>
     </div>
-    <div class="collapse multi-collapse" id="projectContracts">
+    <div class="mt-4 collapse multi-collapse" id="projectContracts">
         <div class="row">
-            <div class="mt-4 col-lg-8" id="contractsDivTable">
+            <div class="col-lg-8" id="contractsDivTable">
                 <div class="card shadow">
                     <div class="card-header py-3">
                         <h4 class="m-0 font-weight-bold card-title">Contracts</h4>
@@ -208,7 +211,7 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-4 col-lg-4">
+            <div class="col-lg-4">
                 <div class="card shadow mb-4" id="newContractCard">
                     <div class="card-header py-3">
                         <h4 class="m-0 font-weight-bold card-title">
@@ -311,7 +314,7 @@
             </div>
         </div>
         <div class="row mt-4">
-            <div class="col-lg-6" id="tasks">
+            <div class="col-lg-6" id="tasks" style="display: none;">
                 <div class="card shadow">
                     <div class="card-header py-3">
                         <h4 class="m-0 font-weight-bold card-title" id="tasksTitle">Tasks</h4>
@@ -340,7 +343,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6" id="invoices">
+            <div class="col-lg-6" id="invoices" style="display: none;">
                 <div class="card shadow">
                     <div class="card-header py-3">
                         <h4 class="m-0 font-weight-bold card-title" id="invoicesTitle">Invoices</h4>
@@ -371,14 +374,14 @@
             </div>
         </div>
     </div>
-    <div class="collapse multi-collapse" id="projectWallets">
+    <div class="mt-4 collapse multi-collapse" id="projectWallets">
         <div id="loadingWallets" class="text-center">
             <img src="/images/loading.svg">
         </div>
         <div id="noWallets" style="display: none;">
             <p>This project doesn't seem to have any wallets.</p>
         </div>
-        <div id="wallets" class="mt-4" style="display: none;">
+        <div id="wallets" style="display: none;">
             <div class="card shadow" id="fakeWalletDiv">
                 <div class="card-header py-3">
                     <h4 class="m-0 font-weight-bold card-title">
@@ -714,6 +717,37 @@
             </div>
         </div>
     </div>
+    <div class="mt-4 collapse multi-collapse" id="projectSettings">
+        <div class="card shadow" id="dangerZoneDiv">
+            <div class="card-header py-3">
+                <h4 class="m-0 font-weight-bold card-title">
+                    Danger Zone
+                </h4>
+            </div>
+            <div class="card-body">
+                <form id="deleteProjectForm">
+                    <div class="form-group">
+                        <button id="deleteProjectButton" type="submit" class="btn btn-danger" aria-describedby="deleteProjectHelp" aria-disabled="true" disabled>Delete Project</button>
+                        <span id="deleteProjectLoading"
+                              class="bg-light align-self-center"
+                              style="margin-top:25px; margin-right:25px; display: none;">
+                              <img src="/images/loading.svg" width="36" height="36">
+                        </span>
+                        <small id="deleteProjectHelp" class="form-text text-muted">
+                            <p>Your repo will be completely forgotten by Self XDSD. All the tasks and other data will be deleted.<br>
+                            You can delete the project only after all the contracts have been removed.</p>
+                        </small>
+                        <div class="invalid-feedback browser-error">
+                            <small>
+                                Oops, your browser did something unexpected.
+                                Please refresh the page and try again.
+                            </small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <div class="card card-body project-not-registered" style="display: none;">
         <div>
             <h3>This repository is not active</h3>
@@ -757,6 +791,7 @@
 <script src="/js/confirmDialog.js"></script>
 <script src="/js/paymentMethods.js"></script>
 <script src="/js/wallets.js"></script>
+<script src="/js/projectSettings.js"></script>
 <script src="/js/getProject.js"></script>
 <script src="/js/autocomplete.js/jquery.autocomplete.min.js"></script>
 <script src="/js/usersService.js"></script>
@@ -770,12 +805,16 @@
                 "click",
                 function(){
                     $(this).addClass("active");
+
                     $("#projectOverview").addClass("show");
 
                     $("#projectContractsButton").removeClass("active");
                     $("#projectWalletsButton").removeClass("active");
+                    $("#projectSettingsButton").removeClass("active");
+
                     $("#projectContracts").removeClass("show");
                     $("#projectWallets").removeClass("show");
+                    $("#projectSettings").removeClass("show");
                 }
             );
 
@@ -795,8 +834,42 @@
 
                     $("#projectContractsButton").removeClass("active");
                     $("#projectOverviewButton").removeClass("active");
+                    $("#projectSettingsButton").removeClass("active");
+
                     $("#projectContracts").removeClass("show");
                     $("#projectOverview").removeClass("show");
+                    $("#projectSettings").removeClass("show");
+                }
+            );
+
+            $("#projectSettingsButton").on(
+                "click",
+                function(){
+                    if($(this).hasClass("active")) {
+                        return;
+                    }
+
+                    $(this).addClass("active");
+                    $("#deleteProjectButton").attr("disabled");
+                    $("#deleteProjectButton").attr("aria-disabled", "true");
+                    if(projectContractsCount == 0) {
+                        $("#deleteProjectButton").removeAttr("disabled");
+                        $("#deleteProjectButton").attr("aria-disabled", "false");
+                        enableDeleteProjectButton();
+                    }
+                    $("#projectSettings").addClass("show");
+
+                    if(projectContractsCount == -1) {
+                        canDeleteProject();
+                    }
+
+                    $("#projectOverviewButton").removeClass("active");
+                    $("#projectContractsButton").removeClass("active");
+                    $("#projectWalletsButton").removeClass("active");
+
+                    $("#projectOverview").removeClass("show");
+                    $("#projectContracts").removeClass("show");
+                    $("#projectWallets").removeClass("show");
                 }
             );
 

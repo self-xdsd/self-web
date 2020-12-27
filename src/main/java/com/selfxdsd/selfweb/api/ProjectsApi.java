@@ -25,16 +25,16 @@ package com.selfxdsd.selfweb.api;
 import com.selfxdsd.api.*;
 import com.selfxdsd.selfweb.api.input.RepoInput;
 import com.selfxdsd.selfweb.api.output.JsonProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.json.Json;
 import javax.validation.Valid;
 
 /**
@@ -46,6 +46,13 @@ import javax.validation.Valid;
 @RestController
 @Validated
 public class ProjectsApi extends BaseApiController {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(
+        ProjectsApi.class
+    );
 
     /**
      * Authenticated user.
@@ -127,18 +134,143 @@ public class ProjectsApi extends BaseApiController {
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<String> activate(@Valid final RepoInput repo) {
+        final ResponseEntity<String> resp;
+        LOG.debug("Activating repo " + repo.fullName() + "... ");
+        final Repo found = this.getRepo(repo.getOwner(), repo.getName());
+        if(found == null) {
+            LOG.error(
+                "Repo " + repo.fullName()
+                + " not found! Precondition failed."
+            );
+            resp = ResponseEntity
+                .status(HttpStatus.PRECONDITION_FAILED)
+                .build();
+        } else {
+            final Project activated = found.activate();
+            LOG.debug("Repo " + repo.fullName() + " successfully activated.");
+            resp = ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new JsonProject(activated).toString());
+        }
+        return resp;
+    }
+
+    /**
+     * Get the number of Contracts for this Project.
+     * @param owner Login or organization name.
+     * @param name Repository name.
+     * @return Response.
+     */
+    @GetMapping(
+        value = "/projects/{owner}/{name}/contracts/count",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> contractsCount(
+        @PathVariable("owner") final String owner,
+        @PathVariable("name") final String name
+    ) {
+        LOG.debug(
+            "Fetching contracts count for Project "
+            + owner + "/" + name + "... "
+        );
+        final ResponseEntity<String> response;
+        final Project project = this.user.projects().getProjectById(
+            owner + "/" + name, this.user.provider().name()
+        );
+        if(project == null) {
+            LOG.error(
+                "Project " + owner + "/" + name + " not found! Bad request."
+            );
+            response = ResponseEntity.badRequest().build();
+        } else {
+            final Contracts contracts = project.contracts();
+            final int count = contracts.count();
+            LOG.debug(
+                "Project " + owner + "/" + name + " has "
+                + count + " contracts."
+            );
+            response = ResponseEntity.ok(
+                Json.createObjectBuilder()
+                    .add("contractsCount", count)
+                    .build()
+                    .toString()
+            );
+        }
+        return response;
+    }
+
+    /**
+     * Get the number of Contracts for this Project.
+     * @param owner Login or organization name.
+     * @param name Repository name.
+     * @return Response.
+     */
+    @DeleteMapping("/projects/{owner}/{name}")
+    public ResponseEntity<String> deleteProject(
+        @PathVariable("owner") final String owner,
+        @PathVariable("name") final String name
+    ) {
+        ResponseEntity<String> response;
+        LOG.debug("Deleting Project " + owner + "/" + name + "... ");
+        final Project project = this.user.projects().getProjectById(
+            owner + "/" + name, this.user.provider().name()
+        );
+        if(project == null) {
+            LOG.error(
+                "Project " + owner + "/" + name + " not found! Bad request."
+            );
+            response = ResponseEntity.badRequest().body(
+                "Project " + owner + "/" + name + " not found."
+            );
+        } else {
+            final Repo repo = this.getRepo(owner, name);
+            if(repo == null) {
+                LOG.error(
+                    "Repository " + owner + "/" + name + " not found! "
+                    + "Bad request."
+                );
+                response = ResponseEntity.badRequest().body(
+                    "Repository " + owner + "/" + name + " not found."
+                );
+            } else {
+                try {
+                    project.deactivate(repo);
+                    LOG.debug(
+                        "Project " + owner + "/" + name
+                        + " successfully deleted!"
+                    );
+                    response = ResponseEntity.ok().build();
+                } catch (final IllegalStateException ex) {
+                    LOG.error(
+                        "IllegalStateException while deleting Project "
+                        + owner + "/" + name + ". ", ex.getMessage()
+                    );
+                    response = ResponseEntity.badRequest()
+                        .body(ex.getMessage());
+                }
+            }
+        }
+        return response;
+    }
+
+    /**
+     * Get the Repo. It can be a personal repo or a repo
+     * from an Organization where the authenticated user has admin rights.
+     * @param owner Repo owner.
+     * @param name Repo name.
+     * @return Repo.
+     */
+    private Repo getRepo(final String owner, final String name) {
         final String username = this.user.username();
         Repo found = null;
-        if(repo.getOwner().equalsIgnoreCase(username)) {
-            found = this.user.provider().repo(
-                repo.getOwner(),
-                repo.getName()
-            );
+        if(owner.equalsIgnoreCase(username)) {
+            found = this.user.provider().repo(owner, name);
         } else {
             final Organizations orgs = this.user.provider().organizations();
             for(final Organization org : orgs) {
                 for(final Repo orgRepo : org.repos()) {
-                    if(orgRepo.fullName().equalsIgnoreCase(repo.fullName())) {
+                    final String fullName = owner + "/" + name;
+                    if(orgRepo.fullName().equalsIgnoreCase(fullName)) {
                         found = orgRepo;
                         break;
                     }
@@ -148,17 +280,6 @@ public class ProjectsApi extends BaseApiController {
                 }
             }
         }
-        final ResponseEntity<String> resp;
-        if(found == null) {
-            resp = ResponseEntity
-                .status(HttpStatus.PRECONDITION_FAILED)
-                .build();
-        } else {
-            final Project activated = found.activate();
-            resp = ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new JsonProject(activated).toString());
-        }
-        return resp;
+        return found;
     }
 }

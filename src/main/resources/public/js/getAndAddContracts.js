@@ -15,6 +15,7 @@
 *  contract to contract table, instead of updating table by re-fetching all contracts again.
 *  Same logic should be applied to "markContractForRemove" and "restoreContract".
 */
+var projectContractsCount = -1;
 (function getAndAddContracts($, contractsService, usersService, confirmDialog){
 
     function getTasksOfContract(contract) {
@@ -24,6 +25,7 @@
             " Tasks assigned to " + contract.id.contributorUsername
             + " (" + contract.id.role + ")"
         )
+        $("#tasks").show();
         $("#loadingTasks").show();
         $.ajax( //API call to get the Tasks.
             "/api/projects/"
@@ -92,6 +94,7 @@
             " Invoices of " + contract.id.contributorUsername
             + " (" + contract.id.role + ")"
         )
+        $("#invoices").show();
         $("#loadingInvoices").show();
         $.ajax(
             "/api/projects/"
@@ -250,6 +253,7 @@
                         .then(function(contracts){
                             //convert contracts page to DataTable "page" specification
                             var total = contracts.paged.totalPages * contracts.paged.current.size;
+                            projectContractsCount = contracts.data.length;
                             var dataTablePage = {
                                 draw: draw,
                                 recordsTotal: total,
@@ -408,8 +412,12 @@
 
                 $("#projectOverviewButton").removeClass("active");
                 $("#projectWalletsButton").removeClass("active");
+                $("#projectSettingsButton").removeClass("active");
+
                 $("#projectOverview").removeClass("show");
                 $("#projectWallets").removeClass("show");
+                $("#projectSettings").removeClass("show");
+
                 //otherwise when tab is showing, table headers will be
                 //initially squashed at start
                 $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
