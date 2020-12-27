@@ -408,8 +408,12 @@
 
                 $("#projectOverviewButton").removeClass("active");
                 $("#projectWalletsButton").removeClass("active");
+                $("#projectSettingsButton").removeClass("active");
+
                 $("#projectOverview").removeClass("show");
                 $("#projectWallets").removeClass("show");
+                $("#projectSettings").removeClass("show");
+
                 //otherwise when tab is showing, table headers will be
                 //initially squashed at start
                 $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
