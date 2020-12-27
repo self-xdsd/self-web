@@ -727,7 +727,7 @@
             <div class="card-body">
                 <form id="deleteProjectForm">
                     <div class="form-group">
-                        <button type="submit" class="btn btn-danger" aria-describedby="deleteProjectHelp" aria-disabled="true" disabled>Delete Project</button>
+                        <button id="deleteProjectButton" type="submit" class="btn btn-danger" aria-describedby="deleteProjectHelp" aria-disabled="true" disabled>Delete Project</button>
                         <span id="deleteProjectLoading"
                               class="bg-light align-self-center"
                               style="margin-top:25px; margin-right:25px; display: none;">
@@ -791,6 +791,7 @@
 <script src="/js/confirmDialog.js"></script>
 <script src="/js/paymentMethods.js"></script>
 <script src="/js/wallets.js"></script>
+<script src="/js/projectSettings.js"></script>
 <script src="/js/getProject.js"></script>
 <script src="/js/autocomplete.js/jquery.autocomplete.min.js"></script>
 <script src="/js/usersService.js"></script>
@@ -804,6 +805,7 @@
                 "click",
                 function(){
                     $(this).addClass("active");
+
                     $("#projectOverview").addClass("show");
 
                     $("#projectContractsButton").removeClass("active");
@@ -848,7 +850,20 @@
                     }
 
                     $(this).addClass("active");
+                    $("#deleteProjectButton").attr("disabled");
+                    $("#deleteProjectButton").attr("aria-disabled", "true");
+                    if(projectContractsCount == 0) {
+                        $("#deleteProjectButton").removeAttr("disabled");
+                        $("#deleteProjectButton").attr("aria-disabled", "false");
+                    }
                     $("#projectSettings").addClass("show");
+
+                    if(projectContractsCount == -1) {
+                        if(canDeleteProject()) {
+                            $("#deleteProjectButton").removeAttr("disabled");
+                            $("#deleteProjectButton").attr("aria-disabled", "false");
+                        }
+                    }
 
                     $("#projectOverviewButton").removeClass("active");
                     $("#projectContractsButton").removeClass("active");

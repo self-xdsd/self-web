@@ -15,6 +15,7 @@
 *  contract to contract table, instead of updating table by re-fetching all contracts again.
 *  Same logic should be applied to "markContractForRemove" and "restoreContract".
 */
+var projectContractsCount = -1;
 (function getAndAddContracts($, contractsService, usersService, confirmDialog){
 
     function getTasksOfContract(contract) {
@@ -250,6 +251,7 @@
                         .then(function(contracts){
                             //convert contracts page to DataTable "page" specification
                             var total = contracts.paged.totalPages * contracts.paged.current.size;
+                            projectContractsCount = contracts.data.length;
                             var dataTablePage = {
                                 draw: draw,
                                 recordsTotal: total,
