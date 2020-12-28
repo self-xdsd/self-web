@@ -41,8 +41,16 @@ public class UserController {
     /**
      * Logged user.
      */
+    private final User user;
+
+    /**
+     * Ctor.
+     * @param user Logged user.
+     */
     @Autowired
-    User user;
+    public UserController(final User user) {
+        this.user = user;
+    }
 
     /**
      * Serve the User page of Self.
