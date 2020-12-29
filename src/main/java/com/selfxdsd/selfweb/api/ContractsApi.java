@@ -57,9 +57,6 @@ import java.util.Locale;
  * @since 0.0.1
  * @todo #84:30min. Start implementing ContributorsApi method contributors GET.
  *  This will list all contributors.
- * @todo #228:60min Start implementing the Remove Project functionality. This
- *  option should be on the Settings (Project page) and it should be available
- *  only if all the Project's contracts are removed.
  */
 @RestController
 @Validated
