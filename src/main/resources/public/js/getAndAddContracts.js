@@ -205,22 +205,42 @@ var projectContractsCount = -1;
          $(".hourlyRate-error").hide();
     }
 
-    /**
-     * Show loading indicator in a data table.
-     * @param {String} tableId Table id (ex: #myTable).
-     * @param {Number} [size = 100] Optional loading icon size in pixels.
-     * @param {String} [path = /images/loading.svg] Optional path of loading icon. 
+     /**
+     * Turn a Contract into a DataTable row.
+     * @param {Object} contract Contract.
+     * @return Row as Array of columns.
      */
-    function dataTableShowLoading(tableId, size, path){
-        var size = size || 100
-        var path = path || '/images/loading.svg'
-        $(tableId+' > tbody').html(
-            '<tr class="odd" style= "height:'+ size +'px">' 
-                + '<td valign="center" colspan="6" class="dataTables_empty">' 
-                   + '<img src="'+ path +'" height=' + size +'px">'
-                +'</td>'
-            +'</tr>'
-        );
+    function contractAsTableRowArray(contract){
+        var removeRestoreIcon;
+        if (contract.markedForRemoval == 'null') {
+            removeRestoreIcon = "<a href='#' title='Mark Contract For Removal' class='removeContract'>"
+                + "<i class='fa fa-trash fa-lg'></i>"
+                + "</a>";
+        } else {
+            var toolTipMessage = "This contract has been marked for removal on "
+                + contract.markedForRemoval.split('T')[0] + ". "
+                + "No more tasks will be assigned to it and it will be removed after 30 days.";
+            removeRestoreIcon = "<a href='#' title='Restore Contract' class='restoreContract'>"
+                + "<i class='fa fa-recycle fa-lg'></i>"
+                + "</a>  "
+                + "<i class='fa fa-exclamation-circle fa-lg fakeWalletInfo' style='color:red;' aria-hidden='true' "
+                + "data-toggle='tooltip' data-placement='left'"
+                + "data-original-title='" + toolTipMessage + "'>"
+                + "</i>"
+        }
+        return [
+            contract.id.contributorUsername,
+            contract.id.role,
+            contract.hourlyRate,
+            contract.value,
+            "<a href='#tasks' title='See Tasks' class='contractAgenda'>"
+            + "<i class='fa fa-laptop fa-lg'></i>"
+            + "</a>  "
+            + "<a href='#updateContractCard' title='Edit Contract' class='editContract'>"
+            + "<i class='fa fa-edit fa-lg'></i>"
+            + "</a>  "
+            + removeRestoreIcon
+        ];
     }
 
     $(document).ready(function(){
@@ -230,173 +250,122 @@ var projectContractsCount = -1;
             name: $("#name").text()
          }
 
-    
         function loadContracts() {
             $("#contracts").dataTable().fnDestroy();
             $("#contracts").dataTable({
-                //setup
-                serverSide:  true,
-                searching:   false,//searching not possible yet on server
-                ordering:    false,//same for ordering
-                //adapt DataTable request to Self-Paged API specification.
+                language: {
+                    loadingRecords: '<img src="/images/loading.svg" height="100">'
+                },
                 ajax: function(data, callback){
-                    dataTableShowLoading("#contracts");
-                   
-                    var draw = data.draw; // draw counter that ensure the page draw ordering is respected
-                    var page = {
-                        no: Math.ceil(data.start/data.length) + 1,
-                        size: data.length
-                    }
-                    //fetch the page from server
                     contractsService
-                        .getAll(project, page)
-                        .then(function(contracts){
-                            //convert contracts page to DataTable "page" specification
-                            var total = contracts.paged.totalPages * contracts.paged.current.size;
-                            projectContractsCount = contracts.data.length;
-                            var dataTablePage = {
-                                draw: draw,
-                                recordsTotal: total,
-                                recordsFiltered: total,
-                                data: contracts.data.map(function(c){
-                                    var removeRestoreIcon;
-                                    if(c.markedForRemoval == 'null') {
-                                        removeRestoreIcon = "<a href='#' title='Mark Contract For Removal' class='removeContract'>"
-                                            +"<i class='fa fa-trash fa-lg'></i>"
-                                            +"</a>";
-                                    } else {
-                                        var toolTipMessage = "This contract has been marked for removal on "
-                                        + c.markedForRemoval.split('T')[0] + ". "
-                                        + "No more tasks will be assigned to it and it will be removed after 30 days.";
-                                        removeRestoreIcon = "<a href='#' title='Restore Contract' class='restoreContract'>"
-                                            +"<i class='fa fa-recycle fa-lg'></i>"
-                                            +"</a>  "
-                                            +"<i class='fa fa-exclamation-circle fa-lg fakeWalletInfo' style='color:red;' aria-hidden='true' "
-                                            + "data-toggle='tooltip' data-placement='left'"
-                                            + "data-original-title='" + toolTipMessage + "'>"
-                                            +"</i>"
+                    .getAll(project)
+                    .then(function (contracts) {
+                        //adding contracts to table
+                        callback({ data: contracts.map(contractAsTableRowArray) });
+                        $('[data-toggle="tooltip"]').tooltip();
+                        $(".contractAgenda").each(
+                            function () {
+                                $(this).on(
+                                    "click",
+                                    function (event) {
+                                        var repo = $("#owner").text() + "/" + $("#name").text();
+                                        var contributor = $(this).parent().parent().children()[0].innerText;
+                                        var role = $(this).parent().parent().children()[1].innerText;
+                                        var hourlyRate = $(this).parent().parent().children()[2].innerText;
+                                        var provider = "github";
+                                        var contract = {
+                                            id: {
+                                                repoFullName: repo,
+                                                contributorUsername: contributor,
+                                                role: role,
+                                                provider: provider
+                                            },
+                                            hourlyRate: hourlyRate
+                                        }
+                                        getTasksOfContract(contract);
+                                        getInvoicesOfContract(contract);
                                     }
-                                    return [
-                                        c.id.contributorUsername,
-                                        c.id.role,
-                                        c.hourlyRate,
-                                        c.value,
-                                        "<a href='#tasks' title='See Tasks' class='contractAgenda'>"
-                                        +"<i class='fa fa-laptop fa-lg'></i>"
-                                        +"</a>  "
-                                        +"<a href='#updateContractCard' title='Edit Contract' class='editContract'>"
-                                        +"<i class='fa fa-edit fa-lg'></i>"
-                                        +"</a>  "
-                                        + removeRestoreIcon
-                                    ];
-                                })
-                            };
-                            //send page to DataTable to be rendered
-                            callback(dataTablePage);
-                            $('[data-toggle="tooltip"]').tooltip();
-                            $(".contractAgenda").each(
-                                function() {
-                                    $(this).on(
-                                        "click",
-                                        function(event) {
-                                            var repo = $("#owner").text() + "/" + $("#name").text();
-                                            var contributor = $(this).parent().parent().children()[0].innerText;
-                                            var role = $(this).parent().parent().children()[1].innerText;
-                                            var hourlyRate = $(this).parent().parent().children()[2].innerText;
-                                            var provider = "github";
-                                            var contract = {
-                                                id: {
-                                                    repoFullName: repo,
-                                                    contributorUsername: contributor,
-                                                    role: role,
-                                                    provider: provider
-                                                },
-                                                hourlyRate: hourlyRate
-                                            }
-                                            getTasksOfContract(contract);
-                                            getInvoicesOfContract(contract);
-                                        }
-                                    )
-                                }
-                            );
-                            if($(".contractAgenda").length > 0) {
-                                $($(".contractAgenda")[0]).trigger("click");
+                                )
                             }
-                            $(".editContract").each(
-                                function() {
-                                    $(this).on(
-                                        "click",
-                                        function(event) {
-                                            var contributor = $(this).parent().parent().children()[0].innerText;
-                                            var role = $(this).parent().parent().children()[1].innerText;
-
-                                            $("#newContractCard").hide();
-
-                                            $("#updateContractUsername").val(contributor);
-                                            $("#updateContractRole").val(role);
-                                            $("#usernameDisplayed").html(contributor);
-                                            $("#roleDisplayed").html(role);
-                                            $("#updatedHourlyRate").val("");
-
-                                            $("#updateContractCard").show();
-                                        }
-                                    )
-                                }
-                            );
-                            $(".removeContract").each(
-                                function() {
-                                    $(this).on(
-                                        "click",
-                                        function(event) {
-                                            event.preventDefault();
-
-                                            var repo = $("#owner").text() + "/" + $("#name").text();
-                                            var contributor = $(this).parent().parent().children()[0].innerText;
-                                            var role = $(this).parent().parent().children()[1].innerText;
-                                            var provider = "github";
-                                            var contract = {
-                                                id: {
-                                                    repoFullName: repo,
-                                                    contributorUsername: contributor,
-                                                    role: role,
-                                                    provider: provider
-                                                }
+                        );
+                        if ($(".contractAgenda").length > 0) {
+                            $($(".contractAgenda")[0]).trigger("click");
+                        }
+                        $(".editContract").each(
+                            function () {
+                                $(this).on(
+                                    "click",
+                                    function (event) {
+                                        var contributor = $(this).parent().parent().children()[0].innerText;
+                                        var role = $(this).parent().parent().children()[1].innerText;
+    
+                                        $("#newContractCard").hide();
+    
+                                        $("#updateContractUsername").val(contributor);
+                                        $("#updateContractRole").val(role);
+                                        $("#usernameDisplayed").html(contributor);
+                                        $("#roleDisplayed").html(role);
+                                        $("#updatedHourlyRate").val("");
+    
+                                        $("#updateContractCard").show();
+                                    }
+                                )
+                            }
+                        );
+                        $(".removeContract").each(
+                            function () {
+                                $(this).on(
+                                    "click",
+                                    function (event) {
+                                        event.preventDefault();
+    
+                                        var repo = $("#owner").text() + "/" + $("#name").text();
+                                        var contributor = $(this).parent().parent().children()[0].innerText;
+                                        var role = $(this).parent().parent().children()[1].innerText;
+                                        var provider = "github";
+                                        var contract = {
+                                            id: {
+                                                repoFullName: repo,
+                                                contributorUsername: contributor,
+                                                role: role,
+                                                provider: provider
                                             }
-                                            confirmDialog
-                                                .create("Are you sure you want to remove this contract?")
-                                                .then(() => markContractForRemoval(contract));
                                         }
-                                    )
-                                }
-                            )
-                            $(".restoreContract").each(
-                                function() {
-                                    $(this).on(
-                                        "click",
-                                        function(event) {
-                                            event.preventDefault();
-
-                                            var repo = $("#owner").text() + "/" + $("#name").text();
-                                            var contributor = $(this).parent().parent().children()[0].innerText;
-                                            var role = $(this).parent().parent().children()[1].innerText;
-                                            var provider = "github";
-                                            var contract = {
-                                                id: {
-                                                    repoFullName: repo,
-                                                    contributorUsername: contributor,
-                                                    role: role,
-                                                    provider: provider
-                                                }
+                                        confirmDialog
+                                            .create("Are you sure you want to remove this contract?")
+                                            .then(() => markContractForRemoval(contract));
+                                    }
+                                )
+                            }
+                        )
+                        $(".restoreContract").each(
+                            function () {
+                                $(this).on(
+                                    "click",
+                                    function (event) {
+                                        event.preventDefault();
+    
+                                        var repo = $("#owner").text() + "/" + $("#name").text();
+                                        var contributor = $(this).parent().parent().children()[0].innerText;
+                                        var role = $(this).parent().parent().children()[1].innerText;
+                                        var provider = "github";
+                                        var contract = {
+                                            id: {
+                                                repoFullName: repo,
+                                                contributorUsername: contributor,
+                                                role: role,
+                                                provider: provider
                                             }
-                                            confirmDialog
-                                                .create("Are you sure you want to restore this contract?")
-                                                .then(() => restoreContract(contract));
                                         }
-                                    )
-                                }
-                            )
-                        })
-                        .catch(handleError);
+                                        confirmDialog
+                                            .create("Are you sure you want to restore this contract?")
+                                            .then(() => restoreContract(contract));
+                                    }
+                                )
+                            }
+                        )
+                    })
+                    .catch(handleError);
                 }
             });
         }
