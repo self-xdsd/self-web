@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="head.html :: head"></head>
+
+<body>
+    <header th:replace="header.html :: header"></header>
+    <main class="container px-0 w-75 mt-7" role="main">
+        <div class="card w-100">
+            <div class="card-user-header card-body">
+                <h4>User profile</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-5 col-lg-4 py-2"><strong>Username</strong></div>
+                    <div class="col-7 col-lg-8 py-2" th:text="${username}"></div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-5 col-lg-4 py-2"><strong>Email</strong></div>
+                    <div class="col-7 col-lg-8 py-2" th:text="${email}"></div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-5 col-lg-4 py-2"><strong>Provider</strong></div>
+                    <div class="col-7 col-lg-8 py-2">
+                        <a class="text-reset text-decoration-none" th:href="${providerProfile}"
+                            th:text="${provider}"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer th:replace="footer.html :: footer"></footer>
+</body>
