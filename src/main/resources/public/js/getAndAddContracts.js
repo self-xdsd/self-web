@@ -20,165 +20,147 @@ var projectContractsCount = -1;
 
     function getTasksOfContract(contract) {
         $("#tasksTable").dataTable().fnDestroy();
-        $("#tasksTable").find("tbody").html('');
         $("#tasksTitle").html(
             " Tasks assigned to " + contract.id.contributorUsername
             + " (" + contract.id.role + ")"
         )
         $("#tasks").show();
-        $("#loadingTasks").show();
-        $.ajax( //API call to get the Tasks.
-            "/api/projects/"
-            + contract.id.repoFullName
-            + "/contracts/" + contract.id.contributorUsername + "/tasks?role=" + contract.id.role,
-            {
-                type: "GET",
-                statusCode: {
-                    200: function (tasks) {
-                        $("#loadingTasks").hide();
-                        tasks.forEach(
-                            function(task) {
-                                $("#tasksTable").find("tbody").append(
-                                    taskAsTableRow(contract, task)
-                                );
-                            }
-                        );
-                        $("#tasksTable").dataTable();
-                        $("#tasksBody").show();
-                        console.log(tasks);
-                    },
-                    204: function (data) {
-                        $("#loadingTasks").hide();
-                        $("#loadingTasksHidden").show();
-                        $("#tasksTable").dataTable();
-                        $("#tasksBody").show();
-                    },
-
+        $("#tasksTable").DataTable({
+            language: {
+                loadingRecords: '<img src="/images/loading.svg" height="100">'
+            },
+            ajax: {
+                url: "/api/projects/"
+                    + contract.id.repoFullName
+                    + "/contracts/" + contract.id.contributorUsername + "/tasks?role=" + contract.id.role,
+                dataSrc: ""
+            },
+            columns: [
+                {
+                    data: "issueId",
+                    render: function (data) {
+                        var issueLink;
+                        if (contract.id.provider == 'github') {
+                            issueLink = 'https://github.com/'
+                                + contract.id.repoFullName
+                                + "/issues/"
+                                + data;
+                        } else if (contract.id.provider == 'gitlab') {
+                            issueLink = 'https://gitlab.com/'
+                                + contract.id.repoFullName
+                                + "/issues/"
+                                + data;
+                        } else {
+                            issueLink = '#';
+                        }
+                        return "<a href='" + issueLink + "' target='_blank'>#" + data + "</a>"
+                    }
+                },
+                {
+                    data: "assignmentDate",
+                    render: (data) => data.split('T')[0]
+                },
+                {
+                    data: "deadline",
+                    render: (data) => data.split('T')[0]
+                },
+                {
+                    data: "estimation",
+                    render: (data) => data + " min."
+                },
+                {
+                    data: "value",
+                    render: (data) => formatEuro(data)
                 }
-            }
-        );
-    }
-
-    /**
-     * Turn a Task into a table row.
-     * @param task Task.
-     */
-    function taskAsTableRow(contract, task) {
-        var issueLink;
-        if(contract.id.provider == 'github') {
-            issueLink = 'https://github.com/'
-                + contract.id.repoFullName
-                + "/issues/"
-                + task.issueId;
-        } else if(contract.id.provider == 'gitlab') {
-            issueLink = 'https://gitlab.com/'
-                + contract.id.repoFullName
-                + "/issues/"
-                + task.issueId;
-        } else {
-            issueLink = '#';
-        }
-        return "<tr>" +
-            "<td><a href='" + issueLink + "' target='_blank'>#" + task.issueId + "</a></td>" +
-            "<td>" + task.assignmentDate.split('T')[0] + "</td>"  +
-            "<td>" + task.deadline.split('T')[0] + "</td>" +
-            "<td>" + task.estimation + " min</td>" +
-            "<td>" + formatEuro(task.value) + "</td>" +
-            "</tr>"
+            ]
+        })
     }
 
     function getInvoicesOfContract(contract) {
         $("#invoicesTable").dataTable().fnDestroy();
-        $("#invoicesTable").find("tbody").html('');
         $("#invoicesTitle").html(
             " Invoices of " + contract.id.contributorUsername
             + " (" + contract.id.role + ")"
         )
         $("#invoices").show();
-        $("#loadingInvoices").show();
-        $.ajax(
-            "/api/projects/"
-            + contract.id.repoFullName
-            + "/contracts/" + contract.id.contributorUsername
-            + "/invoices?role=" + contract.id.role,
-            {
-                type: "GET",
-                statusCode: {
-                    200: function (invoices) {
-                        $("#loadingInvoices").hide();
-                        invoices.forEach(
-                            function(invoice, index) {
-                                $("#invoicesTable").find("tbody").append(
-                                    invoiceAsTableRow(contract, invoice)
-                                );
-                                if(invoice.paymentTime == "null" && invoice.transactionId == "null" && parseFloat(invoice.totalAmount) > 0.0) {
-                                    $($(".payInvoice")[$(".payInvoice").length -1]).on(
-                                        "click",
-                                        function(event) {
-                                            event.preventDefault();
-                                            var message = "Are you sure you want to make this payment?"
-                                            if(activeWallet.type == 'FAKE') {
-                                                message += ' You are using a fake wallet, the payment will be fictive.'
+        $("#invoicesTable").DataTable({
+            language: {
+                loadingRecords: '<img src="/images/loading.svg" height="100">'
+            },
+            ajax: function(data, callback){
+                $.ajax(
+                    "/api/projects/"
+                    + contract.id.repoFullName
+                    + "/contracts/" + contract.id.contributorUsername
+                    + "/invoices?role=" + contract.id.role,
+                    {
+                        type: "GET",
+                        statusCode: {
+                            200: function (invoices) {
+                                callback({ data: invoices.map(invoiceAsTableRow(contract))});
+                                if(invoices.length > 0){
+                                    var invoice = invoices[invoices.length - 1]; //active invoice
+                                    if (invoice.paymentTime == "null" && invoice.transactionId == "null" && parseFloat(invoice.totalAmount) > 0.0){
+                                        $($(".payInvoice")[$(".payInvoice").length - 1]).on(
+                                            "click",
+                                            function (event) {
+                                                event.preventDefault();
+                                                var message = "Are you sure you want to make this payment?"
+                                                if (activeWallet.type == 'FAKE') {
+                                                    message += ' You are using a fake wallet, the payment will be fictive.'
+                                                }
+                                                confirmDialog
+                                                    .create(message)
+                                                    .then(
+                                                        () => payInvoice(invoice, contract, $(this))
+                                                    );
                                             }
-                                            confirmDialog
-                                                .create(message)
-                                                .then(
-                                                    () => payInvoice(invoice, contract, $(this))
-                                                );
-                                        }
-                                    );
+                                        );
+                                    }
                                 }
                             }
-                        );
-                        $("#invoicesTable").dataTable();
-                        $("#invoicesBody").show();
-                    },
-                    204: function (data) {
-                        $("#loadingInvoices").hide();
-                        $("#invoicesTable").dataTable();
-                        $("#invoicesBody").show();
-                    },
-
-                }
+                        }
+                    }
+                );
             }
-        );
+        });
     }
 
     /**
-     * Turn an Invoice into a table row.
-     * @param invoice Invoice.
+     * Turn an Contract Invoice into a table row.
+     * @param contract Contract.
+     * @returns Function which will return and array of columns.
      */
-    function invoiceAsTableRow(contract, invoice) {
-        var status;
-        var payIcon = "";
-        var pdfHref = "/api/projects/"
-            + contract.id.repoFullName
-            + "/contracts/" + contract.id.contributorUsername + "/invoices/"
-            + invoice.id
-            + "/pdf?role=" + contract.id.role;
-        var downloadLink = "<a href='"+pdfHref+"' title='Download Invoice' class='downloadInvoice'>"
-            + "<i class='fa fa-file-pdf-o fa-lg'></i>"
-            + "</a>  ";
-        if (invoice.paymentTime == "null" && invoice.transactionId == "null") {
-            status = "Active";
-            if (parseFloat(invoice.totalAmount) > 0.0) {
-                payIcon = "<a href='#' title='Pay Invoice' class='payInvoice'>"
-                    + "<i class='fa fa-credit-card fa-lg'></i>"
-                    + "</a>";
+    function invoiceAsTableRow(contract) {
+        return function (invoice) {
+            var status;
+            var payIcon = "";
+            var pdfHref = "/api/projects/"
+                + contract.id.repoFullName
+                + "/contracts/" + contract.id.contributorUsername + "/invoices/"
+                + invoice.id
+                + "/pdf?role=" + contract.id.role;
+            var downloadLink = "<a href='" + pdfHref + "' title='Download Invoice' class='downloadInvoice'>"
+                + "<i class='fa fa-file-pdf-o fa-lg'></i>"
+                + "</a>  ";
+            if (invoice.paymentTime == "null" && invoice.transactionId == "null") {
+                status = "Active";
+                if (parseFloat(invoice.totalAmount) > 0.0) {
+                    payIcon = "<a href='#' title='Pay Invoice' class='payInvoice'>"
+                        + "<i class='fa fa-credit-card fa-lg'></i>"
+                        + "</a>";
+                }
+            } else {
+                status = "Paid";
             }
-        } else {
-            status = "Paid";
-        }
-        return "<tr>" +
-            "<td>" + invoice.id + "</td>" +
-            "<td>" + invoice.createdAt.split('T')[0] + "</td>"  +
-            "<td>" + invoice.totalAmount + "</td>" +
-            "<td>" + status + "</td>" +
-            "<td>"
-            + downloadLink
-            + payIcon
-            + "</td>" +
-            "</tr>"
+            return [
+                invoice.id,
+                invoice.createdAt.split('T')[0],
+                invoice.totalAmount,
+                status,
+                downloadLink + payIcon
+            ];
+        };
     }
 
     function handleError(error){
