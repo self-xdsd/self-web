@@ -517,7 +517,7 @@ $(document).ready(
                         success: function (setupIntent) {
                             $("#addStripePaymentMethodButton").removeClass("disabled");
                             $("#loadingStripePaymentForm").hide();
-                            var stripe = Stripe('pk_test_51HFJACFQ8qkNTW7CcB9UoOCrCPBcipFuU0UnsuuaOT4zCxB3217kBgWCIN0cRnJ7ETJazRxMILYHyV0fUBqd5Kca00ClMmHcO0');
+                            var stripe = Stripe(stripePublicKey);
 
                             var elements = stripe.elements();
                             var cardElement = elements.create('card');

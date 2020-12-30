@@ -19,6 +19,12 @@
     <script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
     <script src="http://js.stripe.com/v3/"></script>
+    <script th:if="${testEnvironment}" type="text/javascript">
+        var stripePublicKey="pk_test_51HFJACFQ8qkNTW7CcB9UoOCrCPBcipFuU0UnsuuaOT4zCxB3217kBgWCIN0cRnJ7ETJazRxMILYHyV0fUBqd5Kca00ClMmHcO0"
+    </script>
+    <script th:unless="${testEnvironment}" type="text/javascript">
+        var stripePublicKey="pk_live_51HFJACFQ8qkNTW7CVnBPpRWR6mOTsYoK8lkRFu5JgDSPW2Nnw2lMS2tVJqG9YC15KPBNnUinPQfnP4zoOkuCiNZ0009LomQ8SX"
+    </script>
     <script type="text/javascript">
         $(document).ready(
             function () {
