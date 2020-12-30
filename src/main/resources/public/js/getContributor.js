@@ -1,5 +1,5 @@
 /**
- * #294:60min Better table loading approach for Contributor dashboard tables.
+ * @todo #294:60min Better table loading approach for Contributor dashboard tables.
  *  Use the same approach specified at issue #294.
  */
 function getContributorDashboard() {
