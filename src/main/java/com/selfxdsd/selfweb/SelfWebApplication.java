@@ -53,7 +53,8 @@ public class SelfWebApplication extends WebSecurityConfigurerAdapter {
                 "/error",
                 "/webjars/**",
                 "/p/**",
-                "/b/**"
+                "/b/**",
+                "/ping"
                 )
             .permitAll()
             .anyRequest()
