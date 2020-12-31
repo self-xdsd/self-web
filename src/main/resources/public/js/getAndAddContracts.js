@@ -245,7 +245,7 @@ var projectContractsCount = -1;
                         //adding contracts to table
                         callback({ data: contracts.map(contractAsTableRowArray) });
                         $('[data-toggle="tooltip"]').tooltip();
-                        $(".contractAgenda").each(
+                        $("#contracts .contractAgenda").each(
                             function () {
                                 $(this).on(
                                     "click",
@@ -270,10 +270,10 @@ var projectContractsCount = -1;
                                 )
                             }
                         );
-                        if ($(".contractAgenda").length > 0) {
-                            $($(".contractAgenda")[0]).trigger("click");
+                        if ($("#contracts .contractAgenda").length > 0) {
+                            $($("#contracts .contractAgenda")[0]).trigger("click");
                         }
-                        $(".editContract").each(
+                        $("#contracts .editContract").each(
                             function () {
                                 $(this).on(
                                     "click",
@@ -294,7 +294,7 @@ var projectContractsCount = -1;
                                 )
                             }
                         );
-                        $(".removeContract").each(
+                        $("#contracts .removeContract").each(
                             function () {
                                 $(this).on(
                                     "click",
@@ -320,7 +320,7 @@ var projectContractsCount = -1;
                                 )
                             }
                         )
-                        $(".restoreContract").each(
+                        $("#contracts .restoreContract").each(
                             function () {
                                 $(this).on(
                                     "click",
