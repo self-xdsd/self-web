@@ -15,7 +15,14 @@ function getContributorDashboard() {
                         $("#contributorDashboard").removeClass("d-none");
                         $("#contributorDashboard").addClass("show");
                         $("#contractsTable .contractAgenda").each(function () {
-                            $(this).on("click", () => {
+                            $(this).on("click", function() {
+                                var data = $("#contractsTable").DataTable().row($(this).parents('tr')).data()
+                                var contract = {
+                                    id: {
+                                        repoFullName: $(data[0]).text(),
+                                        role: data[1]
+                                    }
+                                }
                                 getTasksOfContract(contract);
                                 getInvoicesOfContract(contract);
                             });
