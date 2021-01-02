@@ -48,8 +48,10 @@ public final class JsonProject extends AbstractJsonObject {
                     "manager",
                     new JsonProjectManager(project.projectManager())
                 )
-                .add("wallet", new JsonWallet(project.wallet()))
-                .build()
+                .add(
+                    "wallet",
+                    new JsonWallet(project.wallet(), Boolean.FALSE)
+                ).build()
         );
     }
 }

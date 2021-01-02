@@ -320,7 +320,7 @@ public final class JsonProjectTestCase {
                 .add(
                     "available",
                     wallet.available().divide(BigDecimal.valueOf(100))
-                ).add("paymentMethods", Json.createArrayBuilder()).build())
+                ).build())
         );       
     }
    
