@@ -98,30 +98,42 @@ var projectContractsCount = -1;
                         statusCode: {
                             200: function (invoices) {
                                 callback({ data: invoices.map(invoiceAsTableRow(contract))});
-                                if(invoices.length > 0){
-                                    var invoice = invoices[invoices.length - 1]; //active invoice
-                                    if (invoice.paymentTime == "null" && invoice.transactionId == "null" && parseFloat(invoice.totalAmount) > 0.0){
-                                        $($(".payInvoice")[$(".payInvoice").length - 1]).on(
-                                            "click",
-                                            function (event) {
-                                                event.preventDefault();
-                                                var message = "Are you sure you want to make this payment?"
-                                                if (activeWallet.type == 'FAKE') {
-                                                    message += ' You are using a fake wallet, the payment will be fictive.'
-                                                }
-                                                confirmDialog
-                                                    .create(message)
-                                                    .then(
-                                                        () => payInvoice(invoice, contract, $(this))
-                                                    );
-                                            }
-                                        );
-                                    }
-                                }
                             }
                         }
                     }
                 );
+            },
+            drawCallback: function(){
+                $("#invoicesTable .payInvoice").off();
+                $("#invoicesTable .payInvoice").each(function () {
+                    $(this).on(
+                        "click",
+                        function (event) {
+                            event.preventDefault();
+                            var message = "Are you sure you want to make this payment?"
+                            if (activeWallet.type == 'FAKE') {
+                                message += ' You are using a fake wallet, the payment will be fictive.'
+                            }
+                            confirmDialog
+                                .create(message)
+                                .then(() => {
+                                    var table = $("#invoicesTable").DataTable();
+                                    var row = table.row($(event.currentTarget).parents('tr'));
+                                    var contract = {
+                                        id: {
+                                            contributorUsername: $(this).attr("data-contributor"),
+                                            role: $(this).attr("data-role"),
+                                            repoFullName:  $(this).attr("data-repo")
+                                        }
+                                    };
+                                    var invoice = {
+                                        id: row.data()[0]
+                                    };
+                                    payInvoice(invoice, contract, $(this));
+                                });
+                        }
+                    );
+                });
             }
         });
     }
@@ -146,7 +158,9 @@ var projectContractsCount = -1;
             if (invoice.paymentTime == "null" && invoice.transactionId == "null") {
                 status = "Active";
                 if (parseFloat(invoice.totalAmount) > 0.0) {
-                    payIcon = "<a href='#' title='Pay Invoice' class='payInvoice'>"
+                    payIcon = "<a href='#' title='Pay Invoice' class='payInvoice' "
+                        + "data-contributor='" + contract.id.contributorUsername + "' "
+                        + "data-role='" + contract.id.role + "' data-repo='" + contract.id.repoFullName + "'>"
                         + "<i class='fa fa-credit-card fa-lg'></i>"
                         + "</a>";
                 }
@@ -244,110 +258,115 @@ var projectContractsCount = -1;
                     .then(function (contracts) {
                         //adding contracts to table
                         callback({ data: contracts.map(contractAsTableRowArray) });
-                        $('[data-toggle="tooltip"]').tooltip();
-                        $("#contracts .contractAgenda").each(
-                            function () {
-                                $(this).on(
-                                    "click",
-                                    function (event) {
-                                        var repo = $("#owner").text() + "/" + $("#name").text();
-                                        var contributor = $(this).parent().parent().children()[0].innerText;
-                                        var role = $(this).parent().parent().children()[1].innerText;
-                                        var hourlyRate = $(this).parent().parent().children()[2].innerText;
-                                        var provider = "github";
-                                        var contract = {
-                                            id: {
-                                                repoFullName: repo,
-                                                contributorUsername: contributor,
-                                                role: role,
-                                                provider: provider
-                                            },
-                                            hourlyRate: hourlyRate
-                                        }
-                                        getTasksOfContract(contract);
-                                        getInvoicesOfContract(contract);
-                                    }
-                                )
-                            }
-                        );
-                        if ($("#contracts .contractAgenda").length > 0) {
-                            $($("#contracts .contractAgenda")[0]).trigger("click");
-                        }
-                        $("#contracts .editContract").each(
-                            function () {
-                                $(this).on(
-                                    "click",
-                                    function (event) {
-                                        var contributor = $(this).parent().parent().children()[0].innerText;
-                                        var role = $(this).parent().parent().children()[1].innerText;
-    
-                                        $("#newContractCard").hide();
-    
-                                        $("#updateContractUsername").val(contributor);
-                                        $("#updateContractRole").val(role);
-                                        $("#usernameDisplayed").html(contributor);
-                                        $("#roleDisplayed").html(role);
-                                        $("#updatedHourlyRate").val("");
-    
-                                        $("#updateContractCard").show();
-                                    }
-                                )
-                            }
-                        );
-                        $("#contracts .removeContract").each(
-                            function () {
-                                $(this).on(
-                                    "click",
-                                    function (event) {
-                                        event.preventDefault();
-    
-                                        var repo = $("#owner").text() + "/" + $("#name").text();
-                                        var contributor = $(this).parent().parent().children()[0].innerText;
-                                        var role = $(this).parent().parent().children()[1].innerText;
-                                        var provider = "github";
-                                        var contract = {
-                                            id: {
-                                                repoFullName: repo,
-                                                contributorUsername: contributor,
-                                                role: role,
-                                                provider: provider
-                                            }
-                                        }
-                                        confirmDialog
-                                            .create("Are you sure you want to remove this contract?")
-                                            .then(() => markContractForRemoval(contract));
-                                    }
-                                )
-                            }
-                        )
-                        $("#contracts .restoreContract").each(
-                            function () {
-                                $(this).on(
-                                    "click",
-                                    function (event) {
-                                        event.preventDefault();
-    
-                                        var repo = $("#owner").text() + "/" + $("#name").text();
-                                        var contributor = $(this).parent().parent().children()[0].innerText;
-                                        var role = $(this).parent().parent().children()[1].innerText;
-                                        var provider = "github";
-                                        var contract = {
-                                            id: {
-                                                repoFullName: repo,
-                                                contributorUsername: contributor,
-                                                role: role,
-                                                provider: provider
-                                            }
-                                        }
-                                        confirmDialog
-                                            .create("Are you sure you want to restore this contract?")
-                                            .then(() => restoreContract(contract));
-                                    }
-                                )
-                            }
-                        )
                     })
                     .catch(handleError);
+                },
+                drawCallback: function(){
+                    $("#contracts .contractAgenda").off();
+                    $("#contracts .removeContract").off();
+                    $("#contracts .editContract").off();
+                    $('[data-toggle="tooltip"]').tooltip();
+                    $("#contracts .contractAgenda").each(
+                        function () {
+                            $(this).on(
+                                "click",
+                                function (event) {
+                                    var repo = $("#owner").text() + "/" + $("#name").text();
+                                    var contributor = $(this).parent().parent().children()[0].innerText;
+                                    var role = $(this).parent().parent().children()[1].innerText;
+                                    var hourlyRate = $(this).parent().parent().children()[2].innerText;
+                                    var provider = "github";
+                                    var contract = {
+                                        id: {
+                                            repoFullName: repo,
+                                            contributorUsername: contributor,
+                                            role: role,
+                                            provider: provider
+                                        },
+                                        hourlyRate: hourlyRate
+                                    }
+                                    getTasksOfContract(contract);
+                                    getInvoicesOfContract(contract);
+                                }
+                            )
+                        }
+                    );
+                    if ($("#contracts .contractAgenda").length > 0) {
+                        $($("#contracts .contractAgenda")[0]).trigger("click");
+                    }
+                    $("#contracts .editContract").each(
+                        function () {
+                            $(this).on(
+                                "click",
+                                function (event) {
+                                    var contributor = $(this).parent().parent().children()[0].innerText;
+                                    var role = $(this).parent().parent().children()[1].innerText;
+
+                                    $("#newContractCard").hide();
+
+                                    $("#updateContractUsername").val(contributor);
+                                    $("#updateContractRole").val(role);
+                                    $("#usernameDisplayed").html(contributor);
+                                    $("#roleDisplayed").html(role);
+                                    $("#updatedHourlyRate").val("");
+
+                                    $("#updateContractCard").show();
+                                }
+                            )
+                        }
+                    );
+                    $("#contracts .removeContract").each(
+                        function () {
+                            $(this).on(
+                                "click",
+                                function (event) {
+                                    event.preventDefault();
+
+                                    var repo = $("#owner").text() + "/" + $("#name").text();
+                                    var contributor = $(this).parent().parent().children()[0].innerText;
+                                    var role = $(this).parent().parent().children()[1].innerText;
+                                    var provider = "github";
+                                    var contract = {
+                                        id: {
+                                            repoFullName: repo,
+                                            contributorUsername: contributor,
+                                            role: role,
+                                            provider: provider
+                                        }
+                                    }
+                                    confirmDialog
+                                        .create("Are you sure you want to remove this contract?")
+                                        .then(() => markContractForRemoval(contract));
+                                }
+                            )
+                        }
+                    )
+                    $("#contracts .restoreContract").each(
+                        function () {
+                            $(this).on(
+                                "click",
+                                function (event) {
+                                    event.preventDefault();
+
+                                    var repo = $("#owner").text() + "/" + $("#name").text();
+                                    var contributor = $(this).parent().parent().children()[0].innerText;
+                                    var role = $(this).parent().parent().children()[1].innerText;
+                                    var provider = "github";
+                                    var contract = {
+                                        id: {
+                                            repoFullName: repo,
+                                            contributorUsername: contributor,
+                                            role: role,
+                                            provider: provider
+                                        }
+                                    }
+                                    confirmDialog
+                                        .create("Are you sure you want to restore this contract?")
+                                        .then(() => restoreContract(contract));
+                                }
+                            )
+                        }
+                    )
                 }
             });
         }
