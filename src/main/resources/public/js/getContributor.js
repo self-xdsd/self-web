@@ -14,38 +14,6 @@ function getContributorDashboard() {
                         $("#contributorCardFooter").show();
                         $("#contributorDashboard").removeClass("d-none");
                         $("#contributorDashboard").addClass("show");
-                        $("#contractsTable .contractAgenda").each(function () {
-                            $(this).on("click", function() {
-                                var data = $("#contractsTable").DataTable().row($(this).parents('tr')).data()
-                                var contract = {
-                                    id: {
-                                        repoFullName: $(data[0]).text(),
-                                        role: data[1]
-                                    }
-                                }
-                                getTasksOfContract(contract);
-                                getInvoicesOfContract(contract);
-                            });
-                        });
-                        $("#contractsTable .removeContract").each(function () {
-                            $(this).on("click", function(event){
-                                event.preventDefault();
-                                var removeButton = $(this);
-                                var data = $("#contractsTable").DataTable().row($(this).parents('tr')).data()
-                                var contract = {
-                                    id: {
-                                        repoFullName: $(data[0]).text(),
-                                        role: data[1]
-                                    }
-                                }
-                                confirmDialog
-                                    .create("Are you sure you want to remove this contract?")
-                                    .then(() => markContractForRemoval(contract, removeButton));
-                            });
-                        });
-                        $('[data-toggle="tooltip"]').tooltip({
-                            boundary: 'window'
-                        });
                         if (contributor.contracts.length > 0) {
                             $("#tasks").show();
                             getTasksOfContract(contributor.contracts[0]);
@@ -63,6 +31,42 @@ function getContributorDashboard() {
                         $("#notContributorCardFooter").show();
                     }
                 }
+            });
+        },
+        drawCallback:function(){
+            $("#contractsTable .contractAgenda").off();
+            $("#contractsTable .removeContract").off();
+            $('[data-toggle="tooltip"]').tooltip({
+                boundary: 'window'
+            });
+            $("#contractsTable .contractAgenda").each(function () {
+                $(this).on("click", function() {
+                    var data = $("#contractsTable").DataTable().row($(this).parents('tr')).data();
+                    var contract = {
+                        id: {
+                            repoFullName: $(data[0]).text(),
+                            role: data[1]
+                        }
+                    }
+                    getTasksOfContract(contract);
+                    getInvoicesOfContract(contract);
+                });
+            });
+            $("#contractsTable .removeContract").each(function () {
+                $(this).on("click", function(event){
+                    event.preventDefault();
+                    var removeButton = $(this);
+                    var data = $("#contractsTable").DataTable().row($(this).parents('tr')).data();
+                    var contract = {
+                        id: {
+                            repoFullName: $(data[0]).text(),
+                            role: data[1]
+                        }
+                    };
+                    confirmDialog
+                        .create("Are you sure you want to remove this contract?")
+                        .then(() => markContractForRemoval(contract, removeButton));
+                });
             });
         }
     });
