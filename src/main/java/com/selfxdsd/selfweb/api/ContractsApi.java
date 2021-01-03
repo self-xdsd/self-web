@@ -43,6 +43,7 @@ import javax.validation.constraints.Min;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
@@ -335,8 +336,10 @@ public class ContractsApi extends BaseApiController {
 
         final String repoFullName = owner + "/" + name;
         final String provider = this.user.provider().name();
+
         final BigDecimal hourlyRate = BigDecimal
             .valueOf(input.getHourlyRate())
+            .setScale(2, RoundingMode.HALF_UP)
             .multiply(BigDecimal.valueOf(100));
 
         ResponseEntity<String> response;
@@ -420,6 +423,7 @@ public class ContractsApi extends BaseApiController {
                 final Contract updated = contract.update(
                     BigDecimal
                         .valueOf(newHourlyRate)
+                        .setScale(2, RoundingMode.HALF_UP)
                         .multiply(BigDecimal.valueOf(100))
                 );
                 resp = ResponseEntity.ok(
