@@ -215,7 +215,8 @@ function payInvoice(invoice, contract, payButton) {
      */
     function newInvoiceAsTableRow(invoice) {
         var status = "Active"
-        var totalAmount = parseFloat(invoice.totalAmount.substring(0, invoice.totalAmount.length - 1))
+        var totalAmount = parseFloat(invoice.totalAmount.substring(0, invoice.totalAmount.length - 1)
+                .replace(",",".").trim())
         var downloadLink = totalAmount > 0.0 ? "<a href='#' title='Download Invoice' class='downloadInvoice'>"
             + "<i class='fa fa-file-pdf-o fa-lg'></i>"
             + "</a>": "";

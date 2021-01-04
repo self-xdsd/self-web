@@ -157,7 +157,8 @@ var projectContractsCount = -1;
                 + "</a>  ";
             if (invoice.paymentTime == "null" && invoice.transactionId == "null") {
                 status = "Active";
-                var totalAmount = parseFloat(invoice.totalAmount.substring(0, invoice.totalAmount.length - 1))
+                var totalAmount = parseFloat(invoice.totalAmount.substring(0, invoice.totalAmount.length - 1)
+                        .replace(",",".").trim())
                 if (totalAmount >= 108.0) {
                     payIcon = "<a href='#' title='Pay Invoice' class='payInvoice' "
                         + "data-contributor='" + contract.id.contributorUsername + "' "
