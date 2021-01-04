@@ -453,7 +453,7 @@ $(document).ready(
                                 $("#stripeCash").html(formatEuro(wallet.cash));
                                 $("#stripeDebt").html(formatEuro(wallet.debt));
                                 $("#stripeAvailable").html(formatEuro(wallet.available));
-                                cashLimitColor($("#stripeCash"), updatedWallet);
+                                cashLimitColor($("#stripeCash"), wallet);
                                 if (wallet.active) {
                                     $("#stripeWalletBadge").addClass("badge-success")
                                     $("#stripeWalletBadge").html("active")
