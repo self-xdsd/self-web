@@ -166,9 +166,6 @@ var projectContractsCount = -1;
                         + "<i class='fa fa-credit-card fa-lg'></i>"
                         + "</a>";
                 }
-                if(totalAmount === 0.0){
-                   downloadLink = "";
-                }
             } else {
                 status = "Paid";
             }
