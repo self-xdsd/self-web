@@ -215,7 +215,7 @@ function payInvoice(invoice, contract, payButton) {
      */
     function newInvoiceAsTableRow(invoice) {
         var status = "Active"
-        var downloadLink = "<a href='#' title='Download Invoice' class='downloadInvoice'>"
+        var downloadLink ="<a href='#' title='Download Invoice' class='downloadInvoice'>"
             + "<i class='fa fa-file-pdf-o fa-lg'></i>"
             + "</a>";
         return "<tr>" +
