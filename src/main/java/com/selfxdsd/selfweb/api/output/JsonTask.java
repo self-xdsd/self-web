@@ -42,10 +42,12 @@ public final class JsonTask extends AbstractJsonObject {
         super(
             Json.createObjectBuilder()
                 .add("issueId", task.issueId())
+                .add("invoiceNumber", task.toString().split(":")[1])
                 .add("assignmentDate", String.valueOf(task.assignmentDate()))
                 .add("deadline", String.valueOf(task.deadline()))
                 .add("estimation", task.estimation())
                 .add("value", task.value().divide(BigDecimal.valueOf(100)))
+                .add("status", task.toString().split(":")[0])
                 .build()
         );
     }

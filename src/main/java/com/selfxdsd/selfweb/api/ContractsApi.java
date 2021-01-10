@@ -146,9 +146,9 @@ public class ContractsApi extends BaseApiController {
             if(contract == null) {
                 resp = ResponseEntity.noContent().build();
             } else {
-                final Tasks tasks = contract.tasks();
+                final Tasks all = new AllTasks(contract);
                 resp = ResponseEntity.ok(
-                    new JsonTasks(tasks).toString()
+                    new JsonTasks(all).toString()
                 );
             }
         }
@@ -304,7 +304,6 @@ public class ContractsApi extends BaseApiController {
                         )
                     );
                     resp = ResponseEntity.ok()
-                        .contentLength(pdf.length())
                         .contentType(MediaType.APPLICATION_PDF)
                         .header(
                             "Content-Disposition",
