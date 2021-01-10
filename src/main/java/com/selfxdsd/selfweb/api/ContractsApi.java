@@ -304,6 +304,7 @@ public class ContractsApi extends BaseApiController {
                         )
                     );
                     resp = ResponseEntity.ok()
+                        .contentLength(pdf.length())
                         .contentType(MediaType.APPLICATION_PDF)
                         .header(
                             "Content-Disposition",
