@@ -25,6 +25,7 @@ import com.selfxdsd.api.Task;
 
 import javax.json.Json;
 import java.math.BigDecimal;
+import java.util.Optional;
 
 /**
  * Self Task as JSON.
@@ -42,12 +43,16 @@ public final class JsonTask extends AbstractJsonObject {
         super(
             Json.createObjectBuilder()
                 .add("issueId", task.issueId())
-                .add("invoiceNumber", task.toString().split(":")[1])
+                .add("invoiceNumber", Optional.of(task.toString())
+                    .filter(str -> str.contains(":"))
+                    .map(str -> str.split(":")[1]).orElse(""))
                 .add("assignmentDate", String.valueOf(task.assignmentDate()))
                 .add("deadline", String.valueOf(task.deadline()))
                 .add("estimation", task.estimation())
                 .add("value", task.value().divide(BigDecimal.valueOf(100)))
-                .add("status", task.toString().split(":")[0])
+                .add("status", Optional.of(task.toString())
+                    .filter(str -> str.contains(":"))
+                    .map(str -> str.split(":")[0]).orElse(""))
                 .build()
         );
     }
