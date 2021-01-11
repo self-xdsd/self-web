@@ -22,10 +22,7 @@
  */
 package com.selfxdsd.selfweb.api;
 
-import com.selfxdsd.api.Contract;
-import com.selfxdsd.api.Contributor;
-import com.selfxdsd.api.Invoice;
-import com.selfxdsd.api.User;
+import com.selfxdsd.api.*;
 import com.selfxdsd.selfweb.api.output.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -33,6 +30,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.File;
 import java.io.IOException;
@@ -262,6 +260,67 @@ public class ContributorApi extends BaseApiController {
                             + "invoice_slfx_" + found.invoiceId() + ".pdf"
                         )
                         .body(resource);
+                }
+            }
+        }
+        return resp;
+    }
+
+    /**
+     * Get one of the authenticated Contributor's Platform Invoices as PDF.
+     * @param owner Repo owner.
+     * @param name Repo name.
+     * @param invoiceId Invoice ID.
+     * @param role Contributor role (DEV, REV etc).
+     * @throws IOException If something goes wrong.
+     * @return Resource PDF.
+     * @checkstyle ParameterNumber (20 lines)
+     */
+    @GetMapping(
+        value = "/contributor/contracts/{owner}/{name}/invoices"
+            + "/{invoiceId}/platform/pdf",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<StreamingResponseBody> platformInvoicePdf(
+        @PathVariable final String owner,
+        @PathVariable final String name,
+        @PathVariable final int invoiceId,
+        @RequestParam("role") final String role
+    ) throws IOException {
+        final ResponseEntity<StreamingResponseBody> resp;
+        final Contributor contributor = this.user.asContributor();
+        if(contributor == null) {
+            resp = ResponseEntity.noContent().build();
+        } else {
+            final Contract contract = contributor.contract(
+                owner + "/" + name,
+                this.user.provider().name(),
+                role
+            );
+            if(contract == null) {
+                resp = ResponseEntity.badRequest().build();
+            } else {
+                final Invoice found = contract.invoices().getById(invoiceId);
+                if(found == null){
+                    resp = ResponseEntity.badRequest().build();
+                } else {
+                    final PlatformInvoice invoice = found.platformInvoice();
+                    if(invoice == null) {
+                        resp = ResponseEntity.noContent().build();
+                    } else {
+                        resp = ResponseEntity.ok()
+                            .contentType(MediaType.APPLICATION_PDF)
+                            .header(
+                                "Content-Disposition",
+                                "attachment; filename="
+                                    + "platform_invoice_"
+                                    + invoice.serialNumber()
+                                    + ".pdf"
+                            )
+                            .body(
+                                outputStream -> invoice.toPdf(outputStream)
+                            );
+                    }
                 }
             }
         }
