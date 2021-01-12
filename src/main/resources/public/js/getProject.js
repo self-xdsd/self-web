@@ -186,6 +186,7 @@ function installUpdateCashLimitPopover(anchor, currentLimit, walletType, onLimit
                     data: inputValue,
                 }).done(wallet => {
                     onLimitUpdate(wallet);
+                    walletAsPieChart(wallet);
                     anchor.data("updating", IDLE);
                     anchor.popover('hide');
                 }).fail(() => {
