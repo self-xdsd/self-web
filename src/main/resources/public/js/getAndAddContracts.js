@@ -11,11 +11,6 @@
 * but this a good practice since "$" is not "reserved" to jQuery.
 * Now "$" is just a function argument name and not the jQuery
 * alias anymore. It could named "foo" fo ex, thus making a call like foo("#contracts") valid.
-* @todo #253:60min On frontend, in Contracts tab, after adding a new contract, we should add the new
-*  contract to contract table, instead of updating table by re-fetching all contracts again.
-*  Same logic should be applied to "markContractForRemove" and "restoreContract".
-* @todo #258:60min Investigate why `date` filtering using `Search builder` plugin is not
-*  working on column `created` of table `invoices` (`#invoicesTable`).
 */
 var projectContractsCount = -1;
 (function getAndAddContracts($, contractsService, usersService, confirmDialog){
