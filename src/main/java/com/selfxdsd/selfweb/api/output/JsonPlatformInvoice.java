@@ -20,65 +20,37 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.selfweb;
+package com.selfxdsd.selfweb.api.output;
 
-import com.selfxdsd.api.*;
-import com.selfxdsd.core.SelfCore;
-import com.selfxdsd.storage.MySql;
-import com.selfxdsd.storage.SelfJooq;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.SessionScope;
+import com.selfxdsd.api.PlatformInvoice;
+
+import javax.json.Json;
+import java.math.BigDecimal;
 
 /**
- * Self Core component.
+ * PlatformInvoice in JSON.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-@Component
-@SessionScope
-public class SelfCoreComponent implements Self {
+public final class JsonPlatformInvoice extends AbstractJsonObject {
 
     /**
-     * Self's core.
+     * Ctor.
+     * @param invoice PlatformInvoice to convert to JSON.
+     * @checkstyle LineLength (50 lines)
      */
-    private final Self core = new SelfCore(
-        new SelfJooq(
-            new MySql(
-                System.getenv("self_db_url"),
-                System.getenv("self_db_user"),
-                System.getenv("self_db_password")
-            )
-        )
-    );
-
-    @Override
-    public User login(final Login login) {
-        return this.core.login(login);
-    }
-
-    @Override
-    public ProjectManagers projectManagers() {
-        return this.core.projectManagers();
-    }
-
-    @Override
-    public Projects projects() {
-        return this.core.projects();
-    }
-
-    @Override
-    public PlatformInvoices platformInvoices() {
-        return this.core.platformInvoices();
-    }
-
-    @Override
-    public Contributors contributors() {
-        return this.core.contributors();
-    }
-
-    @Override
-    public void close() throws Exception {
-        this.core.close();
+    public JsonPlatformInvoice(final PlatformInvoice invoice) {
+        super(
+            Json.createObjectBuilder()
+                .add("id", invoice.id())
+                .add("number", invoice.serialNumber())
+                .add("createdAt", invoice.createdAt().toString())
+                .add("commission", invoice.commission().divide(BigDecimal.valueOf(100)))
+                .add("vat", invoice.vat().divide(BigDecimal.valueOf(100)))
+                .add("total", invoice.totalAmount().divide(BigDecimal.valueOf(100)))
+                .add("paidAt", invoice.paymentTime().toString())
+                .build()
+        );
     }
 }
