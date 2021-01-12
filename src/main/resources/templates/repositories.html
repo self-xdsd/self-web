@@ -60,7 +60,7 @@
                             You should see here all the repos from Organizations where you have admin rights.<br>
                             Missing some of them? Make sure you
                             <a th:if="${testEnvironment}" href="https://github.com/settings/connections/applications/a55dd23908b4dffe8df6" target="_blank">grant</a>
-                            <a th:if="${not testEnvironment}" href="#" target="_blank">grant</a>
+                            <a th:if="${unless testEnvironment}" href="#" target="_blank">grant</a>
                             Self XDSD access in Github.
                         </div>
                         <table id="orgReposTable" class="display">
