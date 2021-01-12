@@ -106,7 +106,6 @@ var projectContractsCount = -1;
         )
         $("#invoices").show();
         $("#invoicesTable").DataTable({
-            searching: false,
             dom: "<'row w-100 align-items-center'<'col-sm-12 col-md-12 justify-content-end'Q>>" +
             "<'row w-100'<'col-sm-12'tr>>" +
             "<'row w-100 align-items-center'<'col-sm-12 col-md-4 justify-content-end mb-1'i><'col-sm-12 col-md-8 d-flex justify-content-end align-items-center'lp>>",
