@@ -45,7 +45,8 @@ function getContributorDashboard() {
                     var contract = {
                         id: {
                             repoFullName: $(data[0]).text(),
-                            role: data[1]
+                            role: data[1],
+                            provider: $(data[0]).attr("data-provider")
                         }
                     }
                     getTasksOfContract(contract);
@@ -60,7 +61,8 @@ function getContributorDashboard() {
                     var contract = {
                         id: {
                             repoFullName: $(data[0]).text(),
-                            role: data[1]
+                            role: data[1],
+                            provider: $(data[0]).attr("data-provider")
                         }
                     };
                     confirmDialog
@@ -115,7 +117,7 @@ function contractAsTableRow(contract) {
             +"</i>"
     }
     return [
-        "<a href='" + link + "' target='_blank'>" + contract.id.repoFullName + "</a>",
+        "<a href='" + link + "' target='_blank' data-provider='" + contract.id.provider + "'>" + contract.id.repoFullName + "</a>",
         contract.id.role,
         contract.hourlyRate,
         contract.revenue,
