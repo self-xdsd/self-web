@@ -23,6 +23,7 @@
 package com.selfxdsd.selfweb.api.output;
 
 import com.selfxdsd.api.Task;
+import com.selfxdsd.selfweb.api.StatusTasks;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -182,6 +183,54 @@ public final class JsonTaskTestCase {
         MatcherAssert.assertThat(
             jsonTask.getString("deadline"),
             Matchers.equalTo("null")
+        );
+    }
+
+    /**
+     * If instance of StatusTask, a task has status label attached.
+     */
+    @Test
+    public void canHaveStatus(){
+        final Task task = Mockito.mock(Task.class);
+        final StatusTasks.StatusTask active = new StatusTasks.StatusTask
+            .Active(task);
+        final StatusTasks.StatusTask closed = new StatusTasks.StatusTask
+            .Closed(task, 1);
+
+        Mockito.when(task.issueId()).thenReturn("null");
+        Mockito.when(task.assignmentDate()).thenReturn(null);
+        Mockito.when(task.deadline()).thenReturn(LocalDateTime.now());
+        Mockito.when(task.estimation()).thenReturn(60);
+        Mockito.when(task.value()).thenReturn(BigDecimal.valueOf(100));
+
+        final JsonObject jsonTask = new JsonTask(task);
+        MatcherAssert.assertThat(
+            jsonTask.getString("status"),
+            Matchers.equalTo("null")
+        );
+        MatcherAssert.assertThat(
+            jsonTask.getString("invoiceNumber"),
+            Matchers.equalTo("null")
+        );
+
+        final JsonObject jsonActiveTask = new JsonTask(active);
+        MatcherAssert.assertThat(
+            jsonActiveTask.getString("status"),
+            Matchers.equalTo("active")
+        );
+        MatcherAssert.assertThat(
+            jsonActiveTask.getString("invoiceNumber"),
+            Matchers.equalTo("-")
+        );
+
+        final JsonObject jsonClosedTask = new JsonTask(closed);
+        MatcherAssert.assertThat(
+            jsonClosedTask.getString("status"),
+            Matchers.equalTo("closed")
+        );
+        MatcherAssert.assertThat(
+            jsonClosedTask.getString("invoiceNumber"),
+            Matchers.equalTo("1")
         );
     }
 

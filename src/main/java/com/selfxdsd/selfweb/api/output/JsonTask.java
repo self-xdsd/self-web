@@ -22,6 +22,7 @@
  */
 package com.selfxdsd.selfweb.api.output;
 import com.selfxdsd.api.Task;
+import com.selfxdsd.selfweb.api.StatusTasks;
 
 import javax.json.Json;
 import java.math.BigDecimal;
@@ -43,16 +44,18 @@ public final class JsonTask extends AbstractJsonObject {
         super(
             Json.createObjectBuilder()
                 .add("issueId", task.issueId())
-                .add("invoiceNumber", Optional.of(task.toString())
-                    .filter(str -> str.contains(":"))
-                    .map(str -> str.split(":")[1]).orElse(""))
+                .add("invoiceNumber", Optional.of(task)
+                    .filter(t -> t instanceof StatusTasks.StatusTask)
+                    .map(t -> ((StatusTasks.StatusTask) t).invoiceNumber())
+                    .orElse("null"))
                 .add("assignmentDate", String.valueOf(task.assignmentDate()))
                 .add("deadline", String.valueOf(task.deadline()))
                 .add("estimation", task.estimation())
                 .add("value", task.value().divide(BigDecimal.valueOf(100)))
-                .add("status", Optional.of(task.toString())
-                    .filter(str -> str.contains(":"))
-                    .map(str -> str.split(":")[0]).orElse(""))
+                .add("status", Optional.of(task)
+                    .filter(t -> t instanceof StatusTasks.StatusTask)
+                    .map(t -> ((StatusTasks.StatusTask) t).status())
+                    .orElse("null"))
                 .build()
         );
     }

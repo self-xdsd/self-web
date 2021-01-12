@@ -146,7 +146,7 @@ public class ContractsApi extends BaseApiController {
             if(contract == null) {
                 resp = ResponseEntity.noContent().build();
             } else {
-                final Tasks all = new AllTasks(contract);
+                final Tasks all = StatusTasks.all(contract);
                 resp = ResponseEntity.ok(
                     new JsonTasks(all).toString()
                 );

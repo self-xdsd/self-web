@@ -28,12 +28,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * Lists all Contract tasks, active and invoiced, ordered by newest assignment
- * date.
+ * Lists Contract tasks and label them as active or closed, ordered by newest
+ * assignment date.
  * <br/>
  * Should be used only for listing via its iterator, otherwise will
  * throw UnsupportedOperationException.
@@ -41,7 +42,7 @@ import java.util.stream.StreamSupport;
  * @version $Id$
  * @since 0.0.1
  */
-class AllTasks implements Tasks {
+public final class StatusTasks implements Tasks {
 
     /**
      * Contract.
@@ -49,12 +50,74 @@ class AllTasks implements Tasks {
     private final Contract ofContract;
 
     /**
+     * Strategy about how Contract tasks will be iterated.
+     */
+    private final Function<Contract, Iterator<Task>> iteratorStrategy;
+
+    /**
      * Ctor.
      *
      * @param ofContract Contract.
+     * @param iteratorStrategy Strategy about how Contract tasks will be
+     *                         iterated.
      */
-    AllTasks(final Contract ofContract) {
+    private StatusTasks(final Contract ofContract,
+                       final
+                       Function<Contract, Iterator<Task>> iteratorStrategy) {
         this.ofContract = ofContract;
+        this.iteratorStrategy = iteratorStrategy;
+    }
+
+    /**
+     * Lists all Contract tasks active and closed.
+     * @param ofContract Contract.
+     * @return All tasks.
+     */
+    static Tasks all(final Contract ofContract){
+        return new StatusTasks(ofContract,
+            contract -> Stream.concat(
+                StreamSupport.stream(ofContract
+                    .tasks().spliterator(), false)
+                    .<Task>map(StatusTask.Active::new),
+                StreamSupport.stream(ofContract
+                    .invoices().spliterator(), false)
+                    .flatMap(invoice -> StreamSupport
+                        .stream(invoice.tasks().spliterator(), false)
+                        .map(invoicedTask -> new StatusTask
+                            .Closed(invoicedTask.task(), invoice.invoiceId()))))
+                .sorted(Comparator.comparing(Task::assignmentDate))
+                .iterator());
+    }
+
+    /**
+     * Lists active Contract tasks.
+     * @param ofContract Contract.
+     * @return Active tasks.
+     */
+    static Tasks active(final Contract ofContract){
+        return new StatusTasks(ofContract,
+            contract -> StreamSupport.stream(ofContract
+                .tasks().spliterator(), false)
+                .<Task>map(StatusTask.Active::new)
+                .sorted(Comparator.comparing(Task::assignmentDate))
+                .iterator());
+    }
+
+    /**
+     * Lists closed Contract tasks.
+     * @param ofContract Contract.
+     * @return Closed tasks.
+     */
+    static Tasks closed(final Contract ofContract){
+        return new StatusTasks(ofContract,
+            contract -> StreamSupport.stream(ofContract
+                .invoices().spliterator(), false)
+                .flatMap(invoice -> StreamSupport
+                    .stream(invoice.tasks().spliterator(), false)
+                    .<Task>map(invoicedTask -> new StatusTask
+                        .Closed(invoicedTask.task(), invoice.invoiceId())))
+                .sorted(Comparator.comparing(Task::assignmentDate))
+                .iterator());
     }
 
     @Override
@@ -109,24 +172,13 @@ class AllTasks implements Tasks {
 
     @Override
     public Iterator<Task> iterator() {
-        return Stream.concat(
-            StreamSupport.stream(this.ofContract
-                .tasks().spliterator(), false)
-                .<Task>map(StatusTask.Active::new),
-            StreamSupport.stream(this.ofContract
-                .invoices().spliterator(), false)
-                .flatMap(invoice -> StreamSupport
-                    .stream(invoice.tasks().spliterator(), false)
-                    .map(invoicedTask -> new StatusTask
-                        .Closed(invoicedTask.task(), invoice.invoiceId()))))
-            .sorted(Comparator.comparing(Task::assignmentDate))
-            .iterator();
+        return this.iteratorStrategy.apply(this.ofContract);
     }
 
     /**
      * Status task. This can be active or closed.
      */
-    abstract static class StatusTask implements Task {
+    public abstract static class StatusTask implements Task {
 
         /**
          * Delegate.
@@ -141,6 +193,18 @@ class AllTasks implements Tasks {
         protected StatusTask(final Task delegate) {
             this.delegate = delegate;
         }
+
+        /**
+         * Task status (active or closed).
+         * @return String.
+         */
+        public abstract String status();
+
+        /**
+         * Invoice number related to the delegated task.
+         * @return String
+         */
+        public abstract String invoiceNumber();
 
         @Override
         public String issueId() {
@@ -210,27 +274,33 @@ class AllTasks implements Tasks {
         /**
          * Active task status.
          */
-        static class Active extends StatusTask {
+        public static final class Active extends StatusTask {
 
             /**
              * Ctor.
              *
              * @param delegate Delegate.
              */
-            protected Active(final Task delegate) {
+            public Active(final Task delegate) {
                 super(delegate);
             }
 
             @Override
-            public String toString() {
-                return "active:-";
+            public String status() {
+                return "active";
             }
+
+            @Override
+            public String invoiceNumber() {
+                return "-";
+            }
+
         }
 
         /**
          * Closed task status.
          */
-        static class Closed extends StatusTask {
+        public static final class Closed extends StatusTask {
 
 
             /**
@@ -244,14 +314,19 @@ class AllTasks implements Tasks {
              * @param delegate Delegate.
              * @param invoiceId Invoice id.
              */
-            protected Closed(final Task delegate, final int invoiceId) {
+            public Closed(final Task delegate, final int invoiceId) {
                 super(delegate);
                 this.invoiceId = invoiceId;
             }
 
             @Override
-            public String toString() {
-                return "closed:"+this.invoiceId;
+            public String status() {
+                return "closed";
+            }
+
+            @Override
+            public String invoiceNumber() {
+                return Integer.toString(invoiceId);
             }
         }
     }
