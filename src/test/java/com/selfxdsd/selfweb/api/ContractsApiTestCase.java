@@ -195,14 +195,20 @@ public final class ContractsApiTestCase {
 
         final ContractInput input = new ContractInput();
         input.setUsername("john");
-        input.setHourlyRate(10);
+        input.setHourlyRate(16.33);
         input.setRole(Contract.Roles.DEV);
 
         MatcherAssert.assertThat(api
                 .contracts("mihai", "test", input).getStatusCode(),
             Matchers.is(HttpStatus.CREATED));
-        Mockito.verify(contracts).addContract("mihai/test",
-            "john", "github", BigDecimal.valueOf(10.0 * 100), "DEV");
+        Mockito.verify(contracts)
+            .addContract(
+                "mihai/test",
+                "john",
+                "github",
+                BigDecimal.valueOf(1633).setScale(2),
+                "DEV"
+            );
     }
 
     /**

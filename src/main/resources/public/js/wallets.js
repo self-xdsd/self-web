@@ -215,7 +215,7 @@ function payInvoice(invoice, contract, payButton) {
      */
     function newInvoiceAsTableRow(invoice) {
         var status = "Active"
-        var downloadLink = "<a href='#' title='Download Invoice' class='downloadInvoice'>"
+        var downloadLink ="<a href='#' title='Download Invoice' class='downloadInvoice'>"
             + "<i class='fa fa-file-pdf-o fa-lg'></i>"
             + "</a>";
         return "<tr>" +
@@ -453,7 +453,7 @@ $(document).ready(
                                 $("#stripeCash").html(formatEuro(wallet.cash));
                                 $("#stripeDebt").html(formatEuro(wallet.debt));
                                 $("#stripeAvailable").html(formatEuro(wallet.available));
-                                cashLimitColor($("#stripeCash"), updatedWallet);
+                                cashLimitColor($("#stripeCash"), wallet);
                                 if (wallet.active) {
                                     $("#stripeWalletBadge").addClass("badge-success")
                                     $("#stripeWalletBadge").html("active")

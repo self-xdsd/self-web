@@ -45,7 +45,8 @@ function getContributorDashboard() {
                     var contract = {
                         id: {
                             repoFullName: $(data[0]).text(),
-                            role: data[1]
+                            role: data[1],
+                            provider: $(data[0]).attr("data-provider")
                         }
                     }
                     getTasksOfContract(contract);
@@ -60,7 +61,8 @@ function getContributorDashboard() {
                     var contract = {
                         id: {
                             repoFullName: $(data[0]).text(),
-                            role: data[1]
+                            role: data[1],
+                            provider: $(data[0]).attr("data-provider")
                         }
                     };
                     confirmDialog
@@ -115,7 +117,7 @@ function contractAsTableRow(contract) {
             +"</i>"
     }
     return [
-        "<a href='" + link + "' target='_blank'>" + contract.id.repoFullName + "</a>",
+        "<a href='" + link + "' target='_blank' data-provider='" + contract.id.provider + "'>" + contract.id.repoFullName + "</a>",
         contract.id.role,
         contract.hourlyRate,
         contract.revenue,
@@ -232,21 +234,34 @@ function invoiceAsTableRow(contract) {
             transactionId = invoice.transactionId;
         }
         var status;
-        if (transactionId == "-") {
-            status = "Active";
-        } else {
-            status = "Paid";
-        }
-        var pdfHref = "/api/contributor/contracts/"
+        var downloadIcons;
+        var invoicePdfHref = "/api/contributor/contracts/"
             + contract.id.repoFullName
             + "/invoices/" + invoice.id
             + "/pdf?role=" + contract.id.role;
+
+        if (transactionId == "-") {
+            status = "Active";
+            downloadIcons="<a href='" + invoicePdfHref + "' class='downloadInvoice'>" + "<i title='Your Invoice To The Project' class='fa fa-file-pdf-o fa-lg'></i></a>"
+        } else {
+            status = "Paid";
+            if(transactionId.startsWith("fake_payment")) {
+                downloadIcons="<a href='" + invoicePdfHref + "' class='downloadInvoice'>" + "<i title='Your Invoice To The Project' class='fa fa-file-pdf-o fa-lg'></i></a>"
+            } else {
+                var platformInvoicePdfHref = "/api/contributor/contracts/"
+                    + contract.id.repoFullName
+                    + "/invoices/" + invoice.id
+                    + "/platform/pdf?role=" + contract.id.role;
+                downloadIcons="<a href='" + invoicePdfHref + "' class='downloadInvoice'>" + "<i title='Your Invoice To The Project' class='fa fa-file-pdf-o fa-lg'></i></a>"
+                + "  " + "<a href='" + platformInvoicePdfHref + "' class='downloadInvoice'>" + "<i title='Commission Invoice From Self XDSD' style='color: #701516;' class='fa fa-file-pdf-o fa-lg'></i></a>"
+            }
+        }
         return [
             invoice.id,
             invoice.createdAt.split('T')[0],
             invoice.amount,
             status,
-            "<a href='" + pdfHref + "' class='downloadInvoice'>" + "<i class='fa fa-file-pdf-o fa-lg'></i></a>"
+            downloadIcons
         ];
     }
 }
