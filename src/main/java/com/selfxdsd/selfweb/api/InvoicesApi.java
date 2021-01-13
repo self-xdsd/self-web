@@ -29,7 +29,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -88,6 +90,85 @@ public class InvoicesApi extends BaseApiController {
             }
             final JsonArray array = builder.build();
             response = ResponseEntity.ok(array.toString());
+        }
+        return response;
+    }
+
+    /**
+     * Get a PlatformInvoices as PDF.
+     * @param platformInvoiceId Id of the PlatformInvoice.
+     * @return PDF Stream.
+     */
+    @GetMapping(
+        "/invoices/platform/{platformInvoiceId}/pdf"
+    )
+    public ResponseEntity<StreamingResponseBody> platformInvoicePdf(
+        @PathVariable final int platformInvoiceId
+    ) {
+        final ResponseEntity<StreamingResponseBody> response;
+        if(!"admin".equals(this.user.role())) {
+            response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } else {
+            final PlatformInvoice invoice = this.core.platformInvoices()
+                .getById(platformInvoiceId);
+            if(invoice == null) {
+                response = ResponseEntity.noContent().build();
+            } else {
+                response = ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .header(
+                        "Content-Disposition",
+                        "attachment; filename="
+                            + "platform_invoice_"
+                            + invoice.serialNumber()
+                            + ".pdf"
+                    )
+                    .body(
+                        outputStream -> invoice.toPdf(outputStream)
+                    );
+            }
+        }
+        return response;
+    }
+
+    /**
+     * Get an Invoice as PDF (through the PlatformInvoice).
+     * @param platformInvoiceId Id of the PlatformInvoice.
+     * @return PDF Stream.
+     */
+    @GetMapping(
+        "/invoices/platform/{platformInvoiceId}/project/pdf"
+    )
+    public ResponseEntity<StreamingResponseBody> invoicePdf(
+        @PathVariable final int platformInvoiceId
+    ) {
+        final ResponseEntity<StreamingResponseBody> response;
+        if(!"admin".equals(this.user.role())) {
+            response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } else {
+            final PlatformInvoice platform = this.core.platformInvoices()
+                .getById(platformInvoiceId);
+            if(platform == null) {
+                response = ResponseEntity.noContent().build();
+            } else {
+                final Invoice invoice = platform.invoice();
+                if(invoice == null) {
+                    response = ResponseEntity.noContent().build();
+                } else {
+                    response = ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .header(
+                            "Content-Disposition",
+                            "attachment; filename="
+                                + "invoice_SLFX_"
+                                + invoice.invoiceId()
+                                + ".pdf"
+                        )
+                        .body(
+                            outputStream -> invoice.toPdf(outputStream)
+                        );
+                }
+            }
         }
         return response;
     }
