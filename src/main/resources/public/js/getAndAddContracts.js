@@ -489,19 +489,44 @@ var projectContractsCount = -1;
                     }
                 });
                 if(valid) {
-                    var formData = $(this).serialize();
-                    //check if username exists before submit
-                    usersService.exists(
-                        $("#username").val(),
-                        "github",
-                        function(){
+                    var form = $(this).serialize();
+                    const formData = new FormData(this) 
+                    // check if a contract with the same username and role already exist.
+                    contractsService.getAll(
+                        project,
+                        function () {
                             $("#addContractLoading").show();
-                            clearFormErrors();
-                            disableForm(true);
+                        })
+                    .then(
+                        function(contracts){
+                            return new Promise(function(resolve, reject){
+                                const exist = contracts.find( ({id}) => {
+                                    return id.contributorUsername == formData.get("username")  
+                                    && id.role == formData.get("role") 
+                                })
+                                if(exist){
+                                    reject("Contract already exist with same username and role.")
+                                } else {
+                                    resolve()
+                                }
+                            })
                         }
                     ).then(
                         function () {
-                            return contractsService.add(project, formData)
+                            //check if username exists before submit
+                            return usersService.exists(
+                                $("#username").val(),
+                                "github",
+                                function () {
+                                    $("#addContractLoading").show();
+                                    clearFormErrors();
+                                    disableForm(true);
+                                }
+                            )
+                        }
+                    ).then(
+                        function () {
+                            return contractsService.add(project, form)
                         }
                     ).then(
                         function (contract) {
