@@ -160,3 +160,15 @@ body {
     pointer-events: none;
     z-index: 2000;   
 }
+
+
+@media (max-width:413px){
+    #realPaymentMethods{
+        overflow-x: scroll; 
+    }
+
+}
+
+.toggle.btn {
+    min-width:80px !important;
+}
