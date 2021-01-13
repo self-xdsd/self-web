@@ -160,3 +160,7 @@ body {
     pointer-events: none;
     z-index: 2000;   
 }
+
+#tasks,#contractsDivTable{
+    margin-bottom: 15px;
+}
