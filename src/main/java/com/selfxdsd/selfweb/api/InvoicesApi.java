@@ -78,7 +78,7 @@ public class InvoicesApi extends BaseApiController {
         value = "/invoices",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<String> managers() {
+    public ResponseEntity<String> invoices() {
         final ResponseEntity<String> response;
         if(!"admin".equals(this.user.role())) {
             response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
