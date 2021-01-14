@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="head.html :: head"></head>
+<body>
+<header th:replace="header.html :: header"></header>
+<main class="container" role="main">
+    <div class="mt-4" id="invoicesOverview">
+        <div id="invoicesDivTable">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h4 class="m-0 font-weight-bold card-title">Platform Invoices</h4>
+                </div>
+                <div class="card-body">
+                    <div id="platform-invoice-info" class="mb-4">
+                        These are all the Platform Invoices of Self. These invoices are emitted to the Contributors
+                        for the commission of Self. They are registered in the Accounting of the company as income.
+                    </div>
+                    <div class="mb-4">
+                        <span id="gross"></span><br>
+                        <span id="net"></span><br>
+                        <span id="totalVat"></span>
+                    </div>
+                    <div class="table-responsive">
+                        <div id="invoicesTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                            <table id="invoicesTable" class="display" style="width:100%">
+                                <thead>
+                                <tr>
+                                    <th>Number</th>
+                                    <th>Created At</th>
+                                    <th>Commission</th>
+                                    <th>VAT (19%)</th>
+                                    <th>Total</th>
+                                    <th>Paid at</th>
+                                    <th>
+                                        Contributor Invoice
+                                        <i class="fa fa-question-circle-o fa-lg fakeWalletInfo"
+                                           aria-hidden="true"
+                                           data-toggle="tooltip"
+                                           data-placement="top"
+                                           title="Invoice of the Contributor to the Project.">
+                                        </i>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="footer.html :: footer"></footer>
+</body>
+<script>
+    var grossRevenue = 0;
+    var netRevenue = 0;
+    var totalVat = 0;
+    function platformInvoiceAsTableRow(invoice) {
+        grossRevenue += invoice.total;
+        netRevenue += invoice.commission;
+        totalVat += invoice.vat;
+        return [
+            "<a href='/api/invoices/platform/" + invoice.id + "/pdf'>" + invoice.number + "</a>",
+            invoice.createdAt.split('T')[0],
+            formatEuro(invoice.commission),
+            formatEuro(invoice.vat),
+            formatEuro(invoice.total),
+            invoice.paidAt.split('T')[0],
+            "<a href='/api/invoices/platform/" + invoice.id + "/project/pdf'><i title='Contributor Invoice To Project' class='fa fa-file-pdf-o fa-lg'></i></a>"
+        ]
+    }
+    $(document).ready(
+        function () {
+            $("#invoicesHeaderLink").addClass("active");
+            $("#invoicesTable").dataTable({
+                language: {
+                    loadingRecords: '<img src="/images/loading.svg" height="100">'
+                },
+                ajax: function (_data, callback) {
+                    $.ajax("/api/invoices", {
+                        type: "GET",
+                        statusCode: {
+                            200: function (invoices) {
+                                callback({ data: invoices.map(platformInvoiceAsTableRow) });
+                            },
+                            204: function () {
+                                callback({ data: [] });
+                            }
+                        }
+                    });
+                },
+                drawCallback:function(){
+                    $('[data-toggle="tooltip"]').tooltip({
+                        boundary: 'window'
+                    });
+                    $("#gross").html("Gross Revenue (with VAT): <b>" + formatEuro(grossRevenue) + "</b>");
+                    $("#net").html("Net Revenue (without VAT): <b>" + formatEuro(netRevenue) + "</b>");
+                    $("#totalVat").html("Total VAT: <b>" + formatEuro(totalVat) + "</b>");
+                }
+            });
+        }
+    )
+</script>
+</html>

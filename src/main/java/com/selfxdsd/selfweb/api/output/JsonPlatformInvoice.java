@@ -20,49 +20,37 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.selfweb;
+package com.selfxdsd.selfweb.api.output;
 
-import com.selfxdsd.api.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import com.selfxdsd.api.PlatformInvoice;
+
+import javax.json.Json;
+import java.math.BigDecimal;
 
 /**
- * Project Managers page Controller. Only available for users
- * with admin role.
+ * PlatformInvoice in JSON.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-@Controller
-public class ProjectManagersController {
+public final class JsonPlatformInvoice extends AbstractJsonObject {
 
     /**
-     * Authenticated user.
+     * Ctor.
+     * @param invoice PlatformInvoice to convert to JSON.
+     * @checkstyle LineLength (50 lines)
      */
-    private User user;
-
-    /**
-     * Constructor.
-     * @param user Authenticated User.
-     */
-    @Autowired
-    public ProjectManagersController(final User user) {
-        this.user = user;
-    }
-
-    /**
-     * Serve the PMs page (only for admins).
-     * @return PMs page.
-     */
-    @GetMapping("/admin/pms")
-    public String projectManagers() {
-        final String page;
-        if("admin".equals(user.role())) {
-            page = "projectManagers.html";
-        } else {
-            page = "index.html";
-        }
-        return page;
+    public JsonPlatformInvoice(final PlatformInvoice invoice) {
+        super(
+            Json.createObjectBuilder()
+                .add("id", invoice.id())
+                .add("number", invoice.serialNumber())
+                .add("createdAt", invoice.createdAt().toString())
+                .add("commission", invoice.commission().divide(BigDecimal.valueOf(100)))
+                .add("vat", invoice.vat().divide(BigDecimal.valueOf(100)))
+                .add("total", invoice.totalAmount().divide(BigDecimal.valueOf(100)))
+                .add("paidAt", invoice.paymentTime().toString())
+                .build()
+        );
     }
 }

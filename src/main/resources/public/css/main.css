@@ -161,7 +161,6 @@ body {
     z-index: 2000;   
 }
 
-
 @media (max-width:413px){
     #realPaymentMethods{
         overflow-x: scroll; 
@@ -171,4 +170,8 @@ body {
 
 .toggle.btn {
     min-width:80px !important;
+}
+
+#tasks,#contractsDivTable{
+    margin-bottom: 15px;
 }

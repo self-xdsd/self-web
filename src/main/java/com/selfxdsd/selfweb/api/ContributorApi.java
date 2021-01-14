@@ -25,17 +25,12 @@ package com.selfxdsd.selfweb.api;
 import com.selfxdsd.api.*;
 import com.selfxdsd.selfweb.api.output.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 /**
  * Contributor endpoints.<br><br>
@@ -218,17 +213,16 @@ public class ContributorApi extends BaseApiController {
      * @checkstyle ParameterNumber (20 lines)
      */
     @GetMapping(
-        value = "/contributor/contracts/{owner}/{name}/invoices"
-            + "/{invoiceId}/pdf",
-        produces = MediaType.APPLICATION_JSON_VALUE
+        "/contributor/contracts/{owner}/{name}/invoices"
+        + "/{invoiceId}/pdf"
     )
-    public ResponseEntity<Resource> invoicePdf(
+    public ResponseEntity<StreamingResponseBody> invoicePdf(
         @PathVariable final String owner,
         @PathVariable final String name,
         @PathVariable final int invoiceId,
         @RequestParam("role") final String role
     ) throws IOException {
-        final ResponseEntity<Resource> resp;
+        final ResponseEntity<StreamingResponseBody> resp;
         final Contributor contributor = this.user.asContributor();
         if(contributor == null) {
             resp = ResponseEntity.noContent().build();
@@ -245,21 +239,16 @@ public class ContributorApi extends BaseApiController {
                 if(found == null){
                     resp = ResponseEntity.badRequest().build();
                 } else {
-                    final File pdf = found.toPdf();
-                    final ByteArrayResource resource = new ByteArrayResource(
-                        Files.readAllBytes(
-                            Paths.get(pdf.getAbsolutePath())
-                        )
-                    );
                     resp = ResponseEntity.ok()
-                        .contentLength(pdf.length())
                         .contentType(MediaType.APPLICATION_PDF)
                         .header(
                             "Content-Disposition",
                             "attachment; filename="
                             + "invoice_slfx_" + found.invoiceId() + ".pdf"
                         )
-                        .body(resource);
+                        .body(
+                            out -> found.toPdf(out)
+                        );
                 }
             }
         }
@@ -276,10 +265,8 @@ public class ContributorApi extends BaseApiController {
      * @return Resource PDF.
      * @checkstyle ParameterNumber (20 lines)
      */
-    @GetMapping(
-        value = "/contributor/contracts/{owner}/{name}/invoices"
-            + "/{invoiceId}/platform/pdf",
-        produces = MediaType.APPLICATION_JSON_VALUE
+    @GetMapping("/contributor/contracts/{owner}/{name}/invoices"
+        + "/{invoiceId}/platform/pdf"
     )
     public ResponseEntity<StreamingResponseBody> platformInvoicePdf(
         @PathVariable final String owner,
