@@ -68,6 +68,11 @@ public class SelfCoreComponent implements Self {
     }
 
     @Override
+    public PlatformInvoices platformInvoices() {
+        return this.core.platformInvoices();
+    }
+
+    @Override
     public Contributors contributors() {
         return this.core.contributors();
     }

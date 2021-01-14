@@ -28,14 +28,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
- * Project Managers page Controller. Only available for users
+ * Invoices page Controller. Only available for users
  * with admin role.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
 @Controller
-public class ProjectManagersController {
+public class InvoicesController {
 
     /**
      * Authenticated user.
@@ -47,22 +47,23 @@ public class ProjectManagersController {
      * @param user Authenticated User.
      */
     @Autowired
-    public ProjectManagersController(final User user) {
+    public InvoicesController(final User user) {
         this.user = user;
     }
 
     /**
-     * Serve the PMs page (only for admins).
-     * @return PMs page.
+     * Serve the Invoices page (only for admins).
+     * @return PlatformInvoices page.
      */
-    @GetMapping("/admin/pms")
+    @GetMapping("/admin/invoices")
     public String projectManagers() {
         final String page;
         if("admin".equals(user.role())) {
-            page = "projectManagers.html";
+            page = "invoices.html";
         } else {
             page = "index.html";
         }
         return page;
     }
+
 }
