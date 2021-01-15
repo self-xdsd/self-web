@@ -10,6 +10,7 @@ $(document).ready(
 function getPublicRepos() {
     $("#repos").find("tbody").html('');
     $("#loadingPersonalRepos").show();
+    $("#personal-repos-info").hide();
     $.get(
         "/api/users/self",
         function(user) {
@@ -27,6 +28,7 @@ function getPublicRepos() {
                             }
                         )
                         $("#loadingPersonalRepos").hide();
+                        $("#personal-repos-info").show();
                         $('#repos').dataTable();
                     }
                 )
@@ -45,6 +47,7 @@ function getPublicRepos() {
                             }
                         )
                         $("#loadingPersonalRepos").hide();
+                        $("#personal-repos-info").show();
                         $('#repos').dataTable();
                     }
                 )

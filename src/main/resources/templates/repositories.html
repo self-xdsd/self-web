@@ -36,6 +36,9 @@
                         <div id="loadingPersonalRepos" class="text-center">
                             <img src="/images/loading.svg">
                         </div>
+                        <div id="personal-repos-info" class="mb-4" style="display: none;">
+                            These are all your personal public repositories (personal private repositories are not yet supported).
+                        </div>
                         <table id="repos" class="display">
                             <thead>
                             <tr>
@@ -57,7 +60,7 @@
                             <img src="/images/loading.svg">
                         </div>
                         <div id="github-org-info" class="mb-4" style="display: none;">
-                            You should see here all the repos from Organizations where you have admin rights.<br>
+                            You should see here all the repos from Organizations where you have admin rights, including private repos.<br>
                             Missing some of them? Make sure you
                             <a th:if="${testEnvironment}" href="https://github.com/settings/connections/applications/a55dd23908b4dffe8df6" target="_blank">grant</a>
                             <a th:unless="${testEnvironment}" href="#" target="_blank">grant</a>
