@@ -490,6 +490,14 @@ var projectContractsCount = -1;
                 });
                 if(valid) {
                     var formData = $(this).serialize();
+                    // check if a contract exist with the same username and role.
+                    const rowId = $("#username").val() + $("#role").val()
+                    const exists = $("#contracts").DataTable().row("#"+rowId).length > 0;
+                    if(exists) {
+                        alert("Error: Can't add a same contract for the user: "
+                            + $("#username").val() + " with role: " + $("#role").val())
+                        return
+                    }
                     //check if username exists before submit
                     usersService.exists(
                         $("#username").val(),
