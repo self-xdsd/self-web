@@ -352,6 +352,73 @@ public final class ProjectsApiTestCase {
     }
 
     /**
+     * ProjectApi.contractsCount(...) returns the Project's number of
+     * contracts.
+     */
+    @Test
+    public void returnsProjectContractsCount() {
+        final Project project = Mockito.mock(Project.class);
+        final Contracts contracts = Mockito.mock(Contracts.class);
+        Mockito.when(contracts.count()).thenReturn(5);
+        Mockito.when(project.contracts()).thenReturn(contracts);
+
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(user.provider()).thenReturn(provider);
+        final Projects owned = Mockito.mock(Projects.class);
+        Mockito.when(
+            owned.getProjectById(
+            "mihai/test", Provider.Names.GITHUB
+            )
+        ).thenReturn(project);
+        Mockito.when(user.projects()).thenReturn(owned);
+
+        final ResponseEntity<String> resp = new ProjectsApi(
+            user, Mockito.mock(Self.class)
+        ).contractsCount("mihai", "test");
+
+        MatcherAssert.assertThat(
+            resp.getStatusCode(),
+            Matchers.equalTo(HttpStatus.OK)
+        );
+        MatcherAssert.assertThat(
+            Json.createReader(
+                new StringReader(resp.getBody())
+            ).readObject().getInt("contractsCount"),
+            Matchers.equalTo(5)
+        );
+    }
+
+    /**
+     * ProjectApi.contractsCount(...) returns BAD REQUEST if the Project
+     * is missing.
+     */
+    @Test
+    public void contractsCountProjectMissing() {
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(user.provider()).thenReturn(provider);
+        final Projects owned = Mockito.mock(Projects.class);
+        Mockito.when(
+            owned.getProjectById(
+                "mihai/test", Provider.Names.GITHUB
+            )
+        ).thenReturn(null);
+        Mockito.when(user.projects()).thenReturn(owned);
+
+        final ResponseEntity<String> resp = new ProjectsApi(
+            user, Mockito.mock(Self.class)
+        ).contractsCount("mihai", "test");
+
+        MatcherAssert.assertThat(
+            resp.getStatusCode(),
+            Matchers.equalTo(HttpStatus.BAD_REQUEST)
+        );
+    }
+
+    /**
      * Mock an activated project.
      * @param selfOwner Owner username in Self.
      * @param repoOwner Owner username from the provider
