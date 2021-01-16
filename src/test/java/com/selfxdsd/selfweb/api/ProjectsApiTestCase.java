@@ -38,6 +38,7 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Unit tests for {@link ProjectsApi}.
@@ -416,6 +417,181 @@ public final class ProjectsApiTestCase {
             resp.getStatusCode(),
             Matchers.equalTo(HttpStatus.BAD_REQUEST)
         );
+    }
+
+    /**
+     * ProjectApi.deleteProject(...) returns BAD REQUEST if the Project
+     * is missing.
+     */
+    @Test
+    public void deleteProjectMissing() {
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(user.provider()).thenReturn(provider);
+        final Projects owned = Mockito.mock(Projects.class);
+        Mockito.when(
+            owned.getProjectById(
+                "mihai/test", Provider.Names.GITHUB
+            )
+        ).thenReturn(null);
+        Mockito.when(user.projects()).thenReturn(owned);
+
+        final ResponseEntity<String> resp = new ProjectsApi(
+            user, Mockito.mock(Self.class)
+        ).deleteProject("mihai", "test");
+
+        MatcherAssert.assertThat(
+            resp.getStatusCode(),
+            Matchers.equalTo(HttpStatus.BAD_REQUEST)
+        );
+    }
+
+    /**
+     * ProjectApi.deleteProject(...) returns BAD REQUEST if the Repo
+     * is missing.
+     */
+    @Test
+    public void deleteProjectRepoMissing() {
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(user.provider()).thenReturn(provider);
+        Mockito.when(user.username()).thenReturn("mihai");
+        Mockito.when(provider.repo("mihai", "test")).thenReturn(null);
+
+        final Projects owned = Mockito.mock(Projects.class);
+        Mockito.when(
+            owned.getProjectById(
+                "mihai/test", Provider.Names.GITHUB
+            )
+        ).thenReturn(Mockito.mock(Project.class));
+        Mockito.when(user.projects()).thenReturn(owned);
+
+        final ResponseEntity<String> resp = new ProjectsApi(
+            user, Mockito.mock(Self.class)
+        ).deleteProject("mihai", "test");
+
+        MatcherAssert.assertThat(
+            resp.getStatusCode(),
+            Matchers.equalTo(HttpStatus.BAD_REQUEST)
+        );
+    }
+
+    /**
+     * ProjectApi.deleteProject(...) works when the Repo is a
+     * personal Repo.
+     */
+    @Test
+    public void deleteProjectPersonalRepo() {
+        final Project project = Mockito.mock(Project.class);
+        final Repo repo = Mockito.mock(Repo.class);
+
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(user.provider()).thenReturn(provider);
+        Mockito.when(user.username()).thenReturn("mihai");
+        Mockito.when(provider.repo("mihai", "test")).thenReturn(repo);
+
+        final Projects owned = Mockito.mock(Projects.class);
+        Mockito.when(
+            owned.getProjectById(
+                "mihai/test", Provider.Names.GITHUB
+            )
+        ).thenReturn(project);
+        Mockito.when(user.projects()).thenReturn(owned);
+
+        final ResponseEntity<String> resp = new ProjectsApi(
+            user, Mockito.mock(Self.class)
+        ).deleteProject("mihai", "test");
+
+        MatcherAssert.assertThat(
+            resp.getStatusCode(),
+            Matchers.equalTo(HttpStatus.OK)
+        );
+        Mockito.verify(project, Mockito.times(1)).deactivate(repo);
+    }
+
+    /**
+     * ProjectApi.deleteProject(...) works when the Repo is a
+     * Organization Repo.
+     */
+    @Test
+    public void deleteProjectOrgRepo() {
+        final Project project = Mockito.mock(Project.class);
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(repo.fullName()).thenReturn("self/test");
+
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(user.provider()).thenReturn(provider);
+        Mockito.when(user.username()).thenReturn("mihai");
+
+        final Organization org = Mockito.mock(Organization.class);
+        final Repos orgRepos = Mockito.mock(Repos.class);
+        Mockito.when(orgRepos.iterator()).thenReturn(List.of(repo).iterator());
+        Mockito.when(org.repos()).thenReturn(orgRepos);
+        final Organizations orgs = Mockito.mock(Organizations.class);
+        Mockito.when(orgs.iterator()).thenReturn(List.of(org).iterator());
+        Mockito.when(provider.organizations()).thenReturn(orgs);
+
+        final Projects owned = Mockito.mock(Projects.class);
+        Mockito.when(
+            owned.getProjectById(
+                "self/test", Provider.Names.GITHUB
+            )
+        ).thenReturn(project);
+        Mockito.when(user.projects()).thenReturn(owned);
+
+        final ResponseEntity<String> resp = new ProjectsApi(
+            user, Mockito.mock(Self.class)
+        ).deleteProject("self", "test");
+
+        MatcherAssert.assertThat(
+            resp.getStatusCode(),
+            Matchers.equalTo(HttpStatus.OK)
+        );
+        Mockito.verify(project, Mockito.times(1)).deactivate(repo);
+    }
+
+    /**
+     * ProjectApi.deleteProject(...) returns BAD REQUEST because
+     * Project.deactivate(repo) throws IlegalStateException.
+     */
+    @Test
+    public void deleteProjectThrowsIse() {
+        final Project project = Mockito.mock(Project.class);
+        final Repo repo = Mockito.mock(Repo.class);
+        Mockito.when(project.deactivate(repo)).thenThrow(
+            new IllegalStateException("Cannot deactivate...")
+        );
+
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(user.provider()).thenReturn(provider);
+        Mockito.when(user.username()).thenReturn("mihai");
+        Mockito.when(provider.repo("mihai", "test")).thenReturn(repo);
+
+        final Projects owned = Mockito.mock(Projects.class);
+        Mockito.when(
+            owned.getProjectById(
+                "mihai/test", Provider.Names.GITHUB
+            )
+        ).thenReturn(project);
+        Mockito.when(user.projects()).thenReturn(owned);
+
+        final ResponseEntity<String> resp = new ProjectsApi(
+            user, Mockito.mock(Self.class)
+        ).deleteProject("mihai", "test");
+
+        MatcherAssert.assertThat(
+            resp.getStatusCode(),
+            Matchers.equalTo(HttpStatus.BAD_REQUEST)
+        );
+        Mockito.verify(project, Mockito.times(1)).deactivate(repo);
     }
 
     /**
