@@ -22,64 +22,27 @@
  */
 package com.selfxdsd.selfweb;
 
-import org.springframework.stereotype.Component;
-
-import javax.servlet.*;
-import java.io.IOException;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Test;
 
 /**
- * Will set a variable so we know if we are in Test Environment or not.
- * Based on this variable we will display a red banner on every page,
- * if we are in Test.
+ * Unit tests for {@link ReposController}.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-@Component
-public class TestEnvFilter implements Filter {
+public final class ReposControllerTestCase {
 
     /**
-     * Environment.
+     * It can return the repositories page.
      */
-    private final Environment environment;
-
-    /**
-     * Default ctor.
-     */
-    public TestEnvFilter() {
-        this(
-            () -> Boolean.valueOf(System.getenv("self_test_env"))
+    @Test
+    public void returnsReposPage() {
+        MatcherAssert.assertThat(
+            new ReposController().index(),
+            Matchers.equalTo("repositories.html")
         );
     }
 
-    /**
-     * Ctor.
-     * @param environment Environment.
-     */
-    public TestEnvFilter(final Environment environment) {
-        this.environment = environment;
-    }
-
-    @Override
-    public void doFilter(
-        final ServletRequest servletRequest,
-        final ServletResponse servletResponse,
-        final FilterChain filterChain
-    ) throws IOException, ServletException {
-        if(this.environment.selfTestEnv()) {
-            servletRequest.setAttribute("testEnvironment", "true");
-        }
-        filterChain.doFilter(servletRequest, servletResponse);
-    }
-
-    /**
-     * System environment.
-     */
-    interface Environment {
-        /**
-         * Self test env variable.
-         * @return Boolean.
-         */
-        boolean selfTestEnv();
-    }
 }
