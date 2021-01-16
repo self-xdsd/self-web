@@ -41,6 +41,18 @@ import org.springframework.ui.Model;
 public final class ProjectsControllerTestCase {
 
     /**
+     * It can return the project page.
+     */
+    @Test
+    public void returnsProjectPage() {
+        MatcherAssert.assertThat(
+            new ProjectsController(Mockito.mock(Self.class))
+                .project("mihai", "test"),
+            Matchers.equalTo("project.html")
+        );
+    }
+
+    /**
      * It sets the "managed" Model flag to false if the
      * given Project is not managed by Self.
      */
