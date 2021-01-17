@@ -97,11 +97,19 @@ public class PaymentMethodsApi extends BaseApiController {
         @PathVariable final String owner,
         @PathVariable final String name
     ) {
+        LOG.debug(
+            "Creating Stripe PaymentMethod SetupIntent for "
+            + owner + "/" + name + "... "
+        );
         ResponseEntity<String> response;
         final Project found = this.user.projects().getProjectById(
             owner + "/" + name, user.provider().name()
         );
         if(found == null) {
+            LOG.error(
+                "Project " + owner + "/" + name + " not found! "
+                + "Bad request."
+            );
             response = ResponseEntity.badRequest().build();
         } else {
             Wallet wallet = null;
@@ -112,10 +120,12 @@ public class PaymentMethodsApi extends BaseApiController {
                 }
             }
             if (wallet == null) {
+                LOG.error("Stripe Wallet missing! Bad Request.");
                 response = ResponseEntity.badRequest()
                     .body("Stripe Wallet not found.");
             } else {
                 final SetupIntent intent = wallet.paymentMethodSetupIntent();
+                LOG.debug("SetupIntent successfully created!");
                 response = ResponseEntity.ok(
                     Json.createObjectBuilder()
                         .add("clientSecret", intent.getClientSecret())
@@ -149,11 +159,19 @@ public class PaymentMethodsApi extends BaseApiController {
         @Pattern(regexp = "[a-zA-Z0-9\\-_\\{\\}\" :,]{1,256}")
         final String body
     ) {
+        LOG.debug(
+            "Saving new Stripe PaymentMethod for Project "
+            + owner + "/" + name + "... "
+        );
         ResponseEntity<String> response;
         final Project found = this.user.projects().getProjectById(
             owner + "/" + name, user.provider().name()
         );
         if(found == null) {
+            LOG.error(
+                "Project " + owner + "/" + name
+                 + " not found! Bad request."
+            );
             response = ResponseEntity.badRequest().build();
         } else {
             Wallet wallet = null;
@@ -164,6 +182,7 @@ public class PaymentMethodsApi extends BaseApiController {
                 }
             }
             if (wallet == null) {
+                LOG.error("Stripe Wallet missing! Bad Request.");
                 response = ResponseEntity.badRequest()
                     .body("Stripe Wallet not found.");
             } else {
@@ -175,6 +194,7 @@ public class PaymentMethodsApi extends BaseApiController {
                         wallet,
                         jsonBody.getString("paymentMethodId")
                     );
+                LOG.debug("PaymentMethod successfully saved!");
                 response = ResponseEntity.ok(
                     new JsonPaymentMethod(paymentMethod).toString()
                 );
@@ -203,11 +223,19 @@ public class PaymentMethodsApi extends BaseApiController {
         @PathVariable final String name,
         @PathVariable final String paymentMethodId
     ) {
+        LOG.debug(
+            "Activating Stripe PaymentMethod " + paymentMethodId
+            + " of Project " + owner + "/" + name + "... "
+        );
         ResponseEntity<String> response;
         final Project found = this.user.projects().getProjectById(
             owner + "/" + name, user.provider().name()
         );
         if(found == null) {
+            LOG.error(
+                "Project " + owner + "/" + name + " not found! "
+                + "Bad Request."
+            );
             response = ResponseEntity.badRequest().build();
         } else {
             Wallet wallet = null;
@@ -218,6 +246,7 @@ public class PaymentMethodsApi extends BaseApiController {
                 }
             }
             if (wallet == null) {
+                LOG.error("Stripe Wallet missing! Bad Request.");
                 response = ResponseEntity.badRequest()
                     .body("Stripe Wallet not found.");
             } else {
@@ -230,16 +259,25 @@ public class PaymentMethodsApi extends BaseApiController {
                     }
                 }
                 if (paymentMethod == null) {
+                    LOG.error(
+                        "PaymentMethod " + paymentMethodId + " not found! "
+                        + "Bad Request."
+                    );
                     response = ResponseEntity.badRequest()
                         .body("Payment Method not found.");
                 } else {
                     final JsonObject json;
                     if(paymentMethod.active()) {
+                        LOG.debug(
+                            "PaymentMethod already active. "
+                            + "Not doing anything."
+                        );
                         json = new JsonPaymentMethod(
                             paymentMethod, Boolean.FALSE
                         );
                     } else {
                         final PaymentMethod active = paymentMethod.activate();
+                        LOG.debug("PaymentMethod successfully activated!");
                         json = new JsonPaymentMethod(active, Boolean.FALSE);
                     }
                     response = ResponseEntity.ok(json.toString());
