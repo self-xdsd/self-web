@@ -88,4 +88,32 @@ public class Repositories extends BaseApiController {
         }
         return response;
     }
+
+    /**
+     * Get the User's Projects (repos managed by Self XDSD).
+     * @return ResponseEntity.
+     */
+    @GetMapping(
+        value = "/repositories/managed",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> managedRepos() {
+        JsonArrayBuilder reposBuilder = Json.createArrayBuilder();
+        for(final Project project : this.user.projects()) {
+            reposBuilder = reposBuilder.add(
+                Json.createObjectBuilder()
+                    .add("repoFullName", project.repoFullName())
+                    .add("provider", project.provider())
+                    .build()
+            );
+        }
+        final JsonArray repos = reposBuilder.build();
+        final ResponseEntity<String> response;
+        if(repos.isEmpty()){
+            response = ResponseEntity.noContent().build();
+        } else {
+            response = ResponseEntity.ok(repos.toString());
+        }
+        return response;
+    }
 }
