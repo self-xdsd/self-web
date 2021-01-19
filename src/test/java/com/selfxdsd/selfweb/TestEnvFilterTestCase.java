@@ -71,7 +71,7 @@ public final class TestEnvFilterTestCase {
         final ServletRequest request = Mockito.mock(ServletRequest.class);
         final ServletResponse response = Mockito.mock(ServletResponse.class);
         final FilterChain chain = Mockito.mock(FilterChain.class);
-        final TestEnvFilter filter = new TestEnvFilter();
+        final TestEnvFilter filter = new TestEnvFilter(() -> false);
         filter.doFilter(request, response, chain);
 
         Mockito.verify(request, Mockito.times(0)).setAttribute(
