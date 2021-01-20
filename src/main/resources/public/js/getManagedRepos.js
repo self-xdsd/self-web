@@ -7,9 +7,9 @@ $(document).ready(
 function projectAsTableRow(project) {
     var href;
     if(project.provider == 'github') {
-        href="/project/github/" + project.repoFullName;
+        href="/github/" + project.repoFullName;
     } else if (project.provider == 'gitlab') {
-        href="/project/gitlab/" + project.repoFullName;
+        href="/gitlab/" + project.repoFullName;
     } else {
         href="#";
     }
