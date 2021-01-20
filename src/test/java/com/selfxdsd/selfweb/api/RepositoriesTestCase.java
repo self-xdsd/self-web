@@ -74,9 +74,8 @@ public final class RepositoriesTestCase {
     @Test
     public void returnsOrgReposArray() {
         final Repo repo = Mockito.mock(Repo.class);
-        Mockito.when(repo.json()).thenReturn(
-            Json.createObjectBuilder().build()
-        );
+        Mockito.when(repo.provider()).thenReturn("github");
+        Mockito.when(repo.fullName()).thenReturn("john/test");
         final Repos repos = Mockito.mock(Repos.class);
         Mockito.when(repos.iterator()).thenReturn(List.of(repo).iterator());
         final Organization org = Mockito.mock(Organization.class);
@@ -97,9 +96,19 @@ public final class RepositoriesTestCase {
             resp.getStatusCode(),
             Matchers.equalTo(HttpStatus.OK)
         );
-        MatcherAssert.assertThat(
-            Json.createReader(new StringReader(resp.getBody())).readArray(),
-            Matchers.iterableWithSize(1)
+        final JsonArray array = Json
+            .createReader(new StringReader(resp.getBody()))
+            .readArray();
+        MatcherAssert.assertThat(array, Matchers.iterableWithSize(1));
+        MatcherAssert.assertThat(array.get(0)
+            .asJsonObject()
+            .getString("repoFullName"),
+            Matchers.equalTo("john/test")
+        );
+        MatcherAssert.assertThat(array.get(0)
+                .asJsonObject()
+                .getString("provider"),
+            Matchers.equalTo("github")
         );
     }
 

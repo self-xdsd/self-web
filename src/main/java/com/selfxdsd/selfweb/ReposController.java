@@ -22,7 +22,10 @@
  */
 package com.selfxdsd.selfweb;
 
+import com.selfxdsd.api.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
@@ -35,11 +38,27 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ReposController {
 
     /**
+     * Logged user.
+     */
+    private final User user;
+
+    /**
+     * Ctor.
+     * @param user Logged user.
+     */
+    @Autowired
+    public ReposController(final User user) {
+        this.user = user;
+    }
+
+    /**
      * Serve the Repos page of Self.
+     * @param model Model.
      * @return Repos page.
      */
     @GetMapping("/repositories")
-    public String index() {
+    public String index(final Model model) {
+        model.addAttribute("provider", user.provider().name());
         return "repositories.html";
     }
 

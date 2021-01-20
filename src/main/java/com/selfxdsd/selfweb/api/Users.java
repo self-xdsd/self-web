@@ -67,10 +67,14 @@ public class Users extends BaseApiController {
         @AuthenticationPrincipal
         final OAuth2User principal
     ) {
+        final String providerName = this.user.provider().name();
         final Map<String, Object> attributes = new HashMap<>();
         attributes.putAll(principal.getAttributes());
-        attributes.put("provider", this.user.provider().name());
+        attributes.put("provider", providerName);
+        attributes.put("provider_icon", "/images/" + providerName.toLowerCase()
+            + "-small.svg");
         attributes.put("role", this.user.role());
+        attributes.putIfAbsent("login", this.user.username());
         return attributes;
     }
 

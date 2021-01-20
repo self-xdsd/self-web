@@ -85,9 +85,10 @@
                         <div id="github-org-info" class="mb-4" style="display: none;">
                             You should see here all the repos from Organizations where you have admin rights, including private repos.<br>
                             Missing some of them? Make sure you
-                            <a th:if="${testEnvironment}" href="https://github.com/settings/connections/applications/a55dd23908b4dffe8df6" target="_blank">grant</a>
+                            <a th:if="${testEnvironment} and ${provider} == 'github'" href="https://github.com/settings/connections/applications/a55dd23908b4dffe8df6" target="_blank">grant</a>
+                            <a th:if="${testEnvironment} and ${provider} == 'gitlab'" href="https://gitlab.com/-/profile/applications" target="_blank">grant</a>
                             <a th:unless="${testEnvironment}" href="#" target="_blank">grant</a>
-                            Self XDSD access in Github.
+                            Self XDSD access in <span th:text="${#strings.capitalize(provider)}">Provider</span>.
                         </div>
                         <table id="orgReposTable" class="display">
                             <thead>

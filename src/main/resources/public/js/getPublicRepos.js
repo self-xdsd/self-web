@@ -21,7 +21,7 @@ function getPublicRepos() {
                         repos.forEach(
                             function (repo) {
                                 $("#repos").find("tbody").append(
-                                    "<tr><td><a href='/github/" + repo.full_name + "'>" +
+                                    "<tr><td><a href='/project/github/" + repo.full_name + "'>" +
                                         repo.full_name +
                                     "</a></td></tr>"
                                 );
@@ -42,7 +42,9 @@ function getPublicRepos() {
                                 console.log(repo);
                                 console.log(repo.path_with_namespace);
                                 $("#repos").find("tbody").append(
-                                    "<tr><td>" + repo.path_with_namespace + "</td></tr>"
+                                    "<tr><td><a href='/project/gitlab/" + repo.path_with_namespace + "'>" +
+                                    repo.path_with_namespace+
+                                    "</a></td></tr>"
                                 );
                             }
                         )

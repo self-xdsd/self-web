@@ -47,7 +47,7 @@ public final class ProjectsControllerTestCase {
     public void returnsProjectPage() {
         MatcherAssert.assertThat(
             new ProjectsController(Mockito.mock(Self.class))
-                .project("mihai", "test"),
+                .project("github", "mihai", "test"),
             Matchers.equalTo("project.html")
         );
     }

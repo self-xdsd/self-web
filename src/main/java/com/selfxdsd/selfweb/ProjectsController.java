@@ -56,12 +56,14 @@ public class ProjectsController {
 
     /**
      * Serve a Project's page.
+     * @param provider Current Provider (Github, Gitlab etc...).
      * @param owner The owner's Username.
      * @param name The repo's name.
      * @return Project page.
      */
-    @GetMapping("/github/{owner}/{name}")
+    @GetMapping("/project/{provider}/{owner}/{name}")
     public String project(
+        @PathVariable("provider") final String provider,
         @PathVariable("owner") final String owner,
         @PathVariable("name") final String name
     ) {

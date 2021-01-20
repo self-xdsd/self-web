@@ -76,7 +76,10 @@ public class Repositories extends BaseApiController {
             .organizations();
         for(final Organization org : orgs) {
             for(final Repo repo : org.repos()) {
-                reposBuilder = reposBuilder.add(repo.json());
+                reposBuilder = reposBuilder.add(Json.createObjectBuilder()
+                    .add("repoFullName", repo.fullName())
+                    .add("provider", repo.provider())
+                    .build());
             }
         }
         final JsonArray repos = reposBuilder.build();

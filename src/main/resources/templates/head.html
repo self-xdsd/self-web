@@ -37,6 +37,7 @@
                             case 200:
                                 var data = response.responseJSON;
                                 $(".user_login").html('@' + data.login);
+                                $(".provider_icon").load(data.provider_icon);
                                 $(".user_name").html(data.name);
                                 $(".user_avatar").attr("src", data.avatar_url);
                                 $(".unauthenticated").hide()

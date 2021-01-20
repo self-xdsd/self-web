@@ -22,9 +22,13 @@
  */
 package com.selfxdsd.selfweb;
 
+import com.selfxdsd.api.Provider;
+import com.selfxdsd.api.User;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.ui.Model;
 
 /**
  * Unit tests for {@link ReposController}.
@@ -39,10 +43,19 @@ public final class ReposControllerTestCase {
      */
     @Test
     public void returnsReposPage() {
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        final Model model = Mockito.mock(Model.class);
+
+        Mockito.when(provider.name()).thenReturn("github");
+        Mockito.when(user.provider()).thenReturn(provider);
+
         MatcherAssert.assertThat(
-            new ReposController().index(),
+            new ReposController(user).index(model),
             Matchers.equalTo("repositories.html")
         );
+
+        Mockito.verify(model).addAttribute("provider", "github");
     }
 
 }
