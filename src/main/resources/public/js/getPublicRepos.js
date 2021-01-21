@@ -42,7 +42,9 @@ function getPublicRepos() {
                                 console.log(repo);
                                 console.log(repo.path_with_namespace);
                                 $("#repos").find("tbody").append(
-                                    "<tr><td>" + repo.path_with_namespace + "</td></tr>"
+                                    "<tr><td><a href='/gitlab/" + repo.path_with_namespace + "'>" +
+                                    repo.path_with_namespace+
+                                    "</a></td></tr>"
                                 );
                             }
                         )

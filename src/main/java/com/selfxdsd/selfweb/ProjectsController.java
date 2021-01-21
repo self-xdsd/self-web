@@ -55,18 +55,39 @@ public class ProjectsController {
     }
 
     /**
-     * Serve a Project's page.
+     * Serve a Github Project page.
      * @param owner The owner's Username.
      * @param name The repo's name.
+     * @param model Model.
      * @return Project page.
      */
     @GetMapping("/github/{owner}/{name}")
-    public String project(
+    public String githubProject(
         @PathVariable("owner") final String owner,
-        @PathVariable("name") final String name
+        @PathVariable("name") final String name,
+        final Model model
     ) {
+        model.addAttribute("provider", "github");
         return "project.html";
     }
+
+    /**
+     * Serve a Gitlab Project page.
+     * @param owner The owner's Username.
+     * @param name The repo's name.
+     * @param model Model.
+     * @return Project page.
+     */
+    @GetMapping("/gitlab/{owner}/{name}")
+    public String gitlabProject(
+        @PathVariable("owner") final String owner,
+        @PathVariable("name") final String name,
+        final Model model
+    ) {
+        model.addAttribute("provider", "gitlab");
+        return "project.html";
+    }
+
 
     /**
      * Page served when someone clicks on a project badge.

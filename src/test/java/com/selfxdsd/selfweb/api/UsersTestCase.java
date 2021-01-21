@@ -47,6 +47,7 @@ public final class UsersTestCase {
     @Test
     public void returnsSelfMap() {
         final User self = Mockito.mock(User.class);
+        Mockito.when(self.username()).thenReturn("john");
         Mockito.when(self.role()).thenReturn("user");
         final Provider provider = Mockito.mock(Provider.class);
         Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
@@ -60,11 +61,15 @@ public final class UsersTestCase {
         final Map<String, Object> attributes = users.user(principal);
         MatcherAssert.assertThat(
             attributes.entrySet(),
-            Matchers.iterableWithSize(3)
+            Matchers.iterableWithSize(5)
         );
         MatcherAssert.assertThat(
             attributes.get("provider"),
             Matchers.equalTo(Provider.Names.GITHUB)
+        );
+        MatcherAssert.assertThat(
+            attributes.get("provider_icon"),
+            Matchers.equalTo("/images/github-small.svg")
         );
         MatcherAssert.assertThat(
             attributes.get("role"),
@@ -73,6 +78,10 @@ public final class UsersTestCase {
         MatcherAssert.assertThat(
             attributes.get("principal"),
             Matchers.equalTo("from_spring")
+        );
+        MatcherAssert.assertThat(
+            attributes.get("login"),
+            Matchers.equalTo("john")
         );
     }
 
