@@ -1,5 +1,18 @@
 $(document).ready(
     function () {
+        window.globalProvider.onChange(function(value){
+            var grantLink;
+            if(value === "github"){
+                grantLink = "https://github.com/settings/connections/applications/a55dd23908b4dffe8df6";
+            }else if(value === "gitlab"){
+                grantLink = "https://gitlab.com/-/profile/applications";
+            }else{
+                grantLink = "#";
+            }
+            $('.provider-grant').attr('href', grantLink);
+            var capitalized = value.charAt(0).toUpperCase() + value.slice(1);
+            $('.provider').text(capitalized);
+        });
         getOrgRepos();
     }
 );
