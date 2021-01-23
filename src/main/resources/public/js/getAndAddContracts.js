@@ -220,8 +220,14 @@ var projectContractsCount = -1;
         var project = {
             owner: $("#owner").text(),
             name: $("#name").text(),
-            provider: $("#provider").text()
-        }
+            provider: window.globalProvider.value,
+        };
+
+        window.globalProvider.onChange(function(value){
+            project.provider = value;
+            var capitalized = value.charAt(0).toUpperCase() + value.slice(1);
+            $('.provider').text(capitalized);
+        });
 
         function loadContracts() {
             $("#contracts").dataTable().fnDestroy();

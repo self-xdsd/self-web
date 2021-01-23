@@ -26,14 +26,23 @@
         var stripePublicKey="pk_live_51HFJACFQ8qkNTW7CVnBPpRWR6mOTsYoK8lkRFu5JgDSPW2Nnw2lMS2tVJqG9YC15KPBNnUinPQfnP4zoOkuCiNZ0009LomQ8SX"
     </script>
     <script type="text/javascript">
-        /*
-           @todo #335:60min. We should have a global js variable `provider` that will be initialized when
-            `/api/users/self` call in `head.html` is successful (`provider = data.provider`).
-            This variable should replace thymeleaf directives that uses `${provider}` passed as model attribute.
-            Since this operation is async, we should somehow observe changes applied to this variable.
-            Basically when `provider` variable is changed, use jQuery to update dom elements where thymeleaf ${provider} is used.
-            A good starting point to achieve this, would be using proxies: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy#manipulating_dom_nodes
-        */
+        window.globalProvider = (function () {
+                var listeners = [];
+                var value = "No-Provider";
+                return {
+                    change: function (newValue) {
+                        value = newValue;
+                        listeners.forEach(function (listener) {
+                            listener(value);
+                        });
+                    },
+                    onChange: function (listener) {
+                        listener(value);
+                        listeners.push(listener);
+                    },
+                    value: value
+                };
+            })();
         $(document).ready(
             function () {
                 $("#loginLoading").show();
@@ -54,6 +63,7 @@
                                     $(".admin-only").show()
                                 }
                                 $("#loginLoading").hide();
+                                globalProvider.change(data.provider);
                                 break;
                             default:
                                 $("#loginLoading").hide();
