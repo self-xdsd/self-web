@@ -8,38 +8,37 @@ function getProject() {
     var owner =$("#owner").text();
     var name =$("#name").text();
     $("#loadingProject").show();
-    $.get(
-        "/api/users/self",
-        function(user) {
-            console.log(user);
-            $.get(
-                "/api/projects/"+owner+"/"+name,
-                function(project) {
-                    $("#loadingProject").hide();
-                    if(project === undefined) {
-                        $(".project-not-registered").show();
-                    } else {
-                        displayProject(user.login, project);
-                        $(".badge-project-url").text(
-                            "https://self-xdsd.com/p/" + owner + "/" + name
-                            + "?provider=" + project.provider
-                        )
-                        var inviteLink = "#";
-                        if(project.provider === 'github') {
-                            inviteLink = 'https://github.com/' + owner + "/" + name + "/settings/access";
-                        }else if(project.provider === 'gitlab') {
-                            inviteLink = "https://gitlab.com/" + owner + "/" + name + "/-/project_members";
-                        }
-                        $("#addNewContractInfo").html(
-                            "Don't forget to also "
-                            + "<a href='"+ inviteLink + "' target='_blank'>invite</a>"
-                            + " the contributor to the repository."
-                        )
-                    }
-                }
-            );
+    window.globalProfile.onChange(function (profile) {
+        if(profile.login === null){
+            return;
         }
-    );
+        $.get(
+            "/api/projects/" + owner + "/" + name,
+            function (project) {
+                $("#loadingProject").hide();
+                if (project === undefined) {
+                    $(".project-not-registered").show();
+                } else {
+                    displayProject(profile.login, project);
+                    $(".badge-project-url").text(
+                        "https://self-xdsd.com/p/" + owner + "/" + name
+                        + "?provider=" + project.provider
+                    )
+                    var inviteLink = "#";
+                    if (profile.provider === 'github') {
+                        inviteLink = 'https://github.com/' + owner + "/" + name + "/settings/access";
+                    } else if (profile.provider === 'gitlab') {
+                        inviteLink = "https://gitlab.com/" + owner + "/" + name + "/-/project_members";
+                    }
+                    $("#addNewContractInfo").html(
+                        "Don't forget to also "
+                        + "<a href='" + inviteLink + "' target='_blank'>invite</a>"
+                        + " the contributor to the repository."
+                    )
+                }
+            }
+        );
+    });
 }
 
 function displayProject(userLogin, project) {

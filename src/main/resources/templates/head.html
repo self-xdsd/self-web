@@ -43,6 +43,32 @@
                     value: value
                 };
             })();
+        window.globalProfile = (function($){
+            var listeners = [];
+            var value = {
+                login: null,
+                user_name: "-",
+                email: "-",
+                role: "#",
+                provider: "No-Provider",
+                provider_icon: "#",
+                provider_link: "#",
+                avatar_url: "/images/user_avatar.jpg",
+            };
+            return {
+                change: function (newValue) {
+                    value = newValue;
+                    listeners.forEach(function (listener) {
+                        listener(value);
+                    });
+                },
+                onChange: function (listener) {
+                    listener(value);
+                    listeners.push(listener);
+                },
+                value: value
+            };
+        })(jQuery);
         $(document).ready(
             function () {
                 $("#loginLoading").show();
@@ -64,6 +90,7 @@
                                 }
                                 $("#loginLoading").hide();
                                 globalProvider.change(data.provider);
+                                globalProfile.change(data);
                                 break;
                             default:
                                 $("#loginLoading").hide();
@@ -119,6 +146,9 @@
             }
             return false;
         }
+        String.prototype.capitalize = function () {
+                return this.charAt(0).toUpperCase() + this.slice(1);
+            }
     </script>
     <script th:unless="${testEnvironment}" async src="https://www.googletagmanager.com/gtag/js?id=G-5F9Q5Y4G8P"></script>
     <script th:unless="${testEnvironment}">

@@ -225,8 +225,7 @@ var projectContractsCount = -1;
 
         window.globalProvider.onChange(function(value){
             project.provider = value;
-            var capitalized = value.charAt(0).toUpperCase() + value.slice(1);
-            $('.provider').text(capitalized);
+            $('.provider').text(value.capitalized());
         });
 
         function loadContracts() {
