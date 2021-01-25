@@ -43,12 +43,14 @@ public final class UsersTestCase {
 
     /**
      * Users.user(...) returns the user's attributes.
+     * @checkstyle ExecutableStatementCount (50 lines)
      */
     @Test
     public void returnsSelfMap() {
         final User self = Mockito.mock(User.class);
         Mockito.when(self.username()).thenReturn("john");
         Mockito.when(self.role()).thenReturn("user");
+        Mockito.when(self.email()).thenReturn("john@example.com");
         final Provider provider = Mockito.mock(Provider.class);
         Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
         Mockito.when(self.provider()).thenReturn(provider);
@@ -61,7 +63,7 @@ public final class UsersTestCase {
         final Map<String, Object> attributes = users.user(principal);
         MatcherAssert.assertThat(
             attributes.entrySet(),
-            Matchers.iterableWithSize(5)
+            Matchers.iterableWithSize(8)
         );
         MatcherAssert.assertThat(
             attributes.get("provider"),
@@ -82,6 +84,14 @@ public final class UsersTestCase {
         MatcherAssert.assertThat(
             attributes.get("login"),
             Matchers.equalTo("john")
+        );
+        MatcherAssert.assertThat(
+            attributes.get("email"),
+            Matchers.equalTo("john@example.com")
+        );
+        MatcherAssert.assertThat(
+            attributes.get("provider_link"),
+            Matchers.equalTo("https://github.com/john")
         );
     }
 

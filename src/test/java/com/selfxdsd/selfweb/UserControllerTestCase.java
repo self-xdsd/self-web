@@ -22,13 +22,9 @@
  */
 package com.selfxdsd.selfweb;
 
-import com.selfxdsd.api.Provider;
-import com.selfxdsd.api.User;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.ui.Model;
 
 /**
  * Unit tests for {@link UserController}.
@@ -39,119 +35,13 @@ import org.springframework.ui.Model;
 public final class UserControllerTestCase {
 
     /**
-     * UserController models a Github user.
+     * UserController returns user page.
      */
     @Test
-    public void modelsGithubUser() {
-        final User user = Mockito.mock(User.class);
-        Mockito.when(user.username()).thenReturn("mihai");
-        Mockito.when(user.email()).thenReturn("test@gmail.com");
-        final Provider provider = Mockito.mock(Provider.class);
-        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
-        Mockito.when(user.provider()).thenReturn(provider);
-
-        final Model model = Mockito.mock(Model.class);
-        Mockito.when(
-            model.addAttribute(
-                Mockito.anyString(),
-                Mockito.anyString()
-            )
-        ).thenReturn(model);
-
-        final UserController controller = new UserController(user);
+    public void returnsUserPage() {
         MatcherAssert.assertThat(
-            controller.index(model),
+            new UserController().index(),
             Matchers.equalTo("user.html")
-        );
-        Mockito.verify(model, Mockito.times(1)).addAttribute(
-            "username", "@mihai"
-        );
-        Mockito.verify(model, Mockito.times(1)).addAttribute(
-            "email", "test@gmail.com"
-        );
-        Mockito.verify(model, Mockito.times(1)).addAttribute(
-            "provider", "Github"
-        );
-        Mockito.verify(model, Mockito.times(1)).addAttribute(
-            "providerProfile", "https://github.com/mihai"
-        );
-    }
-
-    /**
-     * UserController models a GitLab user.
-     */
-    @Test
-    public void modelsGitlabUser() {
-        final User user = Mockito.mock(User.class);
-        Mockito.when(user.username()).thenReturn("mihai");
-        Mockito.when(user.email()).thenReturn("");
-        final Provider provider = Mockito.mock(Provider.class);
-        Mockito.when(provider.name()).thenReturn(Provider.Names.GITLAB);
-        Mockito.when(user.provider()).thenReturn(provider);
-
-        final Model model = Mockito.mock(Model.class);
-        Mockito.when(
-            model.addAttribute(
-                Mockito.anyString(),
-                Mockito.anyString()
-            )
-        ).thenReturn(model);
-
-        final UserController controller = new UserController(user);
-        MatcherAssert.assertThat(
-            controller.index(model),
-            Matchers.equalTo("user.html")
-        );
-        Mockito.verify(model, Mockito.times(1)).addAttribute(
-            "username", "@mihai"
-        );
-        Mockito.verify(model, Mockito.times(1)).addAttribute(
-            "email", "-"
-        );
-        Mockito.verify(model, Mockito.times(1)).addAttribute(
-            "provider", "Gitlab"
-        );
-        Mockito.verify(model, Mockito.times(1)).addAttribute(
-            "providerProfile", "https://gitlab.com/mihai"
-        );
-    }
-
-    /**
-     * UserController models a user from an unknown provider.
-     */
-    @Test
-    public void modelsOtherUser() {
-        final User user = Mockito.mock(User.class);
-        Mockito.when(user.username()).thenReturn("mihai");
-        Mockito.when(user.email()).thenReturn("");
-        final Provider provider = Mockito.mock(Provider.class);
-        Mockito.when(provider.name()).thenReturn("Unknown");
-        Mockito.when(user.provider()).thenReturn(provider);
-
-        final Model model = Mockito.mock(Model.class);
-        Mockito.when(
-            model.addAttribute(
-                Mockito.anyString(),
-                Mockito.anyString()
-            )
-        ).thenReturn(model);
-
-        final UserController controller = new UserController(user);
-        MatcherAssert.assertThat(
-            controller.index(model),
-            Matchers.equalTo("user.html")
-        );
-        Mockito.verify(model, Mockito.times(1)).addAttribute(
-            "username", "@mihai"
-        );
-        Mockito.verify(model, Mockito.times(1)).addAttribute(
-            "email", "-"
-        );
-        Mockito.verify(model, Mockito.times(1)).addAttribute(
-            "provider", "Unknown"
-        );
-        Mockito.verify(model, Mockito.times(1)).addAttribute(
-            "providerProfile", "#"
         );
     }
 
