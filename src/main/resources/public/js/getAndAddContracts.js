@@ -225,7 +225,7 @@ var projectContractsCount = -1;
 
         window.globalProvider.onChange(function(value){
             project.provider = value;
-            $('.provider').text(value.capitalized());
+            $('.provider').text(value.capitalize());
         });
 
         function loadContracts() {
