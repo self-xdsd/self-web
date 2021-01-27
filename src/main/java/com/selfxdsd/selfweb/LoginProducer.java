@@ -40,8 +40,6 @@ import org.springframework.web.context.annotation.SessionScope;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #40:30min Write unit tests for LoginProducer covering login cases for
- *  Github and Gitlab providers.
  * @todo #45:60min At the moment only the "amihaiemil" user has the admin role.
  *  Everyone who is an admin in the Github or GitLab self-xdsd Organization,
  *  should have the admin role.
