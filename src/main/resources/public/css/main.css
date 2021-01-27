@@ -175,3 +175,20 @@ body {
 #tasks,#contractsDivTable{
     margin-bottom: 15px;
 }
+
+@media (max-width:474px){
+    nav{
+        flex-direction:column;
+    }
+}
+@media (max-width:320px){
+    #logins{
+        text-align: center;
+    }
+    .unauthenticated a:nth-child(1){
+        margin-bottom:5px;
+    }
+    .unauthenticated a:nth-child(2){
+        width:52%;
+    }
+}
