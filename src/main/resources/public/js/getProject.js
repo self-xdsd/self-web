@@ -45,7 +45,7 @@ function displayProject(userLogin, project) {
     console.log(project);
     $(".managedByLink").html(
         $('<a></a>')
-            .attr("href","https://github.com/" + project.manager.username)
+            .attr("href","https://" + project.provider + ".com/" + project.manager.username)
             .attr("target", "_blank")
             .html("@" + project.manager.username)
     );
