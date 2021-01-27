@@ -3,6 +3,8 @@ package com.selfxdsd.selfweb;
 import com.selfxdsd.api.Login;
 import com.selfxdsd.api.Self;
 import com.selfxdsd.api.User;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -44,7 +46,11 @@ public final class LoginProducerTestCase {
         LoginProducer producer = new LoginProducer(core);
         producer.login(clientService);
 
-        Mockito.verify(core, Mockito.only()).login(
+        MatcherAssert.assertThat(
+                producer.login(clientService),
+                Matchers.is(authenticated)
+        );
+        Mockito.verify(core, Mockito.times(2)).login(
                 Mockito.any(Login.class)
         );
     }
@@ -74,7 +80,11 @@ public final class LoginProducerTestCase {
         LoginProducer producer = new LoginProducer(core);
         producer.login(clientService);
 
-        Mockito.verify(core, Mockito.only()).login(
+        MatcherAssert.assertThat(
+                producer.login(clientService),
+                Matchers.is(authenticated)
+        );
+        Mockito.verify(core, Mockito.times(2)).login(
                 Mockito.any(Login.class)
         );
     }
