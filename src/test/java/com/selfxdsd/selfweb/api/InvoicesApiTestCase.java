@@ -54,12 +54,11 @@ public final class InvoicesApiTestCase {
     public void getInvoicesForbiddenToNonAdmin() {
         final User user = Mockito.mock(User.class);
         Mockito.when(user.role()).thenReturn("user");
-        final Self core = Mockito.mock(Self.class);
-        Mockito.when(core.platformInvoices()).thenThrow(
+        Mockito.when(user.asAdmin()).thenThrow(
             new IllegalStateException("Should not be called.")
         );
         MatcherAssert.assertThat(
-            new InvoicesApi(user, core).invoices().getStatusCode(),
+            new InvoicesApi(user).invoices().getStatusCode(),
             Matchers.equalTo(HttpStatus.FORBIDDEN)
         );
     }
@@ -71,12 +70,11 @@ public final class InvoicesApiTestCase {
     public void getPlatformInvoiceForbiddenToNonAdmin() {
         final User user = Mockito.mock(User.class);
         Mockito.when(user.role()).thenReturn("user");
-        final Self core = Mockito.mock(Self.class);
-        Mockito.when(core.platformInvoices()).thenThrow(
+        Mockito.when(user.asAdmin()).thenThrow(
             new IllegalStateException("Should not be called.")
         );
         MatcherAssert.assertThat(
-            new InvoicesApi(user, core).platformInvoicePdf(1).getStatusCode(),
+            new InvoicesApi(user).platformInvoicePdf(1).getStatusCode(),
             Matchers.equalTo(HttpStatus.FORBIDDEN)
         );
     }
@@ -88,12 +86,11 @@ public final class InvoicesApiTestCase {
     public void getInvoiceForbiddenToNonAdmin() {
         final User user = Mockito.mock(User.class);
         Mockito.when(user.role()).thenReturn("user");
-        final Self core = Mockito.mock(Self.class);
-        Mockito.when(core.platformInvoices()).thenThrow(
+        Mockito.when(user.asAdmin()).thenThrow(
             new IllegalStateException("Should not be called.")
         );
         MatcherAssert.assertThat(
-            new InvoicesApi(user, core).invoicePdf(1).getStatusCode(),
+            new InvoicesApi(user).invoicePdf(1).getStatusCode(),
             Matchers.equalTo(HttpStatus.FORBIDDEN)
         );
     }
@@ -113,12 +110,13 @@ public final class InvoicesApiTestCase {
             this.mockPlatformInvoice(3)
         ).iterator();
         Mockito.when(all.iterator()).thenReturn(iterator);
-        final Self core = Mockito.mock(Self.class);
-        Mockito.when(core.platformInvoices()).thenReturn(all);
+        final Admin admin = Mockito.mock(Admin.class);
+        Mockito.when(admin.platformInvoices()).thenReturn(all);
+        Mockito.when(user.asAdmin()).thenReturn(admin);
 
         final JsonArray array = Json.createReader(
             new StringReader(
-                new InvoicesApi(user, core).invoices().getBody()
+                new InvoicesApi(user).invoices().getBody()
             )
         ).readArray();
 
@@ -136,11 +134,12 @@ public final class InvoicesApiTestCase {
         final PlatformInvoices all = Mockito.mock(PlatformInvoices.class);
         Mockito.when(all.getById(1)).thenReturn(null);
 
-        final Self core = Mockito.mock(Self.class);
-        Mockito.when(core.platformInvoices()).thenReturn(all);
+        final Admin admin = Mockito.mock(Admin.class);
+        Mockito.when(admin.platformInvoices()).thenReturn(all);
+        Mockito.when(user.asAdmin()).thenReturn(admin);
 
         MatcherAssert.assertThat(
-            new InvoicesApi(user, core).platformInvoicePdf(1).getStatusCode(),
+            new InvoicesApi(user).platformInvoicePdf(1).getStatusCode(),
             Matchers.equalTo(HttpStatus.NO_CONTENT)
         );
     }
@@ -157,11 +156,12 @@ public final class InvoicesApiTestCase {
         final PlatformInvoice found = this.mockPlatformInvoice(1);
         Mockito.when(all.getById(1)).thenReturn(found);
 
-        final Self core = Mockito.mock(Self.class);
-        Mockito.when(core.platformInvoices()).thenReturn(all);
+        final Admin admin = Mockito.mock(Admin.class);
+        Mockito.when(admin.platformInvoices()).thenReturn(all);
+        Mockito.when(user.asAdmin()).thenReturn(admin);
 
         final ResponseEntity<StreamingResponseBody> resp = new InvoicesApi(
-            user, core
+            user
         ).platformInvoicePdf(1);
         MatcherAssert.assertThat(
             resp.getStatusCode(),
@@ -181,11 +181,12 @@ public final class InvoicesApiTestCase {
         final PlatformInvoices all = Mockito.mock(PlatformInvoices.class);
         Mockito.when(all.getById(1)).thenReturn(null);
 
-        final Self core = Mockito.mock(Self.class);
-        Mockito.when(core.platformInvoices()).thenReturn(all);
+        final Admin admin = Mockito.mock(Admin.class);
+        Mockito.when(admin.platformInvoices()).thenReturn(all);
+        Mockito.when(user.asAdmin()).thenReturn(admin);
 
         MatcherAssert.assertThat(
-            new InvoicesApi(user, core).invoicePdf(1).getStatusCode(),
+            new InvoicesApi(user).invoicePdf(1).getStatusCode(),
             Matchers.equalTo(HttpStatus.NO_CONTENT)
         );
     }
@@ -204,11 +205,12 @@ public final class InvoicesApiTestCase {
         Mockito.when(platformInvoice.invoice()).thenReturn(null);
         Mockito.when(all.getById(1)).thenReturn(platformInvoice);
 
-        final Self core = Mockito.mock(Self.class);
-        Mockito.when(core.platformInvoices()).thenReturn(all);
+        final Admin admin = Mockito.mock(Admin.class);
+        Mockito.when(admin.platformInvoices()).thenReturn(all);
+        Mockito.when(user.asAdmin()).thenReturn(admin);
 
         MatcherAssert.assertThat(
-            new InvoicesApi(user, core).invoicePdf(1).getStatusCode(),
+            new InvoicesApi(user).invoicePdf(1).getStatusCode(),
             Matchers.equalTo(HttpStatus.NO_CONTENT)
         );
     }
@@ -227,11 +229,12 @@ public final class InvoicesApiTestCase {
         Mockito.when(platformInvoice.invoice()).thenReturn(found);
         Mockito.when(all.getById(1)).thenReturn(platformInvoice);
 
-        final Self core = Mockito.mock(Self.class);
-        Mockito.when(core.platformInvoices()).thenReturn(all);
+        final Admin admin = Mockito.mock(Admin.class);
+        Mockito.when(admin.platformInvoices()).thenReturn(all);
+        Mockito.when(user.asAdmin()).thenReturn(admin);
 
         final ResponseEntity<StreamingResponseBody> resp = new InvoicesApi(
-            user, core
+            user
         ).invoicePdf(1);
         MatcherAssert.assertThat(
             resp.getStatusCode(),

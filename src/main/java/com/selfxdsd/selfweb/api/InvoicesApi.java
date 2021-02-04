@@ -52,22 +52,12 @@ public class InvoicesApi extends BaseApiController {
     private final User user;
 
     /**
-     * Self's core.
-     */
-    private final Self core;
-
-    /**
      * Ctor.
      * @param user Authenticated user.
-     * @param core Self's core.
      */
     @Autowired
-    public InvoicesApi(
-        final User user,
-        final Self core
-    ) {
+    public InvoicesApi(final User user) {
         this.user = user;
-        this.core = core;
     }
 
     /**
@@ -84,7 +74,8 @@ public class InvoicesApi extends BaseApiController {
             response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } else {
             final JsonArrayBuilder builder = Json.createArrayBuilder();
-            final PlatformInvoices invoices = this.core.platformInvoices();
+            final PlatformInvoices invoices = this.user.asAdmin()
+                .platformInvoices();
             for(final PlatformInvoice invoice : invoices) {
                 builder.add(new JsonPlatformInvoice(invoice));
             }
@@ -109,7 +100,8 @@ public class InvoicesApi extends BaseApiController {
         if(!"admin".equals(this.user.role())) {
             response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } else {
-            final PlatformInvoice invoice = this.core.platformInvoices()
+            final PlatformInvoice invoice = this.user.asAdmin()
+                .platformInvoices()
                 .getById(platformInvoiceId);
             if(invoice == null) {
                 response = ResponseEntity.noContent().build();
@@ -146,7 +138,8 @@ public class InvoicesApi extends BaseApiController {
         if(!"admin".equals(this.user.role())) {
             response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } else {
-            final PlatformInvoice platform = this.core.platformInvoices()
+            final PlatformInvoice platform = this.user.asAdmin()
+                .platformInvoices()
                 .getById(platformInvoiceId);
             if(platform == null) {
                 response = ResponseEntity.noContent().build();

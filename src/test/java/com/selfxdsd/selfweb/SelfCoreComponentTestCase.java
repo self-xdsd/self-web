@@ -112,21 +112,21 @@ public final class SelfCoreComponentTestCase {
     }
 
     /**
-     * It delegates the platformInvoices to the encapsulated core.
+     * It delegates the token authentication to the encapsulated core.
      */
     @Test
-    public void delegatesPlatformInvoices() {
-        final PlatformInvoices invoices = Mockito.mock(PlatformInvoices.class);
+    public void delegatesAuthenticate() {
+        final User user = Mockito.mock(User.class);
         final Self core = Mockito.mock(Self.class);
-        Mockito.when(core.platformInvoices()).thenReturn(invoices);
+        Mockito.when(core.authenticate("token")).thenReturn(user);
 
         final SelfCoreComponent component = new SelfCoreComponent(core);
 
         MatcherAssert.assertThat(
-            component.platformInvoices(),
-            Matchers.is(invoices)
+            component.authenticate("token"),
+            Matchers.is(user)
         );
-        Mockito.verify(core, Mockito.times(1)).platformInvoices();
+        Mockito.verify(core, Mockito.times(1)).authenticate("token");
     }
 
     /**
