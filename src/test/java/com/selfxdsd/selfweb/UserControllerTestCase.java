@@ -22,24 +22,27 @@
  */
 package com.selfxdsd.selfweb;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Test;
 
 /**
- * Controller for the logged user page.
- * @author criske
+ * Unit tests for {@link UserController}.
+ * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-@Controller
-public class UserController {
+public final class UserControllerTestCase {
 
     /**
-     * Serve the User page of Self.
-     * @return User page.
+     * UserController returns user page.
      */
-    @GetMapping("/user")
-    public String index() {
-        return "user.html";
+    @Test
+    public void returnsUserPage() {
+        MatcherAssert.assertThat(
+            new UserController().index(),
+            Matchers.equalTo("user.html")
+        );
     }
+
 }

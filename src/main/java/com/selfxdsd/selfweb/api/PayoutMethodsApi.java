@@ -112,15 +112,24 @@ public final class PayoutMethodsApi extends BaseApiController {
     public ResponseEntity<String> createStripeConnectAccount(
         @Valid final BillingInfoInput billingInfo
     ) {
+        LOG.debug(
+            "Creating Stripe Connect Account for User "
+            + this.user.username() + "... "
+        );
         ResponseEntity<String> resp;
         final Contributor contributor = this.user.asContributor();
         if(contributor == null) {
+            LOG.error(
+                "User " + this.user.username() + " is not a Contributor! "
+                + "Bad Request."
+            );
             resp = ResponseEntity.badRequest().build();
         } else {
             try {
                 final PayoutMethod created = contributor.createStripeAccount(
                     new StripeBillingInfo(billingInfo)
                 );
+                LOG.debug("Stripe Connect Account successfully created!");
                 resp = ResponseEntity.ok(
                     Json.createObjectBuilder()
                         .add(
@@ -138,8 +147,8 @@ public final class PayoutMethodsApi extends BaseApiController {
                     "Something went wrong while trying to create "
                     + "a Stripe Connect Account for Contributor "
                     + contributor.username()
-                    + " (" + contributor.provider() + ").",
-                    ex
+                    + " (" + contributor.provider() + "): "
+                    + ex.getMessage()
                 );
                 resp = ResponseEntity.badRequest().build();
             }
@@ -164,9 +173,17 @@ public final class PayoutMethodsApi extends BaseApiController {
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<String> stripeConnectOnboardingLink() {
+        LOG.debug(
+            "Creating the Stripe Onboarding Link for User "
+            + this.user.username() + "... "
+        );
         ResponseEntity<String> resp;
         final Contributor contributor = this.user.asContributor();
         if(contributor == null) {
+            LOG.error(
+                "User " + this.user.username() + " is not a Contributor! "
+                + "Bad Request."
+            );
             resp = ResponseEntity.badRequest().build();
         } else {
             PayoutMethod stripe = null;
@@ -177,6 +194,10 @@ public final class PayoutMethodsApi extends BaseApiController {
                 }
             }
             if(stripe == null) {
+                LOG.error(
+                    "User " + this.user.username() + " does NOT have "
+                    + "a Stripe Connect Account (PayoutMethod)! Bad Request."
+                );
                 resp = ResponseEntity.badRequest().build();
             } else {
                 final JsonObject account = stripe.json();
@@ -189,7 +210,12 @@ public final class PayoutMethodsApi extends BaseApiController {
                                     this.createStripeOnboardingLink(account)
                                 ).build().toString()
                         );
+                    LOG.debug("Onboarding Link successfully created!");
                 } else {
+                    LOG.error(
+                        "All the required details are already submitted to "
+                        + "Stripe (onboarding process finished). Bad Request."
+                    );
                     resp = ResponseEntity.badRequest().build();
                 }
             }
@@ -206,9 +232,17 @@ public final class PayoutMethodsApi extends BaseApiController {
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<String> stripeConnectLoginLink() {
+        LOG.debug(
+            "Creating Stripe Login Link for User "
+            + this.user.username() + "... "
+        );
         ResponseEntity<String> resp;
         final Contributor contributor = this.user.asContributor();
         if(contributor == null) {
+            LOG.error(
+                "User " + this.user.username() + " is not a Contributor! "
+                + "Bad Request."
+            );
             resp = ResponseEntity.badRequest().build();
         } else {
             PayoutMethod stripe = null;
@@ -219,6 +253,10 @@ public final class PayoutMethodsApi extends BaseApiController {
                 }
             }
             if(stripe == null) {
+                LOG.error(
+                    "User " + this.user.username() + " does NOT have "
+                    + "a Stripe Connect Account (PayoutMethod)! Bad Request."
+                );
                 resp = ResponseEntity.badRequest().build();
             } else {
                 final JsonObject account = stripe.json();
@@ -231,7 +269,12 @@ public final class PayoutMethodsApi extends BaseApiController {
                                     this.createStripeLoginLink(account)
                                 ).build().toString()
                         );
+                    LOG.debug("Stripe Login Link successfully created!");
                 } else {
+                    LOG.error(
+                        "Not all details are submitted to Stripe yet! "
+                        + "Onboarding process NOT finished. Bad Request."
+                    );
                     resp = ResponseEntity.badRequest().build();
                 }
             }

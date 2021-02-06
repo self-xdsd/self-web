@@ -23,6 +23,8 @@
 package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.*;
+import com.selfxdsd.api.exceptions.WalletAlreadyExistsException;
+import com.selfxdsd.selfweb.api.input.BillingInfoInput;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -45,6 +47,63 @@ import java.util.List;
  * @since 0.0.1
  */
 public final class WalletsApiTestCase {
+
+    /**
+     * WalletsApi can return the empty wallets array of a project.
+     */
+    @Test
+    public void returnsEmptyWalletsArray() {
+        final Wallets wallets = Mockito.mock(Wallets.class);
+        Mockito.when(wallets.spliterator())
+            .thenReturn(new ArrayList<Wallet>().spliterator());
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.wallets()).thenReturn(wallets);
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(user.provider()).thenReturn(provider);
+
+        final Projects owned = Mockito.mock(Projects.class);
+        Mockito.when(
+            owned.getProjectById("mihai/test", Provider.Names.GITHUB)
+        ).thenReturn(project);
+
+        Mockito.when(user.projects()).thenReturn(owned);
+
+        final WalletsApi api = new WalletsApi(user);
+        MatcherAssert.assertThat(
+            Json.createReader(
+                new StringReader(
+                    api.wallets("mihai", "test").getBody()
+                )
+            ).readArray(),
+            Matchers.emptyIterable()
+        );
+    }
+
+    /**
+     * The /wallets endpoint returns NO CONTENT if Project is not found.
+     */
+    @Test
+    public void walletsReturnsNoContentOnProjectNotFound() {
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(user.provider()).thenReturn(provider);
+
+        final Projects owned = Mockito.mock(Projects.class);
+        Mockito.when(
+            owned.getProjectById("mihai/test", Provider.Names.GITHUB)
+        ).thenReturn(null);
+
+        Mockito.when(user.projects()).thenReturn(owned);
+
+        final WalletsApi api = new WalletsApi(user);
+        MatcherAssert.assertThat(
+            api.wallets("mihai", "test").getStatusCode(),
+            Matchers.equalTo(HttpStatus.NO_CONTENT)
+        );
+    }
 
     /**
      * WalletsApi.updateCash(...) can update the cash limit.
@@ -319,6 +378,114 @@ public final class WalletsApiTestCase {
             .activate("john", "test", Wallet.Type.STRIPE);
         MatcherAssert.assertThat(resp.getStatusCode(),
             Matchers.is(HttpStatus.BAD_REQUEST));
+    }
+
+    /**
+     * WalletsApi.createStripeWallet(...) returns BAD REQUEST on missing
+     * Project.
+     */
+    @Test
+    public void createStripeWalletMissingProject() {
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(user.provider()).thenReturn(provider);
+
+        final Projects owned = Mockito.mock(Projects.class);
+        Mockito.when(
+            owned.getProjectById("mihai/test", Provider.Names.GITHUB)
+        ).thenReturn(null);
+
+        Mockito.when(user.projects()).thenReturn(owned);
+
+        MatcherAssert.assertThat(
+            new WalletsApi(user)
+                .createStripeWallet(
+                    "mihai",
+                    "test",
+                new BillingInfoInput()
+            ).getStatusCode(),
+            Matchers.equalTo(HttpStatus.BAD_REQUEST)
+        );
+    }
+
+    /**
+     * WalletsApi.createStripeWallet(...) returns BAD REQUEST if the
+     * wallet already exists.
+     */
+    @Test
+    public void createStripeWalletAlreadyExists() {
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(
+            project.createStripeWallet(Mockito.any())
+        ).thenThrow(new WalletAlreadyExistsException(project, "STRIPE"));
+
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(user.provider()).thenReturn(provider);
+
+        final Projects owned = Mockito.mock(Projects.class);
+        Mockito.when(
+            owned.getProjectById("mihai/test", Provider.Names.GITHUB)
+        ).thenReturn(project);
+
+        Mockito.when(user.projects()).thenReturn(owned);
+
+        MatcherAssert.assertThat(
+            new WalletsApi(user)
+                .createStripeWallet(
+                    "mihai",
+                    "test",
+                    new BillingInfoInput()
+                ).getStatusCode(),
+            Matchers.equalTo(HttpStatus.BAD_REQUEST)
+        );
+    }
+
+    /**
+     * WalletsApi.createStripeWallet(...) works.
+     */
+    @Test
+    public void createStripeWalletWorks() {
+        final Wallet created = Mockito.mock(Wallet.class);
+        Mockito.when(created.type()).thenReturn("STRIPE");
+        Mockito.when(created.active()).thenReturn(Boolean.FALSE);
+        Mockito.when(created.cash()).thenReturn(BigDecimal.valueOf(1000));
+        Mockito.when(created.debt()).thenReturn(BigDecimal.valueOf(0));
+        Mockito.when(created.available()).thenReturn(BigDecimal.valueOf(1000));
+        final PaymentMethods methods = Mockito.mock(PaymentMethods.class);
+        Mockito.when(methods.spliterator()).thenReturn(
+            new ArrayList<PaymentMethod>().spliterator()
+        );
+        Mockito.when(created.paymentMethods()).thenReturn(methods);
+
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.createStripeWallet(
+            Mockito.any()
+        )).thenReturn(created);
+
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(user.provider()).thenReturn(provider);
+
+        final Projects owned = Mockito.mock(Projects.class);
+        Mockito.when(
+            owned.getProjectById("mihai/test", Provider.Names.GITHUB)
+        ).thenReturn(project);
+
+        Mockito.when(user.projects()).thenReturn(owned);
+
+        MatcherAssert.assertThat(
+            new WalletsApi(user)
+                .createStripeWallet(
+                    "mihai",
+                    "test",
+                    new BillingInfoInput()
+                ).getStatusCode(),
+            Matchers.equalTo(HttpStatus.OK)
+        );
     }
 
 }

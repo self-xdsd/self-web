@@ -22,24 +22,40 @@
  */
 package com.selfxdsd.selfweb;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import com.selfxdsd.api.Provider;
+import com.selfxdsd.api.User;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.ui.Model;
 
 /**
- * Controller for the logged user page.
- * @author criske
+ * Unit tests for {@link ReposController}.
+ * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-@Controller
-public class UserController {
+public final class ReposControllerTestCase {
 
     /**
-     * Serve the User page of Self.
-     * @return User page.
+     * It can return the repositories page.
      */
-    @GetMapping("/user")
-    public String index() {
-        return "user.html";
+    @Test
+    public void returnsReposPage() {
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        final Model model = Mockito.mock(Model.class);
+
+        Mockito.when(provider.name()).thenReturn("github");
+        Mockito.when(user.provider()).thenReturn(provider);
+
+        MatcherAssert.assertThat(
+            new ReposController(user).index(model),
+            Matchers.equalTo("repositories.html")
+        );
+
+        Mockito.verify(model).addAttribute("provider", "github");
     }
+
 }

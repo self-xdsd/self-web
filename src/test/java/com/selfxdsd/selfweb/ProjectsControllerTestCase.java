@@ -41,6 +41,34 @@ import org.springframework.ui.Model;
 public final class ProjectsControllerTestCase {
 
     /**
+     * It can return the github project page.
+     */
+    @Test
+    public void returnsGithubProjectPage() {
+        final Model model = Mockito.mock(Model.class);
+        MatcherAssert.assertThat(
+            new ProjectsController(Mockito.mock(Self.class))
+                .githubProject("mihai", "test", model),
+            Matchers.equalTo("project.html")
+        );
+        Mockito.verify(model).addAttribute("provider", "github");
+    }
+
+    /**
+     *It can return the gitlab project page.
+     */
+    @Test
+    public void returnsGitlabProjectPage() {
+        final Model model = Mockito.mock(Model.class);
+        MatcherAssert.assertThat(
+            new ProjectsController(Mockito.mock(Self.class))
+                .gitlabProject("mihai", "test", model),
+            Matchers.equalTo("project.html")
+        );
+        Mockito.verify(model).addAttribute("provider", "gitlab");
+    }
+
+    /**
      * It sets the "managed" Model flag to false if the
      * given Project is not managed by Self.
      */

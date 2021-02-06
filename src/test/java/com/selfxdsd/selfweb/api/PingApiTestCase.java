@@ -20,26 +20,29 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.selfweb;
+package com.selfxdsd.selfweb.api;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Test;
 
 /**
- * Controller for the logged user page.
- * @author criske
+ * Unit tests for {@link PingApi}.
+ * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-@Controller
-public class UserController {
+public final class PingApiTestCase {
 
     /**
-     * Serve the User page of Self.
-     * @return User page.
+     * The ping endpoint works.
      */
-    @GetMapping("/user")
-    public String index() {
-        return "user.html";
+    @Test
+    public void pingWorks() {
+        MatcherAssert.assertThat(
+            new PingApi().ping().getBody(),
+            Matchers.endsWith("is up and running!")
+        );
     }
+
 }

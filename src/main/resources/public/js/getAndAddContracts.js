@@ -261,8 +261,14 @@ var projectContractsCount = -1;
 
         var project = {
             owner: $("#owner").text(),
-            name: $("#name").text()
-        }
+            name: $("#name").text(),
+            provider: window.globalProvider.value,
+        };
+
+        window.globalProvider.onChange(function(value){
+            project.provider = value;
+            $('.provider').text(value.capitalize());
+        });
 
         function loadContracts() {
             $("#contracts").dataTable().fnDestroy();
@@ -349,7 +355,7 @@ var projectContractsCount = -1;
             var contributor = $(this).parent().parent().children()[0].innerText;
             var role = $(this).parent().parent().children()[1].innerText;
             var hourlyRate = $(this).parent().parent().children()[2].innerText;
-            var provider = "github";
+            var provider = project.provider;
             var contract = {
                 id: {
                     repoFullName: repo,
@@ -546,10 +552,18 @@ var projectContractsCount = -1;
                 });
                 if(valid) {
                     var formData = $(this).serialize();
+                    // check if a contract exist with the same username and role.
+                    const rowId = $("#username").val() + $("#role").val()
+                    const exists = $("#contracts").DataTable().row("#"+rowId).length > 0;
+                    if(exists) {
+                        alert("Error: Can't add a same contract for the user: "
+                            + $("#username").val() + " with role: " + $("#role").val())
+                        return
+                    }
                     //check if username exists before submit
                     usersService.exists(
                         $("#username").val(),
-                        "github",
+                        project.provider,
                         function(){
                             $("#addContractLoading").show();
                             clearFormErrors();
@@ -594,7 +608,7 @@ var projectContractsCount = -1;
                  clearTimeout(debounce);
                  debounce = setTimeout(function() {
                     usersService
-                        .findUsers(query, "github")
+                        .findUsers(query, project.provider)
                         .then(function(users){
                             done({
                                 suggestions: users.map(function(user){

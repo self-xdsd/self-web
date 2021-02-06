@@ -20,7 +20,10 @@
             <div class="card-footer">
                 <ul class="nav nav-tabs card-header-tabs">
                     <li class="nav-item">
-                        <button class="nav-link active" role="button" id="personalReposButton">Personal Repos</button>
+                        <button class="nav-link active" role="button" id="managedReposButton">Managed Repos</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" role="button" id="personalReposButton">Personal Repos</button>
                     </li>
                     <li class="nav-item">
                         <button class="nav-link" role="button" id="orgReposButton">Organization Repos</button>
@@ -29,12 +32,35 @@
             </div>
         </div>
     </header>
-        <div class="collapse multi-collapse show" id="personalRepos">
+    <div class="collapse multi-collapse show" id="managedRepos">
+        <div class="card card-body">
+            <div class="table-responsive">
+                <div id="managedReposTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                    <div id="managed-repos-info" class="mb-4">
+                        These are all your repositories which are managed by Self XDSD.
+                    </div>
+                    <table id="managedReposTable" class="display">
+                        <thead>
+                        <tr>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="collapse multi-collapse" id="personalRepos">
             <div class="card card-body">
                 <div class="table-responsive">
                     <div id="reposTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
                         <div id="loadingPersonalRepos" class="text-center">
                             <img src="/images/loading.svg">
+                        </div>
+                        <div id="personal-repos-info" class="mb-4" style="display: none;">
+                            These are all your personal public repositories (personal private repositories are not yet supported).
                         </div>
                         <table id="repos" class="display">
                             <thead>
@@ -49,7 +75,7 @@
                 </div>
             </div>
         </div>
-        <div class="collapse multi-collapse" id="orgRepos">
+    <div class="collapse multi-collapse" id="orgRepos">
             <div class="card card-body">
                 <div class="table-responsive">
                     <div id="orgReposTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
@@ -57,11 +83,11 @@
                             <img src="/images/loading.svg">
                         </div>
                         <div id="github-org-info" class="mb-4" style="display: none;">
-                            You should see here all the repos from Organizations where you have admin rights.<br>
+                            You should see here all the repos from Organizations where you have admin rights, including private repos.<br>
                             Missing some of them? Make sure you
-                            <a th:if="${testEnvironment}" href="https://github.com/settings/connections/applications/a55dd23908b4dffe8df6" target="_blank">grant</a>
-                            <a th:if="${not testEnvironment}" href="#" target="_blank">grant</a>
-                            Self XDSD access in Github.
+                            <a th:if="${testEnvironment}" class="provider-grant" href="https://github.com/settings/connections/applications/a55dd23908b4dffe8df6" target="_blank">grant</a>
+                            <a th:unless="${testEnvironment}" href="#" target="_blank">grant</a>
+                            Self XDSD access in <span class="provider">Provider</span>.
                         </div>
                         <table id="orgReposTable" class="display">
                             <thead>
@@ -79,6 +105,7 @@
 </main>
 <footer th:replace="footer.html :: footer"></footer>
 </body>
+<script src="/js/getManagedRepos.js"></script>
 <script src="/js/getPublicRepos.js"></script>
 <script src="/js/getOrgRepos.js"></script>
 <script>
@@ -86,12 +113,27 @@
         function () {
             $("#reposHeaderLink").addClass("active");
 
+            $("#managedReposButton").on(
+                "click",
+                function(){
+                    $(this).addClass("active");
+                    $("#managedRepos").addClass("show");
+
+                    $("#personalReposButton").removeClass("active");
+                    $("#personalRepos").removeClass("show");
+                    $("#orgReposButton").removeClass("active");
+                    $("#orgRepos").removeClass("show");
+                }
+            );
+
             $("#personalReposButton").on(
                 "click",
                 function(){
                     $(this).addClass("active");
                     $("#personalRepos").addClass("show");
 
+                    $("#managedReposButton").removeClass("active");
+                    $("#managedRepos").removeClass("show");
                     $("#orgReposButton").removeClass("active");
                     $("#orgRepos").removeClass("show");
                 }
@@ -103,6 +145,8 @@
                     $(this).addClass("active");
                     $("#orgRepos").addClass("show");
 
+                    $("#managedReposButton").removeClass("active");
+                    $("#managedRepos").removeClass("show");
                     $("#personalReposButton").removeClass("active");
                     $("#personalRepos").removeClass("show");
                 }

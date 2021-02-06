@@ -22,24 +22,48 @@
  */
 package com.selfxdsd.selfweb;
 
+import com.selfxdsd.api.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
- * Controller for the logged user page.
- * @author criske
+ * Invoices page Controller. Only available for users
+ * with admin role.
+ * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
 @Controller
-public class UserController {
+public class InvoicesController {
 
     /**
-     * Serve the User page of Self.
-     * @return User page.
+     * Authenticated user.
      */
-    @GetMapping("/user")
-    public String index() {
-        return "user.html";
+    private User user;
+
+    /**
+     * Constructor.
+     * @param user Authenticated User.
+     */
+    @Autowired
+    public InvoicesController(final User user) {
+        this.user = user;
     }
+
+    /**
+     * Serve the Invoices page (only for admins).
+     * @return PlatformInvoices page.
+     */
+    @GetMapping("/admin/invoices")
+    public String projectManagers() {
+        final String page;
+        if("admin".equals(user.role())) {
+            page = "invoices.html";
+        } else {
+            page = "index.html";
+        }
+        return page;
+    }
+
 }

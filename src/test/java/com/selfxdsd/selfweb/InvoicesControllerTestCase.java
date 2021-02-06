@@ -23,46 +23,55 @@
 package com.selfxdsd.selfweb;
 
 import com.selfxdsd.api.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 /**
- * Project Managers page Controller. Only available for users
- * with admin role.
+ * Unit tests for {@link InvoicesController}.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
  */
-@Controller
-public class ProjectManagersController {
-
+public final class InvoicesControllerTestCase {
     /**
-     * Authenticated user.
+     * The invoices.html page should be visible to admins.
      */
-    private User user;
-
-    /**
-     * Constructor.
-     * @param user Authenticated User.
-     */
-    @Autowired
-    public ProjectManagersController(final User user) {
-        this.user = user;
+    @Test
+    public void visibleToAdmin() {
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.role()).thenReturn("admin");
+        MatcherAssert.assertThat(
+            new InvoicesController(user).projectManagers(),
+            Matchers.equalTo("invoices.html")
+        );
     }
 
     /**
-     * Serve the PMs page (only for admins).
-     * @return PMs page.
+     * The invoices.html page should NOT be visible to simple users.
      */
-    @GetMapping("/admin/pms")
-    public String projectManagers() {
-        final String page;
-        if("admin".equals(user.role())) {
-            page = "projectManagers.html";
-        } else {
-            page = "index.html";
-        }
-        return page;
+    @Test
+    public void invisibleToSimpleUser() {
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.role()).thenReturn("user");
+        MatcherAssert.assertThat(
+            new InvoicesController(user).projectManagers(),
+            Matchers.equalTo("index.html")
+        );
+    }
+
+    /**
+     * The invoices.html page should NOT be visible
+     * to other types of users.
+     */
+    @Test
+    public void invisibleToOther() {
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.role()).thenReturn("other");
+        MatcherAssert.assertThat(
+            new InvoicesController(user).projectManagers(),
+            Matchers.equalTo("index.html")
+        );
     }
 }

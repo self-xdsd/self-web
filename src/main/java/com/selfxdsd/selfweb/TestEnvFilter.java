@@ -37,15 +37,49 @@ import java.io.IOException;
  */
 @Component
 public class TestEnvFilter implements Filter {
+
+    /**
+     * Environment.
+     */
+    private final Environment environment;
+
+    /**
+     * Default ctor.
+     */
+    public TestEnvFilter() {
+        this(
+            () -> Boolean.valueOf(System.getenv("self_test_env"))
+        );
+    }
+
+    /**
+     * Ctor.
+     * @param environment Environment.
+     */
+    public TestEnvFilter(final Environment environment) {
+        this.environment = environment;
+    }
+
     @Override
     public void doFilter(
         final ServletRequest servletRequest,
         final ServletResponse servletResponse,
         final FilterChain filterChain
     ) throws IOException, ServletException {
-        if("true".equalsIgnoreCase(System.getenv("self_test_env"))) {
+        if(this.environment.selfTestEnv()) {
             servletRequest.setAttribute("testEnvironment", "true");
         }
         filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    /**
+     * System environment.
+     */
+    interface Environment {
+        /**
+         * Self test env variable.
+         * @return Boolean.
+         */
+        boolean selfTestEnv();
     }
 }

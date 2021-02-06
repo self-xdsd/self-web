@@ -10,6 +10,7 @@ $(document).ready(
 function getPublicRepos() {
     $("#repos").find("tbody").html('');
     $("#loadingPersonalRepos").show();
+    $("#personal-repos-info").hide();
     $.get(
         "/api/users/self",
         function(user) {
@@ -27,6 +28,7 @@ function getPublicRepos() {
                             }
                         )
                         $("#loadingPersonalRepos").hide();
+                        $("#personal-repos-info").show();
                         $('#repos').dataTable();
                     }
                 )
@@ -40,11 +42,14 @@ function getPublicRepos() {
                                 console.log(repo);
                                 console.log(repo.path_with_namespace);
                                 $("#repos").find("tbody").append(
-                                    "<tr><td>" + repo.path_with_namespace + "</td></tr>"
+                                    "<tr><td><a href='/gitlab/" + repo.path_with_namespace + "'>" +
+                                    repo.path_with_namespace+
+                                    "</a></td></tr>"
                                 );
                             }
                         )
                         $("#loadingPersonalRepos").hide();
+                        $("#personal-repos-info").show();
                         $('#repos').dataTable();
                     }
                 )

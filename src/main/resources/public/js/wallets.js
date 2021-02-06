@@ -117,6 +117,7 @@ function getProjectWallets() {
                                 $("#stripeDebt").html(formatEuro(updatedWallet.debt));
                                 $("#stripeAvailable").html(formatEuro(updatedWallet.available));
                                 cashLimitColor($("#stripeCash"), updatedWallet);
+                                walletAsPieChart(updatedWallet);
                             }
                         );
                     }
@@ -476,6 +477,7 @@ $(document).ready(
                                         $("#stripeDebt").html(formatEuro(updatedWallet.debt));
                                         $("#stripeAvailable").html(formatEuro(updatedWallet.available));
                                         cashLimitColor($("#stripeCash"), updatedWallet);
+                                        walletAsPieChart(updatedWallet);
                                     }
                                 );
                             },
