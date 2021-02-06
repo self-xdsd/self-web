@@ -42,10 +42,33 @@
             <li>
               <a href="#">Data & Privacy Policy</a>
             </li>
+            <li th:unless="${testEnvironment}">
+              <a href="javascript:cookieConsent.changeConsent();">Cookies Settings</a>
+            </li>
           </ul>
         </div>
       </div>
     </div>
     <div class="footer-copyright text-center py-3 bg-light">Copyright © Self XDSD Team</div>
+    <script th:unless="${testEnvironment}" src="//www.eucookie.eu/public/gdpr-cookie-consent.js" type="text/javascript"></script>
+    <script th:unless="${testEnvironment}" type="text/javascript">
+      var cookieConsent = new cookieConsent({
+        clientId: '7a1fc21f-8fa6-44f2-90f3-84ff0ae35e90',
+        position: 'bottomLeft',
+        backgroundColor: '#f8f9fa',
+        fontColor: '#24292e',
+        linkColor: '#701516',
+        buttonBackground: '#701516'
+      });
+      cookieConsent.run();
+    </script>
+    <script th:unless="${testEnvironment}" data-cookie-if="analytical" async type="text/plain" src="https://www.googletagmanager.com/gtag/js?id=G-5F9Q5Y4G8P"></script>
+    <script th:unless="${testEnvironment}" data-cookie-if="analytical" type="text/plain">
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-5F9Q5Y4G8P');
+    </script>
   </footer>
 </html>
