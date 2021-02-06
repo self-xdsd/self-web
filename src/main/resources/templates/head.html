@@ -150,13 +150,5 @@
                 return this.charAt(0).toUpperCase() + this.slice(1);
             }
     </script>
-    <script th:unless="${testEnvironment}" async src="https://www.googletagmanager.com/gtag/js?id=G-5F9Q5Y4G8P"></script>
-    <script th:unless="${testEnvironment}">
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        gtag('config', 'G-5F9Q5Y4G8P');
-    </script>
 </head>
 </html>
