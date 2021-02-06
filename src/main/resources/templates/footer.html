@@ -42,7 +42,7 @@
             <li>
               <a href="#">Data & Privacy Policy</a>
             </li>
-            <li>
+            <li th:unless="${testEnvironment}">
               <a href="javascript:cookieConsent.changeConsent();">Cookies Settings</a>
             </li>
           </ul>
