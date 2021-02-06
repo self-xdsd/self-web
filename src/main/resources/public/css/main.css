@@ -163,7 +163,7 @@ body {
 
 @media (max-width:413px){
     #realPaymentMethods{
-        overflow-x: scroll; 
+        overflow-x: scroll;
     }
 
 }
@@ -191,4 +191,54 @@ body {
     .unauthenticated a:nth-child(2){
         width:52%;
     }
+}
+
+/*Tables footer customization. */
+[id$=_paginate].dataTables_paginate {
+    padding: 0 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    display: flex !important;
+    float: right !important;
+    margin-top: 4px;
+}
+
+[id$=_paginate] > a.paginate_button {
+    padding: 0 !important;
+    height: 2.5em !important;
+    width: 2.5em !important;
+    display: inline-flex  !important;
+    align-items: center  !important;
+    justify-content: center  !important;
+}
+
+[id$=_paginate] > span .paginate_button {
+    padding: 0px !important;
+    height: 2.5em !important;
+    width: 2.5em !important;
+    display: inline-flex  !important;
+    align-items: center  !important;
+    justify-content: center  !important;
+}
+
+[id$=_length]{
+    margin: 0 !important;
+    margin-left: 8px !important;
+    padding: 0 !important;
+    height: 100% !important;
+}
+
+[id$=_length] > label {
+    display: inline-flex !important;
+    flex-direction: column;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 14px !important;
+    font-weight: normal !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.dataTables_info {
+    text-align: center;
 }

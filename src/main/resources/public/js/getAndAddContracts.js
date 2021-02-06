@@ -23,8 +23,26 @@ var projectContractsCount = -1;
         )
         $("#tasks").show();
         $("#tasksTable").DataTable({
+            dom: "<'row w-100 align-items-center'<'col-sm-12 col-md-12 justify-content-end'Q>>" +
+            "<'row w-100'<'col-sm-12'tr>>" +
+            "<'row w-100 align-items-center'<'col-sm-12 col-md-4 justify-content-end mb-1'i><'col-sm-12 col-md-8 d-flex justify-content-end align-items-center'lp>>",
+            searchBuilder: {
+                columns: [1, 2],
+            },
             language: {
-                loadingRecords: '<img src="/images/loading.svg" height="100">'
+                loadingRecords: '<img src="/images/loading.svg" height="100">',
+                searchBuilder:{
+                    add: "+",
+                    title: {
+                        0: 'Date filters',
+                        _: 'Date filters (%d)'
+                    },
+                },
+                lengthMenu: "<div style='margin-bottom: 2px'>Show entries</div><div>_MENU_</div>",
+                paginate: {
+                    next: "<i class='fa fa-fw fa-chevron-right'></i>",
+                    previous: "<i class='fa fa-fw fa-chevron-left'></i>"
+                },
             },
             ajax: {
                 url: "/api/projects/"
@@ -55,10 +73,12 @@ var projectContractsCount = -1;
                 },
                 {
                     data: "assignmentDate",
+                    type: 'date',
                     render: (data) => data.split('T')[0]
                 },
                 {
                     data: "deadline",
+                    type: 'date',
                     render: (data) => data.split('T')[0]
                 },
                 {
@@ -81,9 +101,31 @@ var projectContractsCount = -1;
         )
         $("#invoices").show();
         $("#invoicesTable").DataTable({
-            language: {
-                loadingRecords: '<img src="/images/loading.svg" height="100">'
+            dom: "<'row w-100 align-items-center'<'col-sm-12 col-md-12 justify-content-end'Q>>" +
+            "<'row w-100'<'col-sm-12'tr>>" +
+            "<'row w-100 align-items-center'<'col-sm-12 col-md-4 justify-content-end mb-1'i><'col-sm-12 col-md-8 d-flex justify-content-end align-items-center'lp>>",
+            searchBuilder: {
+                columns: [1],
             },
+            language: {
+                loadingRecords: '<img src="/images/loading.svg" height="100">',
+                lengthMenu: "<div style='margin-bottom: 2px'>Show entries</div><div>_MENU_</div>",
+                paginate: {
+                    next: "<i class='fa fa-fw fa-chevron-right'></i>",
+                    previous: "<i class='fa fa-fw fa-chevron-left'></i>"
+                },
+                searchBuilder:{
+                    add: "+",
+                    title: {
+                        0: 'Date filters',
+                        _: 'Date filters (%d)'
+                    },
+                },
+            },
+            columnDefs: [
+                { targets: [4], orderable: false },
+                { targets: 1, type: 'date'}
+            ],
             ajax: function(data, callback){
                 $.ajax(
                     "/api/projects/"
@@ -231,9 +273,23 @@ var projectContractsCount = -1;
         function loadContracts() {
             $("#contracts").dataTable().fnDestroy();
             $("#contracts").dataTable({
+                dom: "<'row w-100 align-items-center'<'col-sm-12 col-md-12 justify-content-end'f>>" +
+                     "<'row w-100'<'col-sm-12'tr>>" +
+                     "<'row w-100 align-items-center mt-1'<'col-sm-12 col-md-4 justify-content-end mb-1'i><'col-sm-12 col-md-8 d-flex justify-content-end align-items-center'lp>>",
                 language: {
-                    loadingRecords: '<img src="/images/loading.svg" height="100">'
+                    loadingRecords: '<img src="/images/loading.svg" height="100">',
+                    lengthMenu: "<div style='margin-bottom: 2px'>Show entries</div><div>_MENU_</div>",
+                    paginate: {
+                        next: "<i class='fa fa-fw fa-chevron-right'></i>",
+                        previous: "<i class='fa fa-fw fa-chevron-left'></i>"
+                    },
+                    searchPlaceholder: " Contributor..."
                 },
+                "columnDefs": [
+                    { "targets": [0], "searchable": true },
+                    { "targets": [1, 2, 3, 4], "searchable": false },
+                    { "targets": [4], "orderable": false }
+                ],
                 ajax: function (data, callback) {
                     contractsService
                         .getAll(project)
