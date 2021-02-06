@@ -184,6 +184,7 @@ public final class ProjectsApiTestCase {
 
         final Provider provider = Mockito.mock(Provider.class);
         Mockito.when(provider.organizations()).thenReturn(orgs);
+        Mockito.when(provider.name()).thenReturn("github");
         final User user = Mockito.mock(User.class);
         Mockito.when(user.username()).thenReturn("mihai");
         Mockito.when(user.provider()).thenReturn(provider);

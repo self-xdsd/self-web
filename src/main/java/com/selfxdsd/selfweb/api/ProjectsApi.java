@@ -99,7 +99,8 @@ public class ProjectsApi extends BaseApiController {
         );
         ResponseEntity<String> response = ResponseEntity.noContent().build();
         if(found != null) {
-            if(owner.equalsIgnoreCase(this.user.username())) {
+            final String foundOwner = found.owner().username();
+            if(foundOwner.equalsIgnoreCase(this.user.username())) {
                 response = ResponseEntity.ok(
                     new JsonProject(found).toString()
                 );
