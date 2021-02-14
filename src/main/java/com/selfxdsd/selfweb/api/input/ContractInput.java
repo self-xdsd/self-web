@@ -39,7 +39,7 @@ public final class ContractInput {
      * Contributor username.
      */
     @NotBlank(message = "Contributor's username is mandatory!")
-    @Pattern(regexp = "^[a-zA-Z0-9-_]{1,256}$")
+    @Pattern(regexp = "^[a-zA-Z0-9-_\\.]{1,256}$")
     private String username;
 
     /**
