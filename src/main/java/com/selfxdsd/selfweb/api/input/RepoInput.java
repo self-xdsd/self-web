@@ -38,7 +38,7 @@ public class RepoInput {
      * Repo's owner.
      */
     @NotBlank(message = "Repo owner is mandatory.")
-    @Pattern(regexp = "^[a-zA-Z0-9\\-_]{1,256}$")
+    @Pattern(regexp = "^[a-zA-Z0-9\\-_\\.]{1,256}$")
     private String owner;
 
     /**
