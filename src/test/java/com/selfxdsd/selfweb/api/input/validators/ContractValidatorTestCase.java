@@ -20,51 +20,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.selfweb.api.input;
+package com.selfxdsd.selfweb.api.input.validators;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
+import com.selfxdsd.selfweb.api.input.ContractInput;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Test;
+
+import javax.validation.Validation;
+import javax.validation.Validator;
 
 /**
- * Input for registering a repo as a new project in Self.
- * @author Mihai Andronache (amihaiemil@gmail.com)
+ * Unit tests for {@link ContractInput} contributor's username validation.
+ * @author Ali Fellahi (fellahi.ali@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @checkstyle JavadocMethod (200 lines)
  */
-public class RepoInput {
-
+public class ContractValidatorTestCase {
     /**
-     * Repo's owner.
+     * Should accept a user.name with a dot.
      */
-    @NotBlank(message = "Repo owner is mandatory.")
-    @Pattern(regexp = "^[a-zA-Z0-9\\-_\\.]{1,256}$")
-    private String owner;
+    @Test
+    public void acceptUsernameWithDot(){
+        final Validator validator = Validation
+            .buildDefaultValidatorFactory()
+            .getValidator();
 
-    /**
-     * Repo's name.
-     */
-    @NotBlank(message = "Repo name is mandatory.")
-    @Pattern(regexp = "^[a-zA-Z0-9\\-_\\.]{1,256}$")
-    private String name;
+        final ContractInput contract = new ContractInput();
+        contract.setUsername("fellahi.ali");
+        contract.setRole("DEV");
+        contract.setHourlyRate(15);
 
-    public String getOwner() {
-        return this.owner;
-    }
+        MatcherAssert.assertThat(validator.validate(contract),
+            Matchers.emptyIterable());
 
-    public void setOwner(final String newOwner) {
-        this.owner = newOwner;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(final String newName) {
-        this.name = newName;
-    }
-
-    public String fullName() {
-        return this.owner + "/" + this.name;
     }
 }
