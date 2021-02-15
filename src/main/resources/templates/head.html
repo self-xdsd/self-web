@@ -72,10 +72,12 @@
         $(document).ready(
             function () {
                 $("#loginLoading").show();
-                $(".unauthenticated .btn").hide();
+                $(".unauthenticated .btn").hide ();
                 $.ajax("/api/users/self", {
                     type: "GET",
                     complete: function(response){
+                        const mediaQuery1 = window.matchMedia('(max-width:474px)');
+                        const mediaQuery2 = window.matchMedia('(max-width:320px)');
                         switch(response.status){
                             case 200:
                                 var data = response.responseJSON;
@@ -96,6 +98,16 @@
                                 $("#loginLoading").hide();
                                 $(".unauthenticated").show();
                                 $(".unauthenticated .btn").show();
+                                if(mediaQuery1.matches){
+                                    $('nav').css('flex-direction','column');
+                                }
+                                if(mediaQuery2.matches){
+                                    $('#logins').css('text-align','center');
+                                    $('.unauthenticated > a:nth-child(1)')
+                                            .css('margin-bottom','5px');
+                                    $('.unauthenticated > a:nth-child(2)')
+                                            .css('width','56%');
+                                }
                         }
                     }
                 });
