@@ -134,12 +134,7 @@ public final class PayoutMethodsApi extends BaseApiController {
                     Json.createObjectBuilder()
                         .add(
                             "stripeOnboardingLink",
-                            this.createStripeOnboardingLink(
-                                contributor
-                                    .payoutMethods()
-                                    .activate(created)
-                                    .json()
-                            )
+                            this.createStripeOnboardingLink(created.json())
                         ).build().toString()
                 );
             } catch (final IllegalStateException ex) {

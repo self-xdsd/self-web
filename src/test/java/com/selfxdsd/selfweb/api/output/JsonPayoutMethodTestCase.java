@@ -45,7 +45,6 @@ public class JsonPayoutMethodTestCase {
         final PayoutMethod payout = Mockito.mock(PayoutMethod.class);
         
         Mockito.when(payout.type()).thenReturn("Cash");
-        Mockito.when(payout.active()).thenReturn(Boolean.TRUE);
         Mockito.when(payout.identifier()).thenReturn("identifier1");
         Mockito.when(payout.json())
             .thenReturn(
@@ -63,32 +62,6 @@ public class JsonPayoutMethodTestCase {
     }
     
     /**
-     * JsonPayoutMethod is active.
-     */
-    @Test
-    public void isActive(){
-        
-        final PayoutMethod payout = Mockito.mock(PayoutMethod.class);
-        
-        Mockito.when(payout.type()).thenReturn("Cash");
-        Mockito.when(payout.active()).thenReturn(Boolean.TRUE);
-        Mockito.when(payout.identifier()).thenReturn("identifier1");
-        Mockito.when(payout.json())
-            .thenReturn(
-                Json.createObjectBuilder()
-                       .add("accountName", "Stefan Andreea")
-                       .add("accountNumber", 1234567890)
-                       .build()
-            ); 
-        
-        final JsonObject jsonPayoutMethod = new JsonPayoutMethod(payout);
-        
-        MatcherAssert.assertThat(
-            jsonPayoutMethod.getBoolean("active"),
-            Matchers.equalTo(true));
-    }
-    
-    /**
      * JsonPayoutMethod has identifier.
      */
     @Test
@@ -97,7 +70,6 @@ public class JsonPayoutMethodTestCase {
         final PayoutMethod payout = Mockito.mock(PayoutMethod.class);
         
         Mockito.when(payout.type()).thenReturn("Cash");
-        Mockito.when(payout.active()).thenReturn(Boolean.TRUE);
         Mockito.when(payout.identifier()).thenReturn("identifier1");
         Mockito.when(payout.json())
             .thenReturn(
@@ -123,7 +95,6 @@ public class JsonPayoutMethodTestCase {
         final PayoutMethod payout = Mockito.mock(PayoutMethod.class);
         
         Mockito.when(payout.type()).thenReturn("Cash");
-        Mockito.when(payout.active()).thenReturn(Boolean.TRUE);
         Mockito.when(payout.identifier()).thenReturn("identifier1");
         Mockito.when(payout.json())
             .thenReturn(
