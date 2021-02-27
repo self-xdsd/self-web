@@ -1,17 +1,11 @@
 $(document).ready(
     function () {
         window.globalProvider.onChange(function(value){
-            var grantLink;
             if(value === "github"){
-                grantLink = "https://github.com/settings/connections/applications/a55dd23908b4dffe8df6";
-            }else if(value === "gitlab"){
-                grantLink = "https://gitlab.com/-/profile/applications";
-            }else{
-                grantLink = "#";
+                $("#github-org-access-info").show();
+            }else {
+                $("#github-org-access-info").hide();
             }
-            $('.provider-grant').attr('href', grantLink);
-            var capitalized = value.charAt(0).toUpperCase() + value.slice(1);
-            $('.provider').text(capitalized);
         });
         getOrgRepos();
     }
@@ -22,7 +16,7 @@ $(document).ready(
 function getOrgRepos() {
     $("#orgReposTable").find("tbody").html('');
     $("#loadingOrgRepos").show();
-    $("#github-org-info").hide();
+    $("#org-access-info").hide();
     $.get(
         "/api/repositories/orgs",
         function(repos) {
@@ -32,7 +26,7 @@ function getOrgRepos() {
                 }
             )
             $("#loadingOrgRepos").hide();
-            $("#github-org-info").show();
+            $("#org-access-info").show();
             $('#orgReposTable').dataTable();
         }
     );

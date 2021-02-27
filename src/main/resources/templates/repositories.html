@@ -82,12 +82,14 @@
                         <div id="loadingOrgRepos" class="text-center">
                             <img src="/images/loading.svg">
                         </div>
-                        <div id="github-org-info" class="mb-4" style="display: none;">
+                        <div id="org-access-info" class="mb-4" style="display: none;">
                             You should see here all the repos from Organizations where you have admin rights, including private repos.<br>
-                            Missing some of them? Make sure you
-                            <a th:if="${testEnvironment}" class="provider-grant" href="https://github.com/settings/connections/applications/a55dd23908b4dffe8df6" target="_blank">grant</a>
-                            <a th:unless="${testEnvironment}" class="provider-grant" href="https://github.com/settings/connections/applications/15d5044008af6840cdf7" target="_blank">grant</a>
-                            Self XDSD access in <span class="provider">Provider</span>.
+                            <span id="github-org-access-info" style="display: none;">
+                                Missing some of them? Make sure you
+                                <a th:if="${testEnvironment}" class="provider-grant" href="https://github.com/settings/connections/applications/a55dd23908b4dffe8df6" target="_blank">grant</a>
+                                <a th:unless="${testEnvironment}" class="provider-grant" href="https://github.com/settings/connections/applications/15d5044008af6840cdf7" target="_blank">grant</a>
+                                Self XDSD access in Github.
+                            </span>
                         </div>
                         <table id="orgReposTable" class="display">
                             <thead>
