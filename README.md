@@ -5,7 +5,7 @@
 [![Build Status](https://travis-ci.org/self-xdsd/self-web.svg?branch=master)](https://travis-ci.org/self-xdsd/self-web)
 [![Coverage Status](https://coveralls.io/repos/github/self-xdsd/self-web/badge.svg?branch=master)](https://coveralls.io/github/self-xdsd/self-web?branch=master)
 
-[![Managed By Self XDSD](https://amihaiemil.com/images/mbself.svg)](#)
+[![Managed By Self XDSD](https://self-xdsd.com/b/mbself.svg)](https://self-xdsd.com/p/self-xdsd/self-web?provider=github)
 [![DevOps By Rultor.com](http://www.rultor.com/b/self-xdsd/self-web)](http://www.rultor.com/p/self-xdsd/self-web)
 [![We recommend IntelliJ IDEA](http://amihaiemil.github.io/images/intellij-idea-recommend.svg)](https://www.jetbrains.com/idea/)
 
