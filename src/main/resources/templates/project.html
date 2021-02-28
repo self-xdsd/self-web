@@ -899,6 +899,10 @@
                                 success: function (project) {
                                     $("#loadingProject").hide();
                                     displayProject(project.selfOwner, project);
+                                    $(".badge-project-url").text(
+                                        "https://self-xdsd.com/p/" + project.repoFullName
+                                        + "?provider=" + project.provider
+                                    )
                                 },
                                 error: function(jqXHR, error, errorThrown) {
                                     $("#loadingProject").hide();
