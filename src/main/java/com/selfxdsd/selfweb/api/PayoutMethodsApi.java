@@ -36,8 +36,10 @@ import com.stripe.param.AccountLinkCreateParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -271,6 +273,116 @@ public final class PayoutMethodsApi extends BaseApiController {
                         + "Onboarding process NOT finished. Bad Request."
                     );
                     resp = ResponseEntity.badRequest().build();
+                }
+            }
+        }
+        return resp;
+    }
+
+    /**
+     * Delete the Contributor's STRIPE PayoutMethod (which is actually his/her
+     * Stripe Connect Account).
+     * @return PRECONDITION FAILED, if the Contributor doesn't have the
+     *  Stripe PayoutMethod. NO CONTENT, if the PayoutMethod was deleted.
+     *  SERVER ERROR, if there was a problem while deleting the PayoutMethod.
+     *  BAD REQUEST, if the Contributor does not exist or the PayoutMethod
+     *  cannot be deleted because of StripeException (which occurs if the
+     *  Stripe account still has funds in it).
+     * @checkstyle ExecutableStatementCount (150 lines)
+     */
+    @DeleteMapping(
+        value = "/contributor/payoutmethods/stripe",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> deleteStripeConnectAccount() {
+        LOG.debug(
+            "Deleting Stripe Connect Account for User "
+            + this.user.username() + "... "
+        );
+        ResponseEntity<String> resp;
+        final Contributor contributor = this.user.asContributor();
+        if(contributor == null) {
+            LOG.error(
+                "User " + this.user.username() + " is not a Contributor! "
+                + "Bad Request."
+            );
+            resp = ResponseEntity.status(
+                HttpStatus.BAD_REQUEST
+            ).body(
+                Json.createObjectBuilder()
+                    .add(
+                        "message",
+                        "You are not a Contributor in Self XDSD."
+                    ).build().toString()
+            );
+        } else {
+            try {
+                PayoutMethod stripe = null;
+                for(final PayoutMethod method : contributor.payoutMethods()) {
+                    if("STRIPE".equalsIgnoreCase(method.type())) {
+                        stripe = method;
+                        break;
+                    }
+                }
+                if(stripe == null) {
+                    LOG.debug("Stripe PayoutMethod doesn't exist.");
+                    resp = ResponseEntity.status(HttpStatus.PRECONDITION_FAILED)
+                        .body(
+                            Json.createObjectBuilder()
+                                .add(
+                                    "message",
+                                    "Stripe PayoutMethod not found."
+                                ).build().toString()
+                        );
+                } else {
+                    final boolean deleted = stripe.remove();
+                    if(deleted) {
+                        LOG.debug("Stripe Connect account deleted!");
+                        resp = ResponseEntity.noContent().build();
+                    } else {
+                        LOG.error("StripePayoutMethod.remove() is false!");
+                        resp = ResponseEntity.status(
+                            HttpStatus.INTERNAL_SERVER_ERROR
+                        ).body(
+                            Json.createObjectBuilder()
+                                .add(
+                                    "message",
+                                    "Something went wrong, "
+                                    + "please try again."
+                                ).build().toString()
+                        );
+                    }
+                }
+            } catch (final IllegalStateException ex) {
+                LOG.error(
+                    "Something went wrong while trying to create "
+                    + "a Stripe Connect Account for Contributor "
+                    + contributor.username()
+                    + " (" + contributor.provider() + "): "
+                    + ex.getMessage()
+                );
+                if(ex.getCause() instanceof StripeException) {
+                    resp = ResponseEntity.status(
+                        HttpStatus.BAD_REQUEST
+                    ).body(
+                        Json.createObjectBuilder()
+                            .add(
+                                "message",
+                                "You still have funds in Stripe, "
+                                + "the PayoutMethod cannot be deleted."
+                            ).build().toString()
+                    );
+                } else {
+                    resp = ResponseEntity.status(
+                        HttpStatus.INTERNAL_SERVER_ERROR
+                    ).body(
+                        Json.createObjectBuilder()
+                            .add(
+                                "message",
+                                "Something went wrong, "
+                                + "please try again."
+                            ).build().toString()
+                    );
                 }
             }
         }
