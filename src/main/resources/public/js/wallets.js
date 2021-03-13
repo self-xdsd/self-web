@@ -92,8 +92,12 @@ function getProjectWallets() {
                                             parent.addClass('off');
                                             activatePaymentMethod(owner, name, method);
                                             $("#activateStripeWalletButton").removeClass("disabled");
-                                        } else { //we don't allow manual inactivation of a PaymentMethod
-                                            $(this).bootstrapToggle('on');
+                                            $("#realPaymentMethodsWarning").hide();
+                                        } else { 
+                                            deactivatePaymentMethod(owner, name, method);
+                                            if(arePaymentMethodsDeactivated($('input.pmToggle'))){
+                                                $("#realPaymentMethodsWarning").show();
+                                            }
                                         }
                                     }
                                 );
@@ -106,6 +110,9 @@ function getProjectWallets() {
                             $("#realPaymentMethods").show();
                             if(activePaymentMethodFound) {
                                 $("#activateStripeWalletButton").removeClass("disabled");
+                            }
+                            if(arePaymentMethodsDeactivated($('input.pmToggle'))){
+                                $("#realPaymentMethodsWarning").show();
                             }
                         }
                         installUpdateCashLimitPopover(
@@ -133,6 +140,19 @@ function getProjectWallets() {
             }
         }
     );
+}
+
+/**
+ * Checks if payment methods are deactivated.
+ * @param toggleButtons Active/Inactive payment methods toggle buttons.
+ * @returns True if all payment methods are deactivated.
+ */
+function arePaymentMethodsDeactivated(toggleButtons) {
+    var allDeactivated = true;
+    toggleButtons.each(function () {
+        allDeactivated = allDeactivated & !$(this).prop('checked');
+    });
+    return allDeactivated;
 }
 
 /**
@@ -611,8 +631,12 @@ $(document).ready(
                                                                     parent.addClass('off');
                                                                     activatePaymentMethod(owner, name, paymentMethod);
                                                                     $("#activateStripeWalletButton").removeClass("disabled");
-                                                                } else { //we don't allow manual inactivation of a PaymentMethod
-                                                                    $(this).bootstrapToggle('on');
+                                                                    $("#realPaymentMethodsWarning").hide();
+                                                                } else { 
+                                                                    deactivatePaymentMethod(owner, name, paymentMethod);
+                                                                    if(arePaymentMethodsDeactivated($('input.pmToggle'))){
+                                                                        $("#realPaymentMethodsWarning").show();
+                                                                    }
                                                                 }
                                                             }
                                                         );

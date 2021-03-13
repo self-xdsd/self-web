@@ -210,7 +210,6 @@ public class PaymentMethodsApi extends BaseApiController {
      * @param name Repo name.
      * @param paymentMethodId Id of the PaymentMethod to be activated.
      * @return Activated PaymentMethod in JSON.
-     * @checkstyle ExecutableStatementCount (100 lines)
      */
     @PutMapping(
         value = "/projects/{owner}/{name}/wallets/stripe/paymentMethods/"
@@ -225,18 +224,104 @@ public class PaymentMethodsApi extends BaseApiController {
     ) {
         LOG.debug(
             "Activating Stripe PaymentMethod " + paymentMethodId
-            + " of Project " + owner + "/" + name + "... "
+                + " of Project " + owner + "/" + name + "... "
         );
         ResponseEntity<String> response;
+        try {
+            final PaymentMethod paymentMethod = this
+                .getStripePaymentMethod(owner, name, paymentMethodId);
+            final JsonObject json;
+            if (paymentMethod.active()) {
+                LOG.debug(
+                    "PaymentMethod already active. Not doing anything."
+                );
+                json = new JsonPaymentMethod(paymentMethod, Boolean.FALSE);
+            } else {
+                final PaymentMethod active = paymentMethod.activate();
+                LOG.debug("PaymentMethod successfully activated!");
+                json = new JsonPaymentMethod(active, Boolean.FALSE);
+            }
+            response = ResponseEntity.ok(json.toString());
+        } catch (final IllegalStateException exception) {
+            final String message = exception.getMessage();
+            if (message != null) {
+                response = ResponseEntity.badRequest().body(message);
+            } else {
+                response = ResponseEntity.badRequest().build();
+            }
+        }
+        return response;
+    }
+
+    /**
+     * This will deactivate the specified Stripe PaymentMethod.
+     *
+     * @param owner Owner of the project (login of user or org name).
+     * @param name Repo name.
+     * @param paymentMethodId Id of the PaymentMethod to be deactivated.
+     * @return Deactivated PaymentMethod in JSON.
+     */
+    @PutMapping(
+        value = "/projects/{owner}/{name}/wallets/stripe/paymentMethods/"
+            + "{paymentMethodId}/deactivate",
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> deactivateStripePaymentMethod(
+        @PathVariable final String owner,
+        @PathVariable final String name,
+        @PathVariable final String paymentMethodId
+    ) {
+        LOG.debug(
+            "Deactivating Stripe PaymentMethod " + paymentMethodId
+                + " of Project " + owner + "/" + name + "... "
+        );
+        ResponseEntity<String> response;
+        try {
+            final PaymentMethod paymentMethod = this
+                .getStripePaymentMethod(owner, name, paymentMethodId)
+                .deactivate();
+            LOG.debug("PaymentMethod successfully deactivated!");
+            final JsonPaymentMethod json = new JsonPaymentMethod(
+                paymentMethod,
+                Boolean.FALSE
+            );
+            response = ResponseEntity.ok(json.toString());
+        } catch (final IllegalStateException exception) {
+            final String message = exception.getMessage();
+            if (message != null) {
+                response = ResponseEntity.badRequest().body(message);
+            } else {
+                response = ResponseEntity.badRequest().build();
+            }
+        }
+        return response;
+    }
+
+    /**
+     * Get a PaymentMethod from STRIPE wallet.
+     * @param owner Owner of the project (login of user or org name).
+     * @param name Repo name.
+     * @param paymentMethodId Id of the PaymentMethod to be deactivated.
+     * @return PaymentMethod.
+     * @throws IllegalStateException if method is not found.
+     * @checkstyle ExecutableStatementCount (60 lines).
+     */
+    private PaymentMethod getStripePaymentMethod(
+        final String owner,
+        final String name,
+        final String paymentMethodId
+    ) throws IllegalStateException {
+        final PaymentMethod result;
         final Project found = this.user.projects().getProjectById(
             owner + "/" + name, user.provider().name()
         );
-        if(found == null) {
+        if (found == null) {
             LOG.error(
                 "Project " + owner + "/" + name + " not found! "
-                + "Bad Request."
+                    + "Bad Request."
             );
-            response = ResponseEntity.badRequest().build();
+            throw new IllegalStateException();
         } else {
             Wallet wallet = null;
             for (final Wallet search : found.wallets()) {
@@ -247,8 +332,7 @@ public class PaymentMethodsApi extends BaseApiController {
             }
             if (wallet == null) {
                 LOG.error("Stripe Wallet missing! Bad Request.");
-                response = ResponseEntity.badRequest()
-                    .body("Stripe Wallet not found.");
+                throw new IllegalStateException("Stripe Wallet not found.");
             } else {
                 PaymentMethod paymentMethod = null;
                 for (final PaymentMethod method : wallet.paymentMethods()) {
@@ -261,29 +345,15 @@ public class PaymentMethodsApi extends BaseApiController {
                 if (paymentMethod == null) {
                     LOG.error(
                         "PaymentMethod " + paymentMethodId + " not found! "
-                        + "Bad Request."
+                            + "Bad Request."
                     );
-                    response = ResponseEntity.badRequest()
-                        .body("Payment Method not found.");
-                } else {
-                    final JsonObject json;
-                    if(paymentMethod.active()) {
-                        LOG.debug(
-                            "PaymentMethod already active. "
-                            + "Not doing anything."
-                        );
-                        json = new JsonPaymentMethod(
-                            paymentMethod, Boolean.FALSE
-                        );
-                    } else {
-                        final PaymentMethod active = paymentMethod.activate();
-                        LOG.debug("PaymentMethod successfully activated!");
-                        json = new JsonPaymentMethod(active, Boolean.FALSE);
-                    }
-                    response = ResponseEntity.ok(json.toString());
+                    throw new IllegalStateException(
+                        "Payment Method not found."
+                    );
                 }
+                result = paymentMethod;
             }
         }
-        return response;
+        return result;
     }
 }
