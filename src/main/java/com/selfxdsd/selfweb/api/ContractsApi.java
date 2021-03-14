@@ -576,18 +576,46 @@ public class ContractsApi extends BaseApiController {
                 if(found == null){
                     resp = ResponseEntity.noContent().build();
                 } else {
+                    Payment payment = null;
                     if (!found.isPaid()) {
                         final Wallet wallet = project.wallets().active();
-                        wallet.pay(found);
+                        payment = wallet.pay(found);
                     }
                     final Invoice active = contract.invoices().active();
-                    resp = ResponseEntity.ok(
-                        Json.createObjectBuilder()
-                            .add("paid", found.invoiceId())
-                            .add("active", new JsonInvoice(active))
-                            .build()
-                            .toString()
-                    );
+                    if(payment == null) {
+                        resp = ResponseEntity.ok(
+                            Json.createObjectBuilder()
+                                .add("paid", found.invoiceId())
+                                .add("active", new JsonInvoice(active))
+                                .build()
+                                .toString()
+                        );
+                    } else {
+                        resp = ResponseEntity.ok(
+                            Json.createObjectBuilder()
+                                .add("paid", found.invoiceId())
+                                .add(
+                                    "payment",
+                                    Json.createObjectBuilder()
+                                        .add("status", payment.status())
+                                        .add(
+                                            "failReason",
+                                            payment.failReason()
+                                        ).add(
+                                            "transactionId",
+                                            payment.transactionId()
+                                        ).add(
+                                            "timestamp",
+                                            String.valueOf(
+                                                payment.paymentTime()
+                                            )
+                                        ).build()
+                                )
+                                .add("active", new JsonInvoice(active))
+                                .build()
+                                .toString()
+                        );
+                    }
                 }
             }
         }

@@ -253,7 +253,7 @@ function invoiceAsTableRow(contract) {
 
                 status = "Payment failed " + "<i class='fa fa-exclamation-triangle fa-lg' style='color:red;' aria-hidden='true' "
                     + "data-toggle='tooltip' data-placement='top' "
-                    + "data-original-title='" + failMessage + "'>"
+                    + "data-original-title=\"" + failMessage.replaceAll('"', '\'') + "\">"
                     +"</i>";
             }
             downloadIcons="<a href='" + invoicePdfHref + "' class='downloadInvoice'>" + "<i title='Your Invoice To The Project' class='fa fa-file-pdf-o fa-lg'></i></a>"

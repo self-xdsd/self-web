@@ -170,7 +170,7 @@ var projectContractsCount = -1;
                     }
                     status = "Payment failed " + "<i class='fa fa-exclamation-triangle fa-lg' style='color:red;' aria-hidden='true' "
                         + "data-toggle='tooltip' data-placement='top' "
-                        + "data-original-title='" + failMessage + "'>"
+                        + "data-original-title=\"" + failMessage.replaceAll('"', '\'')+ "\">"
                         +"</i>";
                 }
                 var totalAmount = parseFloat(invoice.totalAmount.substring(0, invoice.totalAmount.length - 1)
