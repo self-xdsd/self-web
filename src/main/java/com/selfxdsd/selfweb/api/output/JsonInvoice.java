@@ -23,8 +23,11 @@
 package com.selfxdsd.selfweb.api.output;
 
 import com.selfxdsd.api.Invoice;
+import com.selfxdsd.api.Payment;
+
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -53,8 +56,9 @@ public final class JsonInvoice extends AbstractJsonObject {
     public JsonInvoice(final Invoice invoice, final boolean full) {
         super(() -> {
             final JsonObject json;
+            JsonObjectBuilder builder;
             if(!full) {
-                json = Json.createObjectBuilder()
+                builder = Json.createObjectBuilder()
                     .add("id", invoice.invoiceId())
                     .add("createdAt", String.valueOf(invoice.createdAt()))
                     .add("isPaid", invoice.isPaid())
@@ -74,16 +78,9 @@ public final class JsonInvoice extends AbstractJsonObject {
                                 invoice.totalAmount()
                                     .divide(BigDecimal.valueOf(100))
                             )
-                    )
-                    .add(
-                        "paymentTime",
-                        String.valueOf(invoice.paymentTime())
-                    ).add(
-                        "transactionId",
-                        String.valueOf(invoice.transactionId())
-                    ).build();
+                    );
             } else {
-                json = Json.createObjectBuilder()
+                builder = Json.createObjectBuilder()
                     .add("id", invoice.invoiceId())
                     .add("createdAt", String.valueOf(invoice.createdAt()))
                     .add("isPaid", invoice.isPaid())
@@ -105,13 +102,23 @@ public final class JsonInvoice extends AbstractJsonObject {
                                 invoice.totalAmount()
                                     .divide(BigDecimal.valueOf(100))
                             )
-                    ).add(
-                        "paymentTime",
-                        String.valueOf(invoice.paymentTime())
-                    ).add(
-                        "transactionId",
-                        String.valueOf(invoice.transactionId())
-                    ).build();
+                    );
+            }
+            final Payment latest = invoice.latest();
+            if(latest == null) {
+                json = builder.build();
+            } else {
+                json = builder.add(
+                    "latestPayment",
+                    Json.createObjectBuilder()
+                        .add("status", latest.status())
+                        .add("failReason", latest.failReason())
+                        .add("transactionId", latest.transactionId())
+                        .add(
+                            "timestamp",
+                            String.valueOf(latest.paymentTime())
+                        ).build()
+                ).build();
             }
             return json;
         });

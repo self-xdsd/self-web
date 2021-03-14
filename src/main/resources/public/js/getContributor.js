@@ -217,6 +217,9 @@ function getInvoicesOfContract(contract) {
                     }
                 }
             );
+        },
+        drawCallback: function () {
+            $('[data-toggle="tooltip"]').tooltip();
         }
     });
 }
@@ -227,12 +230,6 @@ function getInvoicesOfContract(contract) {
  */
 function invoiceAsTableRow(contract) {
     return function (invoice) {
-        var transactionId;
-        if (invoice.transactionId == "null") {
-            transactionId = "-";
-        } else {
-            transactionId = invoice.transactionId;
-        }
         var status;
         var downloadIcons;
         var invoicePdfHref = "/api/contributor/contracts/"
@@ -240,12 +237,29 @@ function invoiceAsTableRow(contract) {
             + "/invoices/" + invoice.id
             + "/pdf?role=" + contract.id.role;
 
-        if (transactionId == "-") {
-            status = "Active";
+        if (!invoice.isPaid) {
+            var latestPayment = invoice.latestPayment;
+            if(latestPayment === undefined) {
+                status = "Active";
+            } else {
+                var timestamp = latestPayment.timestamp;
+                var failMessage;
+                if(timestamp.length > 0) {
+                    timestamp = timestamp.split('T')[0];
+                    failMessage = timestamp + ": " + latestPayment.failReason;
+                } else {
+                    failMessage = latestPayment.failReason;
+                }
+
+                status = "Payment failed " + "<i class='fa fa-exclamation-triangle fa-lg' style='color:red;' aria-hidden='true' "
+                    + "data-toggle='tooltip' data-placement='top' "
+                    + "data-original-title='" + failMessage + "'>"
+                    +"</i>";
+            }
             downloadIcons="<a href='" + invoicePdfHref + "' class='downloadInvoice'>" + "<i title='Your Invoice To The Project' class='fa fa-file-pdf-o fa-lg'></i></a>"
         } else {
             status = "Paid";
-            if(transactionId.startsWith("fake_payment")) {
+            if(invoice.latestPayment.transactionId.startsWith("fake_payment")) {
                 downloadIcons="<a href='" + invoicePdfHref + "' class='downloadInvoice'>" + "<i title='Your Invoice To The Project' class='fa fa-file-pdf-o fa-lg'></i></a>"
             } else {
                 var platformInvoicePdfHref = "/api/contributor/contracts/"

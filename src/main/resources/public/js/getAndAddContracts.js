@@ -101,6 +101,7 @@ var projectContractsCount = -1;
                 );
             },
             drawCallback: function(){
+                $('[data-toggle="tooltip"]').tooltip();
                 $("#invoicesTable .payInvoice").off();
                 $("#invoicesTable .payInvoice").each(function () {
                     $(this).on(
@@ -139,6 +140,8 @@ var projectContractsCount = -1;
      * Turn an Contract Invoice into a table row.
      * @param contract Contract.
      * @returns Function which will return and array of columns.
+     * @todo #390:60min Modify the Invoice payment endpoint so it returns the Payment JSON.
+     *  Then, display the status on the Invoice row properly.
      */
     function invoiceAsTableRow(contract) {
         return function (invoice) {
@@ -152,8 +155,24 @@ var projectContractsCount = -1;
             var downloadLink = "<a href='" + pdfHref + "' title='Download Invoice' class='downloadInvoice'>"
                 + "<i class='fa fa-file-pdf-o fa-lg'></i>"
                 + "</a>  ";
-            if (invoice.paymentTime == "null" && invoice.transactionId == "null") {
-                status = "Active";
+            if (!invoice.isPaid) {
+                var latestPayment = invoice.latestPayment;
+                if(latestPayment === undefined) {
+                    status = "Active";
+                } else {
+                    var timestamp = latestPayment.timestamp;
+                    var failMessage;
+                    if(timestamp.length > 0) {
+                        timestamp = timestamp.split('T')[0];
+                        failMessage = timestamp + ": " + latestPayment.failReason;
+                    } else {
+                        failMessage = latestPayment.failReason;
+                    }
+                    status = "Payment failed " + "<i class='fa fa-exclamation-triangle fa-lg' style='color:red;' aria-hidden='true' "
+                        + "data-toggle='tooltip' data-placement='top' "
+                        + "data-original-title='" + failMessage + "'>"
+                        +"</i>";
+                }
                 var totalAmount = parseFloat(invoice.totalAmount.substring(0, invoice.totalAmount.length - 1)
                         .replace(",",".").trim())
                 if (totalAmount >= 108.0) {
