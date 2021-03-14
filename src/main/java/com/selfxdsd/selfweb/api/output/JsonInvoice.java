@@ -75,13 +75,7 @@ public final class JsonInvoice extends AbstractJsonObject {
                                     .divide(BigDecimal.valueOf(100))
                             )
                     )
-                    .add(
-                        "paymentTime",
-                        String.valueOf(invoice.paymentTime())
-                    ).add(
-                        "transactionId",
-                        String.valueOf(invoice.transactionId())
-                    ).build();
+                    .build();
             } else {
                 json = Json.createObjectBuilder()
                     .add("id", invoice.invoiceId())
@@ -105,12 +99,6 @@ public final class JsonInvoice extends AbstractJsonObject {
                                 invoice.totalAmount()
                                     .divide(BigDecimal.valueOf(100))
                             )
-                    ).add(
-                        "paymentTime",
-                        String.valueOf(invoice.paymentTime())
-                    ).add(
-                        "transactionId",
-                        String.valueOf(invoice.transactionId())
                     ).build();
             }
             return json;
