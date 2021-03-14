@@ -493,4 +493,55 @@ public final class PaymentMethodsApiTestCase {
             Matchers.equalTo(HttpStatus.OK)
         );
     }
+
+    /**
+     * Trying to deactivate a PaymentMethod works.
+     */
+    @Test
+    public void deactivateInactivePaymentMethod() {
+        final PaymentMethod deactivated = Mockito.mock(PaymentMethod.class);
+        Mockito.when(deactivated.identifier()).thenReturn("paymentMethod123");
+        Mockito.when(deactivated.active()).thenReturn(Boolean.FALSE);
+
+        final PaymentMethod original = Mockito.mock(PaymentMethod.class);
+        Mockito.when(original.identifier()).thenReturn("paymentMethod123");
+        Mockito.when(original.active()).thenReturn(Boolean.TRUE);
+        Mockito.when(original.deactivate()).thenReturn(deactivated);
+
+        final PaymentMethods ofWallet = Mockito.mock(PaymentMethods.class);
+        Mockito.when(ofWallet.iterator()).thenReturn(
+            List.of(original).iterator()
+        );
+        final Wallet stripe = Mockito.mock(Wallet.class);
+        Mockito.when(stripe.type()).thenReturn("STRIPE");
+        Mockito.when(stripe.paymentMethods()).thenReturn(ofWallet);
+
+        final Wallets ofProject = Mockito.mock(Wallets.class);
+        Mockito.when(ofProject.iterator()).thenReturn(
+            List.of(stripe).iterator()
+        );
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.wallets()).thenReturn(ofProject);
+
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(user.provider()).thenReturn(provider);
+
+        final Projects owned = Mockito.mock(Projects.class);
+        Mockito.when(
+            owned.getProjectById("mihai/test", Provider.Names.GITHUB)
+        ).thenReturn(project);
+        Mockito.when(user.projects()).thenReturn(owned);
+
+        MatcherAssert.assertThat(
+            new PaymentMethodsApi(user)
+                .deactivateStripePaymentMethod(
+                    "mihai",
+                    "test",
+                    "paymentMethod123"
+                ).getStatusCode(),
+            Matchers.equalTo(HttpStatus.OK)
+        );
+    }
 }
