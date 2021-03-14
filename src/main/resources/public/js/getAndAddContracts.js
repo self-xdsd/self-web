@@ -140,8 +140,6 @@ var projectContractsCount = -1;
      * Turn an Contract Invoice into a table row.
      * @param contract Contract.
      * @returns Function which will return and array of columns.
-     * @todo #390:60min Modify the Invoice payment endpoint so it returns the Payment JSON.
-     *  Then, display the status on the Invoice row properly.
      */
     function invoiceAsTableRow(contract) {
         return function (invoice) {
@@ -170,7 +168,7 @@ var projectContractsCount = -1;
                     }
                     status = "Payment failed " + "<i class='fa fa-exclamation-triangle fa-lg' style='color:red;' aria-hidden='true' "
                         + "data-toggle='tooltip' data-placement='top' "
-                        + "data-original-title='" + failMessage + "'>"
+                        + "data-original-title=\"" + failMessage.replaceAll('"', '\'')+ "\">"
                         +"</i>";
                 }
                 var totalAmount = parseFloat(invoice.totalAmount.substring(0, invoice.totalAmount.length - 1)
