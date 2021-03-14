@@ -152,7 +152,7 @@ var projectContractsCount = -1;
             var downloadLink = "<a href='" + pdfHref + "' title='Download Invoice' class='downloadInvoice'>"
                 + "<i class='fa fa-file-pdf-o fa-lg'></i>"
                 + "</a>  ";
-            if (invoice.paymentTime == "null" && invoice.transactionId == "null") {
+            if (!invoice.isPaid) {
                 status = "Active";
                 var totalAmount = parseFloat(invoice.totalAmount.substring(0, invoice.totalAmount.length - 1)
                         .replace(",",".").trim())

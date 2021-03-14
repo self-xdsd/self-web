@@ -227,12 +227,6 @@ function getInvoicesOfContract(contract) {
  */
 function invoiceAsTableRow(contract) {
     return function (invoice) {
-        var transactionId;
-        if (invoice.transactionId == "null") {
-            transactionId = "-";
-        } else {
-            transactionId = invoice.transactionId;
-        }
         var status;
         var downloadIcons;
         var invoicePdfHref = "/api/contributor/contracts/"
@@ -240,12 +234,12 @@ function invoiceAsTableRow(contract) {
             + "/invoices/" + invoice.id
             + "/pdf?role=" + contract.id.role;
 
-        if (transactionId == "-") {
+        if (!invoice.isPaid) {
             status = "Active";
             downloadIcons="<a href='" + invoicePdfHref + "' class='downloadInvoice'>" + "<i title='Your Invoice To The Project' class='fa fa-file-pdf-o fa-lg'></i></a>"
         } else {
             status = "Paid";
-            if(transactionId.startsWith("fake_payment")) {
+            if(invoice.transactionId.startsWith("fake_payment")) {
                 downloadIcons="<a href='" + invoicePdfHref + "' class='downloadInvoice'>" + "<i title='Your Invoice To The Project' class='fa fa-file-pdf-o fa-lg'></i></a>"
             } else {
                 var platformInvoicePdfHref = "/api/contributor/contracts/"
