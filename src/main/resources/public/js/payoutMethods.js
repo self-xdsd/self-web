@@ -16,7 +16,7 @@ $(document).ready(
                 }
             }
         );
-        $("#create ConnectAccountForm").submit(
+        $("#createStripeConnectAccountForm").submit(
             function(e) {
                 e.preventDefault();
                 var valid = true;
@@ -130,13 +130,14 @@ $(document).ready(
                 );
             }
         );
-        $('#stripeDeleteButton').submit(
+        $('#deleteStripeForm').submit(
                 function(e) {
                     e.preventDefault();
+                    var form = $(this);
                     $.ajax({
                         type: "DELETE",
                         url: "/api/contributor/payoutmethods/stripe",
-                        data: form.serealize(),
+                        data: form.serialize(),
                         success: function(response){
                             $(".payout-methods").hide();
                             $(".no-payout-methods").show();
