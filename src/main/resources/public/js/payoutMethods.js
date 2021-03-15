@@ -16,7 +16,7 @@ $(document).ready(
                 }
             }
         );
-        $("#createStripeConnectAccountForm").submit(
+        $("#create ConnectAccountForm").submit(
             function(e) {
                 e.preventDefault();
                 var valid = true;
@@ -129,6 +129,34 @@ $(document).ready(
                     }
                 );
             }
+        );
+        $('#stripeDeleteButton').submit(
+                function(e) {
+                    e.preventDefault();
+                    $.ajax({
+                        type: "DELETE",
+                        url: "/api/contributor/payoutmethods/stripe",
+                        data: form.serealize(),
+                        success: function(response){
+                            $(".payout-methods").hide();
+                            $(".no-payout-methods").show();
+                        },
+                        error: function(jqXHR, error, errorThrown){
+                            if(jqXHR.status && jqXHR.status == 400){
+                                console.error("Bad Request: " + jqXHR.responseText);
+                                $(".browser-error").show();
+                            } else {
+                                console.log("Server error status: " + jqXHR.status);
+                                console.log("Server error: " + jqXHR.responseText);
+                                alert(
+                                    "Something went wrong (" + jqXHR.status + ")." +
+                                    "Please, try again later."
+                                );
+                            }
+                            
+                        }
+                    });
+                }
         );
         $("#stripeDashboardForm").submit(
             function(e) {
