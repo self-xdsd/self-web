@@ -176,3 +176,11 @@ body {
     margin-bottom: 15px;
 }
 
+.no-payout-methods{
+    margin-bottom:20px;
+}
+
+#stripeDeleteButton{
+    width:145px;
+}
+
