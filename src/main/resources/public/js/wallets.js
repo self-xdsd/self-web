@@ -424,8 +424,8 @@ function walletAsPieChart(wallet) {
                 + 'aria-hidden="true"'
                 + 'data-toggle="tooltip"'
                 + 'data-placement="top"'
-                + 'title="We assigned you a fake wallet with 100.000 €. You can work with it'
-                + 'until you decide to register a real wallet. The business flow is the same,'
+                + 'title="We assigned your project a fake wallet with 100.000 €. You can work with it '
+                + 'until you decide to register a real wallet. The business flow is the same, '
                 + 'except the payments are fictive."></i>'
         );
         $('[data-toggle="tooltip"]').tooltip();
