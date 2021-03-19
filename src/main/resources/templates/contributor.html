@@ -348,27 +348,27 @@
                             </p>
                         </div>
                         <div id="stripeDashboardFormDiv" style="display: none">
-                            <form id="stripeDashboardForm">
-                                <div class="form-group">
+                            <div class="row ml-0">
+                                <form id="stripeDashboardForm" class="mr-1">
                                     <button id="stripeDashboardButton" type="submit" class="btn btn-primary">
                                         Stripe Dashboard
-                                    </button>                                    
-                                    <span id="loadingStripeDashboardForm" class="text-center" style="display: none;">
-                                        <img height="40" width="40" src="/images/loading.svg">
-                                    </span>
-                                    <div class="invalid-feedback browser-error">
-                                        <small>
-                                            Something went wrong. Please refresh the page and try again.<br>
-                                            If the error persists, please open an Issue <a href="https://github.com/self-xdsd/self-web/issues" target="_blank">here</a>.
-                                        </small>
-                                    </div>
-                                </div>
-                            </form>
-                            <form id="deleteStripeForm">
-                                <button id="stripeDeleteButton" type="submit" class="btn btn-danger">
+                                    </button>
+                                </form>
+                                <form id="deleteStripeForm">
+                                    <button id="stripeDeleteButton" type="submit" class="btn btn-danger">
                                         Delete Account
                                     </button>
-                            </form>
+                                </form>
+                                <span id="loadingStripeDashboardForm" class="text-center" style="display: none;">
+                                    <img height="30" width="30" src="/images/loading.svg">
+                                </span>
+                                <div class="invalid-feedback browser-error">
+                                    <small>
+                                        Something went wrong. Please refresh the page and try again.<br>
+                                        If the error persists, please open an Issue <a href="https://github.com/self-xdsd/self-web/issues" target="_blank">here</a>.
+                                    </small>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

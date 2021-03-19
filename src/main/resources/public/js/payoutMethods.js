@@ -133,16 +133,25 @@ $(document).ready(
         $('#deleteStripeForm').submit(
                 function(e) {
                     e.preventDefault();
+                    $("#stripeDashboardButton").addClass("disabled");
+                    $("#stripeDeleteButton").addClass("disabled");
+                    $("#loadingStripeDashboardForm").show();
                     var form = $(this);
                     $.ajax({
                         type: "DELETE",
                         url: "/api/contributor/payoutmethods/stripe",
                         data: form.serialize(),
                         success: function(response){
+                            $("#loadingStripeDashboardForm").hide();
+                            $("#stripeDashboardButton").removeClass("disabled");
+                            $("#stripeDeleteButton").removeClass("disabled");
                             $(".payout-methods").hide();
                             $(".no-payout-methods").show();
                         },
                         error: function(jqXHR, error, errorThrown){
+                            $("#stripeDashboardButton").removeClass("disabled");
+                            $("#stripeDeleteButton").removeClass("disabled");
+                            $("#loadingStripeDashboardForm").hide();
                             if(jqXHR.status && jqXHR.status == 400){
                                 console.error("Bad Request: " + jqXHR.responseText);
                                 $(".browser-error").show();
@@ -163,6 +172,7 @@ $(document).ready(
             function(e) {
                 e.preventDefault();
                 $("#stripeDashboardButton").addClass("disabled");
+                $("#stripeDeleteButton").addClass("disabled");
                 $("#loadingStripeDashboardForm").show();
                 var form = $(this);
                 $.ajax(
@@ -176,6 +186,7 @@ $(document).ready(
                         },
                         error: function(jqXHR, error, errorThrown) {
                             $("#stripeDashboardButton").removeClass("disabled");
+                            $("#stripeDeleteButton").removeClass("disabled");
                             $("#loadingStripeDashboardForm").hide();
                             if(jqXHR.status && jqXHR.status == 400){
                                 console.error("Bad Request: " + jqXHR.responseText);
