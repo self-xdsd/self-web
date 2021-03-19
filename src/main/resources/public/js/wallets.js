@@ -187,17 +187,7 @@ function activateWallet(owner, name, type) {
 
                     $("#activateStripeWalletButton").removeClass("disabled");
                     $("#loadingActivateStripeWalletButton").hide();
-                } else if(type == 'fake') {
-                    $("#stripeWalletBadge").removeClass("badge-success")
-                    $("#stripeWalletBadge").html("")
-                    $("#activateStripeWallet").show();
-
-                    $("#fakeWalletBadge").addClass("badge-success");
-                    $("#fakeWalletBadge").html("active");
-                    $("#activateFakeWallet").hide();
-
-                    $("#activateFakeWalletButton").removeClass("disabled");
-                    $("#loadingActivateFakeWalletButton").hide();
+                    $("#fakeWalletDiv").hide();
                 }
                 walletAsPieChart(activatedWallet);
             },
@@ -741,17 +731,6 @@ $(document).ready(
                 $("#addNewCardError").hide();
                 $("#addStripePaymentMethodButton").show();
                 $("#payment-method-element-card").hide();
-            }
-        )
-        $("#activateFakeWalletButton").on(
-            "click",
-            function(event) {
-                event.preventDefault();
-                activateWallet(
-                    $("#owner").text(),
-                    $("#name").text(),
-                    "fake"
-                )
             }
         )
         $("#activateStripeWalletButton").on(

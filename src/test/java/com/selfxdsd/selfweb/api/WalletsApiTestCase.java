@@ -284,6 +284,8 @@ public final class WalletsApiTestCase {
             .thenReturn(walletsSrc.spliterator());
         Mockito.when(wallets.iterator())
             .thenReturn(walletsSrc.iterator());
+        Mockito.when(wallets.active())
+            .thenReturn(fake);
         Mockito.when(project.wallets()).thenReturn(wallets);
         Mockito.when(wallets.activate(stripe)).thenAnswer(inv -> {
             final Wallet activated = Mockito.mock(Wallet.class);
@@ -304,6 +306,8 @@ public final class WalletsApiTestCase {
         final ResponseEntity<String> resp =
             api.activate("john", "test", Wallet.Type.STRIPE);
 
+        Mockito.verify(wallets, Mockito.times(1))
+            .remove(fake);
         MatcherAssert.assertThat(resp.getStatusCode(),
             Matchers.is(HttpStatus.OK));
         final JsonObject body = Json.createReader(

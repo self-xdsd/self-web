@@ -237,7 +237,11 @@ public class WalletsApi extends BaseApiController {
                 if(wallet.active()) {
                     activated = wallet;
                 } else {
+                    final Wallet previousActive = wallets.active();
                     activated = wallets.activate(wallet);
+                    if(previousActive.type().equals(Wallet.Type.FAKE)){
+                        wallets.remove(previousActive);
+                    }
                 }
                 response = ResponseEntity.ok(
                     new JsonWallet(activated, Boolean.FALSE).toString()
