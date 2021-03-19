@@ -177,6 +177,9 @@ function activateWallet(owner, name, type) {
             })
             .then(function (activatedWallet) {
                 $("#fakeWalletDiv").hide();
+                $("#stripeWalletBadge").addClass("badge-success");
+                $("#stripeWalletBadge").html("active");
+                $("#activateStripeWallet").hide();
                 walletAsPieChart(activatedWallet);
             })
             .catch(function (jqXHR) {
