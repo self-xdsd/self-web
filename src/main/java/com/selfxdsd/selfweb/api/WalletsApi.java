@@ -46,6 +46,8 @@ import java.math.RoundingMode;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
+ * @todo #389:60min When creating a Wallet PaymentMethod for the first time,
+ *  that PaymentMethod should be "active" by default.
  */
 @RestController
 @Validated
@@ -237,11 +239,7 @@ public class WalletsApi extends BaseApiController {
                 if(wallet.active()) {
                     activated = wallet;
                 } else {
-                    final Wallet previousActive = wallets.active();
-                    activated = wallets.activate(wallet);
-                    if(previousActive.type().equals(Wallet.Type.FAKE)){
-                        wallets.remove(previousActive);
-                    }
+                    activated = wallet.activate();
                 }
                 response = ResponseEntity.ok(
                     new JsonWallet(activated, Boolean.FALSE).toString()
