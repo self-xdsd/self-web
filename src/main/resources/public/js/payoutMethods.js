@@ -133,39 +133,45 @@ $(document).ready(
         $('#deleteStripeForm').submit(
                 function(e) {
                     e.preventDefault();
-                    $("#stripeDashboardButton").addClass("disabled");
-                    $("#stripeDeleteButton").addClass("disabled");
-                    $("#loadingStripeDashboardForm").show();
-                    var form = $(this);
-                    $.ajax({
-                        type: "DELETE",
-                        url: "/api/contributor/payoutmethods/stripe",
-                        data: form.serialize(),
-                        success: function(response){
-                            $("#loadingStripeDashboardForm").hide();
-                            $("#stripeDashboardButton").removeClass("disabled");
-                            $("#stripeDeleteButton").removeClass("disabled");
-                            $(".payout-methods").hide();
-                            $(".no-payout-methods").show();
-                        },
-                        error: function(jqXHR, error, errorThrown){
-                            $("#stripeDashboardButton").removeClass("disabled");
-                            $("#stripeDeleteButton").removeClass("disabled");
-                            $("#loadingStripeDashboardForm").hide();
-                            if(jqXHR.status && jqXHR.status == 400){
-                                console.error("Bad Request: " + jqXHR.responseText);
-                                $(".browser-error").show();
-                            } else {
-                                console.log("Server error status: " + jqXHR.status);
-                                console.log("Server error: " + jqXHR.responseText);
-                                alert(
-                                    "Something went wrong (" + jqXHR.status + ")." +
-                                    "Please, try again later."
-                                );
+                    confirmDialog
+                        .create("Are you sure you want to delete your Stripe Connect Account?", "Warning","Yes")
+                        .then(
+                            () => {
+                                $("#stripeDashboardButton").addClass("disabled");
+                                $("#stripeDeleteButton").addClass("disabled");
+                                $("#loadingStripeDashboardForm").show();
+                                var form = $(this);
+                                $.ajax({
+                                    type: "DELETE",
+                                    url: "/api/contributor/payoutmethods/stripe",
+                                    data: form.serialize(),
+                                    success: function(response){
+                                        $("#loadingStripeDashboardForm").hide();
+                                        $("#stripeDashboardButton").removeClass("disabled");
+                                        $("#stripeDeleteButton").removeClass("disabled");
+                                        $(".payout-methods").hide();
+                                        $(".no-payout-methods").show();
+                                    },
+                                    error: function(jqXHR, error, errorThrown){
+                                        $("#stripeDashboardButton").removeClass("disabled");
+                                        $("#stripeDeleteButton").removeClass("disabled");
+                                        $("#loadingStripeDashboardForm").hide();
+                                        if(jqXHR.status && jqXHR.status == 400){
+                                            console.error("Bad Request: " + jqXHR.responseText);
+                                            $(".browser-error").show();
+                                        } else {
+                                            console.log("Server error status: " + jqXHR.status);
+                                            console.log("Server error: " + jqXHR.responseText);
+                                            alert(
+                                                "Something went wrong (" + jqXHR.status + ")." +
+                                                "Please, try again later."
+                                            );
+                                        }
+
+                                    }
+                                });
                             }
-                            
-                        }
-                    });
+                        );
                 }
         );
         $("#stripeDashboardForm").submit(

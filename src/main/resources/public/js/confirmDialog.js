@@ -38,12 +38,14 @@ var confirmDialog = (function ($) {
          * Creates a confirm dialog.
          * @param {String} body  Required dialog body.
          * @param {String} title Optional title. Default is "Warning".
+         * @param {String} answer Optional answer. Default is "OK";
          */
-        create: function (body, title) {
+        create: function (body, title, answer) {
             return new Promise(function (resolve, reject) {
                 var dialog = getDialogEl();
                 var confirmBtn = dialog.find("#dialog-confirm-btn");
                 dialog.find("#dialog-title").text(title || "Warning");
+                dialog.find("#dialog-confirm-btn").text(answer || "OK");
                 dialog.find("#dialog-body").text(body);
                 confirmBtn.click(function(event) {
                     dialog.modal("hide");
