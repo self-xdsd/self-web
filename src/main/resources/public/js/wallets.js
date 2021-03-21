@@ -164,10 +164,10 @@ function arePaymentMethodsDeactivated(toggleButtons) {
 function activateWallet(owner, name, type) {
     if(type == 'stripe') {
         $("#activateStripeWalletButton").addClass("disabled");
-        $("#loadingActivateStripeWalletButton").show();
         confirmDialog
-            .create("Are you sure you want to do this? The Fake Wallet will be deleted, there's no going back.")
+            .create("Are you sure you want to activate the Real Wallet? The Fake Wallet will be deleted, there's no going back.", "Warning", "Yes")
             .then(function () {
+                $("#loadingActivateStripeWalletButton").show();
                 return $.when($.ajax({
                     type: "PUT",
                     contentType: "application/json",
@@ -287,7 +287,7 @@ function payInvoice(invoice, contract, payButton) {
                                 message += ' You are using a fake wallet, the payment will be fictive.'
                             }
                             confirmDialog
-                                .create(message)
+                                .create(message, "Warning", "Yes")
                                 .then(
                                     () => payInvoice(invoice, contract, $(this))
                                 );
@@ -310,7 +310,7 @@ function payInvoice(invoice, contract, payButton) {
                             message += ' You are using a fake wallet, the payment will be fictive.'
                         }
                         confirmDialog
-                            .create(message)
+                            .create(message, "Warning", "Yes")
                             .then(
                                 () => payInvoice(invoice, contract, $(this))
                             );

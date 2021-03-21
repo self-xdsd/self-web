@@ -113,7 +113,7 @@ var projectContractsCount = -1;
                                 message += ' You are using a fake wallet, the payment will be fictive.'
                             }
                             confirmDialog
-                                .create(message)
+                                .create(message, "Warning", "Yes")
                                 .then(() => {
                                     var table = $("#invoicesTable").DataTable();
                                     var row = table.row($(event.currentTarget).parents('tr'));
@@ -348,14 +348,14 @@ var projectContractsCount = -1;
         $("#contracts ").on("click", ".removeContract", function (event) {
             event.preventDefault();
             confirmDialog
-                .create("Are you sure you want to remove this contract?")
+                .create("Are you sure you want to remove this contract?", "Warning", "Yes")
                 .then(() => markContractForRemoval($(this)));
         });
 
         $("#contracts ").on("click", ".restoreContract", function (event) {
             event.preventDefault();
             confirmDialog
-                .create("Are you sure you want to restore this contract?")
+                .create("Are you sure you want to restore this contract?", "Warning", "Yes")
                 .then(() => restoreContract($(this)));
         });
 
