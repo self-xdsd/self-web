@@ -22,7 +22,7 @@ var confirmDialog = (function ($) {
                 '<p id="dialog-body"></p>' +
                 '</div>' +
                 '<div class="modal-footer">' +
-                '<a href="#!" class="btn" data-dismiss="modal">Cancel</a>' +
+                '<a href="#!" id="dialog-cancel-btn" class="btn" data-dismiss="modal">Cancel</a>' +
                 '<a href="#!" id="dialog-confirm-btn" class="btn btn-primary">OK</a>' +
                 '</div>' +
                 '</div>' +
@@ -44,17 +44,23 @@ var confirmDialog = (function ($) {
             return new Promise(function (resolve, reject) {
                 var dialog = getDialogEl();
                 var confirmBtn = dialog.find("#dialog-confirm-btn");
+                var cancelBtn = dialog.find("#dialog-cancel-btn");
                 dialog.find("#dialog-title").text(title || "Warning");
                 dialog.find("#dialog-confirm-btn").text(answer || "OK");
                 dialog.find("#dialog-body").text(body);
+                var isResolved = false;
                 confirmBtn.click(function(event) {
-                    dialog.modal("hide");
                     resolve();
+                    isResolved = true;
+                    dialog.modal("hide");
                 });
                 //remove all listeners after `hide` is completed
                 dialog.on("hidden.bs.modal", function(){
                     confirmBtn.off("click")
                     $(this).off()
+                    if(!isResolved){
+                        reject();
+                    }
                 })
                 dialog.modal("show");
             });

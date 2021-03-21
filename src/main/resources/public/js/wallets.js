@@ -159,66 +159,44 @@ function arePaymentMethodsDeactivated(toggleButtons) {
  * Activate a Project's Wallet.
  * @param owner Owner of the repo/project.
  * @param name Name of the repo.
- * @param type Type of the wallet (fake or stripe).
+ * @param type Type of the real wallet (ex: stripe).
  */
 function activateWallet(owner, name, type) {
     if(type == 'stripe') {
         $("#activateStripeWalletButton").addClass("disabled");
         $("#loadingActivateStripeWalletButton").show();
-    } else if(type == 'fake') {
-        $("#activateFakeWalletButton").addClass("disabled");
-        $("#loadingActivateFakeWalletButton").show();
-    }
-    $.ajax(
-        {
-            type: "PUT",
-            contentType: "application/json",
-            url: "/api/projects/" + owner + "/" + name +
-                "/wallets/" + type + "/activate",
-            success: function (activatedWallet) {
-                if(type == 'stripe') {
-                    $("#fakeWalletBadge").removeClass("badge-success")
-                    $("#fakeWalletBadge").html("")
-                    $("#activateFakeWallet").show();
-
-                    $("#stripeWalletBadge").addClass("badge-success");
-                    $("#stripeWalletBadge").html("active");
-                    $("#activateStripeWallet").hide();
-
-                    $("#activateStripeWalletButton").removeClass("disabled");
-                    $("#loadingActivateStripeWalletButton").hide();
-                } else if(type == 'fake') {
-                    $("#stripeWalletBadge").removeClass("badge-success")
-                    $("#stripeWalletBadge").html("")
-                    $("#activateStripeWallet").show();
-
-                    $("#fakeWalletBadge").addClass("badge-success");
-                    $("#fakeWalletBadge").html("active");
-                    $("#activateFakeWallet").hide();
-
-                    $("#activateFakeWalletButton").removeClass("disabled");
-                    $("#loadingActivateFakeWalletButton").hide();
-                }
+        confirmDialog
+            .create("Are you sure you want to do this? The Fake Wallet will be deleted, there's no going back.")
+            .then(function () {
+                return $.when($.ajax({
+                    type: "PUT",
+                    contentType: "application/json",
+                    url: "/api/projects/" + owner + "/" + name +
+                        "/wallets/" + type + "/activate"
+                }));
+            })
+            .then(function (activatedWallet) {
+                $("#fakeWalletDiv").hide();
+                $("#stripeWalletBadge").addClass("badge-success");
+                $("#stripeWalletBadge").html("active");
+                $("#activateStripeWallet").hide();
                 walletAsPieChart(activatedWallet);
-            },
-            error: function(jqXHR, error, errorThrown) {
-                if(type == 'stripe') {
-                    $("#activateStripeWalletButton").removeClass("disabled");
-                    $("#loadingActivateStripeWalletButton").hide();
-                } else if(type == 'fake') {
-                    $("#activateFakeWalletButton").removeClass("disabled");
-                    $("#loadingActivateFakeWalletButton").hide();
+            })
+            .catch(function (jqXHR) {
+                if (jqXHR) {
+                    confirmDialog
+                        .create("Something went wrong (" + jqXHR.responseText + "). Please try again.", "Error")
+                        .then(function () {
+                            console.log("Server error status: " + jqXHR.status);
+                            console.log("Server error: " + jqXHR.responseText);
+                        });
                 }
-                console.log("Server error status: " + jqXHR.status);
-                console.log("Server error: " + jqXHR.responseText);
-                alert(
-                    "Something went wrong (" + jqXHR.status + ")." +
-                    "Please, refresh the page and try again."
-                );
-            }
-        }
-    );
-
+            })
+            .finally(function () {
+                $("#activateStripeWalletButton").removeClass("disabled");
+                $("#loadingActivateStripeWalletButton").hide();
+            });
+    } 
 }
 
 /**
@@ -741,17 +719,6 @@ $(document).ready(
                 $("#addNewCardError").hide();
                 $("#addStripePaymentMethodButton").show();
                 $("#payment-method-element-card").hide();
-            }
-        )
-        $("#activateFakeWalletButton").on(
-            "click",
-            function(event) {
-                event.preventDefault();
-                activateWallet(
-                    $("#owner").text(),
-                    $("#name").text(),
-                    "fake"
-                )
             }
         )
         $("#activateStripeWalletButton").on(

@@ -285,7 +285,7 @@ public final class WalletsApiTestCase {
         Mockito.when(wallets.iterator())
             .thenReturn(walletsSrc.iterator());
         Mockito.when(project.wallets()).thenReturn(wallets);
-        Mockito.when(wallets.activate(stripe)).thenAnswer(inv -> {
+        Mockito.when(stripe.activate()).thenAnswer(inv -> {
             final Wallet activated = Mockito.mock(Wallet.class);
             Mockito.when(activated.type()).thenReturn(Wallet.Type.STRIPE);
             Mockito.when(activated.cash()).thenReturn(BigDecimal.TEN);
@@ -323,9 +323,9 @@ public final class WalletsApiTestCase {
         );
 
         Mockito.verify(
-            wallets,
+            stripe,
             Mockito.times(1)
-        ).activate(stripe);
+        ).activate();
     }
 
     /**
