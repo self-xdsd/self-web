@@ -134,7 +134,7 @@ $(document).ready(
                 function(e) {
                     e.preventDefault();
                     confirmDialog
-                        .create("Are you sure you want to delete your Stripe Connect Account?", "Warning","Yes")
+                        .create("Are you sure you want to delete your Stripe Connect Account?", "Warning", "Yes")
                         .then(
                             () => {
                                 $("#stripeDashboardButton").addClass("disabled");

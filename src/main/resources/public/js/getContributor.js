@@ -66,7 +66,7 @@ function getContributorDashboard() {
                         }
                     };
                     confirmDialog
-                        .create("Are you sure you want to remove this contract?")
+                        .create("Are you sure you want to remove this contract?", "Warning", "Yes")
                         .then(() => markContractForRemoval(contract, removeButton));
                 });
             });
@@ -313,7 +313,7 @@ function markContractForRemoval(contract, removeButton) {
                     function (event) {
                         event.preventDefault();
                         confirmDialog
-                            .create("Are you sure you want to remove this contract?")
+                            .create("Are you sure you want to remove this contract?", "Warning", "Yes")
                             .then(() => markContractForRemoval(contract, removeButton));
                     }
                 );
