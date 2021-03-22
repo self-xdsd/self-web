@@ -23,6 +23,7 @@
 package com.selfxdsd.selfweb.api;
 
 import com.selfxdsd.api.PaymentMethod;
+import com.selfxdsd.api.PaymentMethods;
 import com.selfxdsd.api.Project;
 import com.selfxdsd.api.User;
 import com.selfxdsd.api.Wallet;
@@ -146,6 +147,7 @@ public class PaymentMethodsApi extends BaseApiController {
      * @param name Repo name.
      * @param body PaymentMethod data in JSON.
      * @return PaymentMethod.
+     * @checkstyle ExecutableStatementCount (80 lines)
      */
     @PostMapping(
         value = "/projects/{owner}/{name}/wallets/stripe/paymentMethods",
@@ -186,18 +188,30 @@ public class PaymentMethodsApi extends BaseApiController {
                 response = ResponseEntity.badRequest()
                     .body("Stripe Wallet not found.");
             } else {
-                final JsonObject jsonBody = Json.createReader(
-                    new StringReader(body)
-                ).readObject();
-                final PaymentMethod paymentMethod = wallet.paymentMethods()
+                final String paymentMethodId = Json
+                    .createReader(new StringReader(body))
+                    .readObject()
+                    .getString("paymentMethodId");
+                final PaymentMethods paymentMethods = wallet.paymentMethods();
+                final boolean wasEmpty = !paymentMethods.iterator().hasNext();
+                PaymentMethod paymentMethod = paymentMethods
                     .register(
                         wallet,
-                        jsonBody.getString("paymentMethodId")
+                        paymentMethodId
                     );
                 LOG.debug("PaymentMethod successfully saved!");
-                response = ResponseEntity.ok(
-                    new JsonPaymentMethod(paymentMethod).toString()
-                );
+                if (wasEmpty) {
+                    response = this.activateStripePaymentMethodInternal(
+                        owner,
+                        name,
+                        paymentMethodId,
+                        true
+                    );
+                } else {
+                    response = ResponseEntity.ok(
+                        new JsonPaymentMethod(paymentMethod).toString()
+                    );
+                }
             }
         }
         return response;
@@ -222,35 +236,12 @@ public class PaymentMethodsApi extends BaseApiController {
         @PathVariable final String name,
         @PathVariable final String paymentMethodId
     ) {
-        LOG.debug(
-            "Activating Stripe PaymentMethod " + paymentMethodId
-                + " of Project " + owner + "/" + name + "... "
+        return this.activateStripePaymentMethodInternal(
+            owner,
+            name,
+            paymentMethodId,
+            false
         );
-        ResponseEntity<String> response;
-        try {
-            final PaymentMethod paymentMethod = this
-                .getStripePaymentMethod(owner, name, paymentMethodId);
-            final JsonObject json;
-            if (paymentMethod.active()) {
-                LOG.debug(
-                    "PaymentMethod already active. Not doing anything."
-                );
-                json = new JsonPaymentMethod(paymentMethod, Boolean.FALSE);
-            } else {
-                final PaymentMethod active = paymentMethod.activate();
-                LOG.debug("PaymentMethod successfully activated!");
-                json = new JsonPaymentMethod(active, Boolean.FALSE);
-            }
-            response = ResponseEntity.ok(json.toString());
-        } catch (final IllegalStateException exception) {
-            final String message = exception.getMessage();
-            if (message != null) {
-                response = ResponseEntity.badRequest().body(message);
-            } else {
-                response = ResponseEntity.badRequest().build();
-            }
-        }
-        return response;
     }
 
     /**
@@ -355,5 +346,53 @@ public class PaymentMethodsApi extends BaseApiController {
             }
         }
         return result;
+    }
+
+    /**
+     * Activates the specified Stripe PaymentMethod and will
+     * deactivate all the others (there can be only one active PaymentMethod).
+     *
+     * @param owner Owner of the project (login of user or org name).
+     * @param name Repo name.
+     * @param paymentMethodId Id of the PaymentMethod to be activated.
+     * @param fullJson Include the full JSON or not?
+     * @return Activated PaymentMethod Response in JSON.
+     * @checkstyle ParameterNumber (10 lines)
+     */
+    private ResponseEntity<String> activateStripePaymentMethodInternal(
+        final String owner,
+        final String name,
+        final String paymentMethodId,
+        final boolean fullJson
+    ){
+        LOG.debug(
+            "Activating Stripe PaymentMethod " + paymentMethodId
+                + " of Project " + owner + "/" + name + "... "
+        );
+        ResponseEntity<String> response;
+        try {
+            final PaymentMethod paymentMethod = this
+                .getStripePaymentMethod(owner, name, paymentMethodId);
+            final JsonObject json;
+            if (paymentMethod.active()) {
+                LOG.debug(
+                    "PaymentMethod already active. Not doing anything."
+                );
+                json = new JsonPaymentMethod(paymentMethod, fullJson);
+            } else {
+                final PaymentMethod active = paymentMethod.activate();
+                LOG.debug("PaymentMethod successfully activated!");
+                json = new JsonPaymentMethod(active, fullJson);
+            }
+            response = ResponseEntity.ok(json.toString());
+        } catch (final IllegalStateException exception) {
+            final String message = exception.getMessage();
+            if (message != null) {
+                response = ResponseEntity.badRequest().body(message);
+            } else {
+                response = ResponseEntity.badRequest().build();
+            }
+        }
+        return response;
     }
 }

@@ -22,7 +22,14 @@
  */
 package com.selfxdsd.selfweb.api;
 
-import com.selfxdsd.api.*;
+import com.selfxdsd.api.PaymentMethod;
+import com.selfxdsd.api.PaymentMethods;
+import com.selfxdsd.api.Project;
+import com.selfxdsd.api.Projects;
+import com.selfxdsd.api.Provider;
+import com.selfxdsd.api.User;
+import com.selfxdsd.api.Wallet;
+import com.selfxdsd.api.Wallets;
 import com.stripe.model.SetupIntent;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -34,6 +41,8 @@ import org.springframework.http.ResponseEntity;
 import javax.json.Json;
 import javax.json.JsonObject;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -230,6 +239,9 @@ public final class PaymentMethodsApiTestCase {
         );
 
         final PaymentMethods ofWallet = Mockito.mock(PaymentMethods.class);
+        final Iterator<PaymentMethod> iterator = Mockito.mock(Iterator.class);
+        Mockito.when(ofWallet.iterator()).thenReturn(iterator);
+        Mockito.when(iterator.hasNext()).thenReturn(true);
 
         final Wallet stripeWallet = Mockito.mock(Wallet.class);
         Mockito.when(stripeWallet.type()).thenReturn("STRIPE");
@@ -281,6 +293,89 @@ public final class PaymentMethodsApiTestCase {
         MatcherAssert.assertThat(
             jsonResp.getJsonObject("self").getBoolean("active"),
             Matchers.is(Boolean.FALSE)
+        );
+        MatcherAssert.assertThat(
+            jsonResp.getJsonObject("stripe").keySet(),
+            Matchers.emptyIterable()
+        );
+    }
+    /**
+     * Saving a new PaymentMethod works if the Project exists
+     * and it has a Stripe Wallet and activate the method if there are no other
+     * PaymentMethods.
+     */
+    @Test
+    public void saveStripePaymentMethodAndActivateWorks() {
+        final PaymentMethod saved = Mockito.mock(PaymentMethod.class);
+        Mockito.when(saved.identifier()).thenReturn("pm123");
+        Mockito.when(saved.active()).thenReturn(Boolean.FALSE);
+        Mockito.when(saved.json()).thenReturn(
+            Json.createObjectBuilder().build()
+        );
+        final PaymentMethod activated = Mockito.mock(PaymentMethod.class);
+        Mockito.when(saved.identifier()).thenReturn("pm123");
+        Mockito.when(saved.active()).thenReturn(Boolean.TRUE);
+        Mockito.when(saved.json()).thenReturn(
+            Json.createObjectBuilder().build()
+        );
+        Mockito.when(saved.activate()).thenReturn(activated);
+
+        final PaymentMethods ofWallet = Mockito.mock(PaymentMethods.class);
+        final List<PaymentMethod> ofWalletSrc = new ArrayList<>();
+        Mockito.when(ofWallet.iterator())
+            .thenAnswer(inv -> ofWalletSrc.iterator());
+
+        final Wallet stripeWallet = Mockito.mock(Wallet.class);
+        Mockito.when(stripeWallet.type()).thenReturn("STRIPE");
+        Mockito.when(stripeWallet.paymentMethods()).thenReturn(ofWallet);
+
+        Mockito.when(ofWallet.register(stripeWallet, "pm123"))
+            .thenAnswer(inv -> {
+                ofWalletSrc.add(saved);
+                return saved;
+            });
+
+        final Wallets ofProject = Mockito.mock(Wallets.class);
+        Mockito.when(ofProject.iterator())
+            .thenAnswer(inv -> List.of(stripeWallet).iterator());
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.wallets()).thenReturn(ofProject);
+
+
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(user.provider()).thenReturn(provider);
+
+        final Projects owned = Mockito.mock(Projects.class);
+        Mockito.when(
+            owned.getProjectById("mihai/test", Provider.Names.GITHUB)
+        ).thenReturn(project);
+        Mockito.when(user.projects()).thenReturn(owned);
+
+        final ResponseEntity<String> resp = new PaymentMethodsApi(user)
+            .saveStripePaymentMethod(
+                "mihai",
+                "test",
+                "{\"paymentMethodId\":\"pm123\"}"
+            );
+
+        MatcherAssert.assertThat(
+            resp.getStatusCode(),
+            Matchers.equalTo(HttpStatus.OK)
+        );
+
+        final JsonObject jsonResp = Json.createReader(
+            new StringReader(resp.getBody())
+        ).readObject();
+
+        MatcherAssert.assertThat(
+            jsonResp.getJsonObject("self").getString("paymentMethodId"),
+            Matchers.equalTo("pm123")
+        );
+        MatcherAssert.assertThat(
+            jsonResp.getJsonObject("self").getBoolean("active"),
+            Matchers.is(Boolean.TRUE)
         );
         MatcherAssert.assertThat(
             jsonResp.getJsonObject("stripe").keySet(),
