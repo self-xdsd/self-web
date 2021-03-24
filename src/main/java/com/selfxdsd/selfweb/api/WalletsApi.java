@@ -46,8 +46,6 @@ import java.math.RoundingMode;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #389:60min When creating a Wallet PaymentMethod for the first time,
- *  that PaymentMethod should be "active" by default.
  */
 @RestController
 @Validated
