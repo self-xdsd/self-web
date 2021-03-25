@@ -184,3 +184,17 @@ body {
     width:145px;
 }
 
+.error-container{
+    max-width:100%;
+    padding-bottom: 0;
+}
+
+@media (max-width:426px){
+    .error-container{
+        height:140px;
+    }
+    .error-header{
+        transform: scale(1.5);
+    }
+}
+
