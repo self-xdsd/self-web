@@ -641,17 +641,17 @@ public final class PaymentMethodsApiTestCase {
     }
 
     /**
-     * Removing an active PaymentMethod fails.
+     * Removing an inactive PaymentMethod works.
      */
     @Test
-    public void removeActivePaymentMethodFails() {
+    public void removeInactivePaymentMethod() {
         final PaymentMethod paymentMethod = Mockito.mock(PaymentMethod.class);
         final Wallet stripe = Mockito.mock(Wallet.class);
         final PaymentMethods ofWallet = Mockito.mock(PaymentMethods.class);
 
         Mockito.when(paymentMethod.identifier()).thenReturn("paymentMethod123");
-        Mockito.when(paymentMethod.active()).thenReturn(Boolean.TRUE);
-        Mockito.when(paymentMethod.wallet()).thenReturn(stripe);
+        Mockito.when(paymentMethod.active()).thenReturn(Boolean.FALSE);
+        Mockito.when(paymentMethod.remove()).thenReturn(Boolean.TRUE);
         Mockito.when(stripe.type()).thenReturn("STRIPE");
         Mockito.when(stripe.paymentMethods()).thenReturn(ofWallet);
         Mockito.when(ofWallet.iterator()).thenReturn(
@@ -683,7 +683,7 @@ public final class PaymentMethodsApiTestCase {
                     "test",
                     "paymentMethod123"
                 ).getStatusCode(),
-            Matchers.equalTo(HttpStatus.BAD_REQUEST)
+            Matchers.equalTo(HttpStatus.NO_CONTENT)
         );
     }
 
@@ -699,7 +699,7 @@ public final class PaymentMethodsApiTestCase {
 
         Mockito.when(paymentMethod.identifier()).thenReturn("paymentMethod123");
         Mockito.when(paymentMethod.active()).thenReturn(Boolean.FALSE);
-        Mockito.when(paymentMethod.wallet()).thenReturn(stripe);
+        Mockito.when(paymentMethod.remove()).thenReturn(Boolean.FALSE);
         Mockito.when(stripe.type()).thenReturn("STRIPE");
         Mockito.when(stripe.paymentMethods()).thenReturn(ofWallet);
         Mockito.when(ofWallet.iterator()).thenReturn(
@@ -751,6 +751,52 @@ public final class PaymentMethodsApiTestCase {
         Mockito.when(
             owned.getProjectById("mihai/test", Provider.Names.GITHUB)
         ).thenThrow(new IllegalStateException("Project not found"));
+        Mockito.when(user.projects()).thenReturn(owned);
+
+        MatcherAssert.assertThat(
+            new PaymentMethodsApi(user)
+                .removeStripePaymentMethod(
+                    "mihai",
+                    "test",
+                    "paymentMethod123"
+                ).getStatusCode(),
+            Matchers.equalTo(HttpStatus.BAD_REQUEST)
+        );
+    }
+
+    /**
+     * Removing an active PaymentMethod fails.
+     */
+    @Test
+    public void removeFailsOnActivePaymentMethod() {
+        final PaymentMethod paymentMethod = Mockito.mock(PaymentMethod.class);
+        final Wallet stripe = Mockito.mock(Wallet.class);
+        final PaymentMethods ofWallet = Mockito.mock(PaymentMethods.class);
+
+        Mockito.when(paymentMethod.identifier()).thenReturn("paymentMethod123");
+        Mockito.when(paymentMethod.active()).thenReturn(Boolean.TRUE);
+        Mockito.when(stripe.type()).thenReturn("STRIPE");
+        Mockito.when(stripe.paymentMethods()).thenReturn(ofWallet);
+        Mockito.when(ofWallet.iterator()).thenReturn(
+            List.of(paymentMethod).iterator()
+        );
+
+        final Wallets ofProject = Mockito.mock(Wallets.class);
+        Mockito.when(ofProject.iterator()).thenReturn(
+            List.of(stripe).iterator()
+        );
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.wallets()).thenReturn(ofProject);
+
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(user.provider()).thenReturn(provider);
+
+        final Projects owned = Mockito.mock(Projects.class);
+        Mockito.when(
+            owned.getProjectById("mihai/test", Provider.Names.GITHUB)
+        ).thenReturn(project);
         Mockito.when(user.projects()).thenReturn(owned);
 
         MatcherAssert.assertThat(

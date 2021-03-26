@@ -322,10 +322,7 @@ public class PaymentMethodsApi extends BaseApiController {
             final PaymentMethod paymentMethod = this
                 .getStripePaymentMethod(owner, name, paymentMethodId);
             if (!paymentMethod.active()) {
-                final PaymentMethods paymentMethods = paymentMethod
-                    .wallet()
-                    .paymentMethods();
-                final boolean removed = paymentMethods.remove(paymentMethod);
+                final boolean removed = paymentMethod.remove();
                 if (removed) {
                     LOG.debug("PaymentMethod successfully removed!");
                     response = ResponseEntity.noContent().build();
