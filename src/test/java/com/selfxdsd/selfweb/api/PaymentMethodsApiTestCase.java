@@ -639,4 +639,128 @@ public final class PaymentMethodsApiTestCase {
             Matchers.equalTo(HttpStatus.OK)
         );
     }
+
+    /**
+     * Removing an active PaymentMethod fails.
+     */
+    @Test
+    public void removeActivePaymentMethodFails() {
+        final PaymentMethod paymentMethod = Mockito.mock(PaymentMethod.class);
+        final Wallet stripe = Mockito.mock(Wallet.class);
+        final PaymentMethods ofWallet = Mockito.mock(PaymentMethods.class);
+
+        Mockito.when(paymentMethod.identifier()).thenReturn("paymentMethod123");
+        Mockito.when(paymentMethod.active()).thenReturn(Boolean.TRUE);
+        Mockito.when(paymentMethod.wallet()).thenReturn(stripe);
+        Mockito.when(stripe.type()).thenReturn("STRIPE");
+        Mockito.when(stripe.paymentMethods()).thenReturn(ofWallet);
+        Mockito.when(ofWallet.iterator()).thenReturn(
+            List.of(paymentMethod).iterator()
+        );
+
+        final Wallets ofProject = Mockito.mock(Wallets.class);
+        Mockito.when(ofProject.iterator()).thenReturn(
+            List.of(stripe).iterator()
+        );
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.wallets()).thenReturn(ofProject);
+
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(user.provider()).thenReturn(provider);
+
+        final Projects owned = Mockito.mock(Projects.class);
+        Mockito.when(
+            owned.getProjectById("mihai/test", Provider.Names.GITHUB)
+        ).thenReturn(project);
+        Mockito.when(user.projects()).thenReturn(owned);
+
+        MatcherAssert.assertThat(
+            new PaymentMethodsApi(user)
+                .removeStripePaymentMethod(
+                    "mihai",
+                    "test",
+                    "paymentMethod123"
+                ).getStatusCode(),
+            Matchers.equalTo(HttpStatus.BAD_REQUEST)
+        );
+    }
+
+    /**
+     * Removing an inactive PaymentMethod fails due to an unexpected
+     * persistence error.
+     */
+    @Test
+    public void removeInactivePaymentMethodFails() {
+        final PaymentMethod paymentMethod = Mockito.mock(PaymentMethod.class);
+        final Wallet stripe = Mockito.mock(Wallet.class);
+        final PaymentMethods ofWallet = Mockito.mock(PaymentMethods.class);
+
+        Mockito.when(paymentMethod.identifier()).thenReturn("paymentMethod123");
+        Mockito.when(paymentMethod.active()).thenReturn(Boolean.FALSE);
+        Mockito.when(paymentMethod.wallet()).thenReturn(stripe);
+        Mockito.when(stripe.type()).thenReturn("STRIPE");
+        Mockito.when(stripe.paymentMethods()).thenReturn(ofWallet);
+        Mockito.when(ofWallet.iterator()).thenReturn(
+            List.of(paymentMethod).iterator()
+        );
+        Mockito.when(ofWallet.remove(paymentMethod))
+            .thenReturn(Boolean.FALSE);
+
+        final Wallets ofProject = Mockito.mock(Wallets.class);
+        Mockito.when(ofProject.iterator()).thenReturn(
+            List.of(stripe).iterator()
+        );
+        final Project project = Mockito.mock(Project.class);
+        Mockito.when(project.wallets()).thenReturn(ofProject);
+
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(user.provider()).thenReturn(provider);
+
+        final Projects owned = Mockito.mock(Projects.class);
+        Mockito.when(
+            owned.getProjectById("mihai/test", Provider.Names.GITHUB)
+        ).thenReturn(project);
+        Mockito.when(user.projects()).thenReturn(owned);
+
+        MatcherAssert.assertThat(
+            new PaymentMethodsApi(user)
+                .removeStripePaymentMethod(
+                    "mihai",
+                    "test",
+                    "paymentMethod123"
+                ).getStatusCode(),
+            Matchers.equalTo(HttpStatus.BAD_REQUEST)
+        );
+    }
+
+    /**
+     * Removing an inactive PaymentMethod fails due a not found exception.
+     * (Project, Wallet etc...).
+     */
+    @Test
+    public void removeInactivePaymentMethodFailsDueToNotFound() {
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.name()).thenReturn(Provider.Names.GITHUB);
+        Mockito.when(user.provider()).thenReturn(provider);
+        final Projects owned = Mockito.mock(Projects.class);
+        Mockito.when(
+            owned.getProjectById("mihai/test", Provider.Names.GITHUB)
+        ).thenThrow(new IllegalStateException("Project not found"));
+        Mockito.when(user.projects()).thenReturn(owned);
+
+        MatcherAssert.assertThat(
+            new PaymentMethodsApi(user)
+                .removeStripePaymentMethod(
+                    "mihai",
+                    "test",
+                    "paymentMethod123"
+                ).getStatusCode(),
+            Matchers.equalTo(HttpStatus.BAD_REQUEST)
+        );
+    }
 }

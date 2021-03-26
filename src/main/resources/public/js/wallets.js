@@ -56,56 +56,15 @@ function getProjectWallets() {
                             $('#realPaymentMethodsTable > tbody').html('');
                             var activePaymentMethodFound = false;
                             $.each(wallet.paymentMethods, function(index, method) {
-                                var active;
-                                if(method.self.active) {
+                                if (method.self.active) {
                                     activePaymentMethodFound = true;
-                                    active = "<input class='pmToggle' type='checkbox' checked data-toggle=\"toggle\">";
-                                } else {
-                                    active = "<input class='pmToggle' type='checkbox' data-toggle='toggle'>";
                                 }
-                                var issuer = method.stripe.card.brand;
-                                issuer = issuer.substr(0,1).toUpperCase() + issuer.substr(1);
-                                $('#realPaymentMethodsTable > tbody').append(
-                                    "<tr>"
-                                    + "<td>"
-                                    + issuer
-                                    + "</td>"
-                                    + "<td>"
-                                    + "****** " + method.stripe.card.last4
-                                    + "</td>"
-                                    + "<td>"
-                                    + method.stripe.card.exp_month + "/" + method.stripe.card.exp_year
-                                    + "</td>"
-                                    + "<td>"
-                                    + active
-                                    + "</td>"
-                                    + "</tr>"
-                                )
-                                $($('input.pmToggle')[$('input.pmToggle').length - 1]).on(
-                                    'change',
-                                    function() {
-                                        if($(this).prop('checked')) {
-                                            $('input.pmToggle').not(this).prop('checked', false);
-                                            let parent = $('input.pmToggle').not(this).parent();
-                                            parent.removeClass('btn-primary');
-                                            parent.addClass('btn-default');
-                                            parent.addClass('off');
-                                            activatePaymentMethod(owner, name, method);
-                                            $("#activateStripeWalletButton").removeClass("disabled");
-                                            $("#realPaymentMethodsWarning").hide();
-                                        } else { 
-                                            deactivatePaymentMethod(owner, name, method);
-                                            if(arePaymentMethodsDeactivated($('input.pmToggle'))){
-                                                $("#realPaymentMethodsWarning").show();
-                                            }
-                                        }
-                                    }
-                                );
+                               renderPaymentMethodRow(method);
                             });
                             $('.pmToggle').bootstrapToggle({
                                 on: 'Active',
                                 off: 'Inactive',
-                                width: '45%'
+                                width: '30%'
                             });
                             $("#realPaymentMethods").show();
                             if(activePaymentMethodFound) {
@@ -138,6 +97,92 @@ function getProjectWallets() {
                 }
                 $("#wallets").show();
             }
+        }
+    );
+}
+
+/**
+ * Renders a payment method row in the payment methods table.
+ * @param {Object} method Payment method.
+ */
+function renderPaymentMethodRow(method) {
+    var owner = $("#owner").text();
+    var name = $("#name").text();
+    /**
+     * Creates html template for active toggle button and remove inactive method button.
+     * @param {Boolean} active Is method active?
+     * @returns Html template.
+     */
+    function activeToggleTemplate(active){
+        var checked = (active) ? "checked" : "";
+        var showRemove = (active) ? "style='visibility:hidden;'" : "style='visibility:visible;'";
+        return "<input class='pmToggle' type='checkbox' " +
+            checked + " data-toggle='toggle'/> " +
+            "<button " + showRemove +
+            " type='button' class='btn btn-danger px-3 btn-pmToggle'><i class='fa fa-times' aria-hidden='true'></i></button>";
+    }
+
+    var active = activeToggleTemplate(method.self.active);
+    var issuer = method.stripe.card.brand;
+    issuer = issuer.substr(0, 1).toUpperCase() + issuer.substr(1);
+    $('#realPaymentMethodsTable > tbody').append(
+        "<tr>"
+        + "<td>"
+        + issuer
+        + "</td>"
+        + "<td>"
+        + "****** " + method.stripe.card.last4
+        + "</td>"
+        + "<td>"
+        + method.stripe.card.exp_month + "/" + method.stripe.card.exp_year
+        + "</td>"
+        + "<td>"
+        + active
+        + "</td>"
+        + "</tr>"
+    );
+    $($('input.pmToggle')[$('input.pmToggle').length - 1]).on(
+        'change',
+        function () {
+            var parent = $('input.pmToggle').not(this).parent();
+            var otherRemoveBtns = parent.siblings();
+            var thisRemoveBtn = $(this).parent().next();
+            if ($(this).prop('checked')) {
+                $('input.pmToggle').not(this).prop('checked', false);
+                parent.removeClass('btn-primary');
+                parent.addClass('btn-default');
+                parent.addClass('off');
+                activatePaymentMethod(owner, name, method);
+                $("#activateStripeWalletButton").removeClass("disabled");
+                $("#realPaymentMethodsWarning").hide();
+                otherRemoveBtns.css('visibility','visible');
+                thisRemoveBtn.css('visibility','hidden');
+            } else {
+                deactivatePaymentMethod(owner, name, method);
+                thisRemoveBtn.css('visibility','visible');
+                if (arePaymentMethodsDeactivated($('input.pmToggle'))) {
+                    $("#realPaymentMethodsWarning").show();
+                }
+            }
+        }
+    );
+    $($('button.btn-pmToggle')[$('button.btn-pmToggle').length - 1]).on(
+        "click",
+        function () {
+            var thisBtn = $(this);
+            thisBtn.prop('disabled', true);
+            confirmDialog
+                .create("Are you sure you want to remove this payment method?", "Warning", "Yes")
+                .then(() => removePaymentMethod(owner, name, method))
+                .then(() => thisBtn.closest("tr").remove())
+                .catch((jqXHR) => {
+                    if (jqXHR) {
+                        confirmDialog
+                            .create("Something went wrong while removing the payment method. Please try again.", "Error", "Yes")
+                            .then(() => { });
+                    }
+                    thisBtn.prop('disabled', false);
+                });
         }
     );
 }
@@ -609,55 +654,14 @@ $(document).ready(
                                                         "/wallets/stripe/paymentMethods",
                                                     data: JSON.stringify(paymentMethodInfo),
                                                     success: function (paymentMethod) {
-                                                        var active;
-                                                        if(paymentMethod.self.active) {
-                                                            activePaymentMethodFound = true;
-                                                            active = "<input class='pmToggle' type='checkbox' checked data-toggle=\"toggle\">";
-                                                        } else {
-                                                            active = "<input class='pmToggle' type='checkbox' data-toggle='toggle'>";
-                                                        }                                                            var issuer = paymentMethod.stripe.card.brand;
-                                                        issuer = issuer.substr(0,1).toUpperCase() + issuer.substr(1);
-                                                        $('#realPaymentMethodsTable > tbody').append(
-                                                            "<tr>"
-                                                            + "<td>"
-                                                            + issuer
-                                                            + "</td>"
-                                                            + "<td>"
-                                                            + "****** " + paymentMethod.stripe.card.last4
-                                                            + "</td>"
-                                                            + "<td>"
-                                                            + paymentMethod.stripe.card.exp_month + "/" + paymentMethod.stripe.card.exp_year
-                                                            + "</td>"
-                                                            + "<td>"
-                                                            + active
-                                                            + "</td>"
-                                                            + "</tr>"
-                                                        )
+                                                        renderPaymentMethodRow(paymentMethod);
+                                                        var showWarning = arePaymentMethodsDeactivated($('input.pmToggle'));
+                                                        $("#realPaymentMethodsWarning").toggle(showWarning);
                                                         $('.pmToggle').bootstrapToggle({
                                                             on: 'Active',
                                                             off: 'Inactive',
-                                                            width: '45%'
+                                                            width: '30%'
                                                         });
-                                                        $($('input.pmToggle')[$('input.pmToggle').length - 1]).on(
-                                                            'change',
-                                                            function() {
-                                                                if($(this).prop('checked')) {
-                                                                    $('input.pmToggle').not(this).prop('checked', false);
-                                                                    let parent = $('input.pmToggle').not(this).parent();
-                                                                    parent.removeClass('btn-primary');
-                                                                    parent.addClass('btn-default');
-                                                                    parent.addClass('off');
-                                                                    activatePaymentMethod(owner, name, paymentMethod);
-                                                                    $("#activateStripeWalletButton").removeClass("disabled");
-                                                                    $("#realPaymentMethodsWarning").hide();
-                                                                } else { 
-                                                                    deactivatePaymentMethod(owner, name, paymentMethod);
-                                                                    if(arePaymentMethodsDeactivated($('input.pmToggle'))){
-                                                                        $("#realPaymentMethodsWarning").show();
-                                                                    }
-                                                                }
-                                                            }
-                                                        );
                                                         $("#noRealPaymentMethods").hide();
                                                         $("#realPaymentMethods").show();
                                                     },

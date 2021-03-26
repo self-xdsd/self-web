@@ -35,7 +35,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -285,6 +290,60 @@ public class PaymentMethodsApi extends BaseApiController {
             } else {
                 response = ResponseEntity.badRequest().build();
             }
+        }
+        return response;
+    }
+
+    /**
+     * This will remove the specified inactive Stripe PaymentMethod.
+     *
+     * @param owner Owner of the project (login of user or org name).
+     * @param name Repo name.
+     * @param paymentMethodId Id of the PaymentMethod to be removed.
+     * @return NO_CONTENT status on successful remove.
+     */
+    @DeleteMapping(
+        value = "/projects/{owner}/{name}/wallets/stripe/paymentMethods/"
+            + "{paymentMethodId}",
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> removeStripePaymentMethod(
+        @PathVariable final String owner,
+        @PathVariable final String name,
+        @PathVariable final String paymentMethodId
+    ) {
+        LOG.debug(
+            "Removing Stripe PaymentMethod " + paymentMethodId
+                + " of Project " + owner + "/" + name + "... "
+        );
+        ResponseEntity<String> response;
+        try {
+            final PaymentMethod paymentMethod = this
+                .getStripePaymentMethod(owner, name, paymentMethodId);
+            if (!paymentMethod.active()) {
+                final PaymentMethods paymentMethods = paymentMethod
+                    .wallet()
+                    .paymentMethods();
+                final boolean removed = paymentMethods.remove(paymentMethod);
+                if (removed) {
+                    LOG.debug("PaymentMethod successfully removed!");
+                    response = ResponseEntity.noContent().build();
+                } else {
+                    LOG.debug("PaymentMethod was not removed from storage!");
+                    response = ResponseEntity.badRequest().build();
+                }
+            } else {
+                LOG.debug("PaymentMethod was not removed."
+                    + " Only inactive payment methods can be removed!");
+                response = ResponseEntity.badRequest().build();
+            }
+        } catch (final IllegalStateException exception) {
+            LOG.debug("PaymentMethod was not removed! Reason: {}",
+                exception.getMessage());
+            response = ResponseEntity
+                .badRequest()
+                .body(exception.getMessage());
         }
         return response;
     }

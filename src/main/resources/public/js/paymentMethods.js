@@ -57,3 +57,19 @@ function activatePaymentMethod(repoOwner, repoName, method){
         }
     );
 }
+
+/**
+ * Remove a PaymentMethod.
+ * @param repoOwner Owner of the repository/project.
+ * @param repoName Name of the repository.
+ * @param method The PaymentMethod to be deactivated.
+ * @requires Promise.
+ */
+function removePaymentMethod(repoOwner, repoName, method) {
+    return $.when($.ajax({
+        type: "DELETE",
+        contentType: "application/json",
+        url: "/api/projects/" + repoOwner + "/" + repoName +
+            "/wallets/stripe/paymentMethods/" + method.self.paymentMethodId
+    }));
+}
