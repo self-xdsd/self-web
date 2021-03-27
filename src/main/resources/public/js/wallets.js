@@ -38,6 +38,7 @@ function getProjectWallets() {
                     }
                     if(wallet.type == "STRIPE") {
                         realWalletFound = true;
+                        $("#fakeWalletDiv").remove();
                         $("#stripeCash").html(formatEuro(wallet.cash));
                         $("#stripeDebt").html(formatEuro(wallet.debt));
                         $("#stripeAvailable").html(formatEuro(wallet.available));
