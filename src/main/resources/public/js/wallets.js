@@ -43,6 +43,7 @@ function getProjectWallets() {
                         $("#stripeAvailable").html(formatEuro(wallet.available));
                         cashLimitColor($("#stripeCash"), wallet);
                         if(wallet.active) {
+                            $("#fakeWalletDiv").remove();
                             $("#stripeWalletBadge").addClass("badge-success")
                             $("#stripeWalletBadge").html("active")
                             $("#activateStripeWallet").hide();
