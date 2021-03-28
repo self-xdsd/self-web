@@ -163,6 +163,7 @@ function renderPaymentMethodRow(method) {
                 thisRemoveBtn.css('visibility','visible');
                 if (arePaymentMethodsDeactivated($('input.pmToggle'))) {
                     $("#realPaymentMethodsWarning").show();
+                    $("#activateStripeWalletButton").addClass("disabled");
                 }
             }
         }
@@ -181,6 +182,7 @@ function renderPaymentMethodRow(method) {
                     thisBtn.closest("tr").remove();
                     if($('#realPaymentMethodsTable > tbody > tr').length === 0){
                         $("#realPaymentMethods").hide();
+                        $("#activateStripeWalletButton").addClass('disabled');
                         $("#noRealPaymentMethods").show();
                     }
                 })
@@ -676,6 +678,9 @@ $(document).ready(
                                                         });
                                                         $("#noRealPaymentMethods").hide();
                                                         $("#realPaymentMethods").show();
+                                                        if(paymentMethod.self.active) {
+                                                            $("#activateStripeWalletButton").removeClass("disabled");
+                                                        }
                                                     },
                                                     error: function(jqXHR, error, errorThrown) {
                                                         $("#addStripePaymentMethodButton").removeClass("disabled");
