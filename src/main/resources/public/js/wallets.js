@@ -172,10 +172,18 @@ function renderPaymentMethodRow(method) {
         function () {
             var thisBtn = $(this);
             thisBtn.prop('disabled', true);
+            //prevent activating toggle input while payment method is removed;
+            thisBtn.siblings().children().first().prop('disabled', true);
             confirmDialog
                 .create("Are you sure you want to remove this payment method?", "Warning", "Yes")
                 .then(() => removePaymentMethod(owner, name, method))
-                .then(() => thisBtn.closest("tr").remove())
+                .then(() => {
+                    thisBtn.closest("tr").remove();
+                    if($('#realPaymentMethodsTable > tbody > tr').length === 0){
+                        $("#realPaymentMethods").hide();
+                        $("#noRealPaymentMethods").show();
+                    }
+                })
                 .catch((jqXHR) => {
                     if (jqXHR) {
                         confirmDialog
@@ -183,6 +191,8 @@ function renderPaymentMethodRow(method) {
                             .then(() => { });
                     }
                     thisBtn.prop('disabled', false);
+                    //re-enable toggle input
+                    thisBtn.siblings().children().first().prop('disabled', false);
                 });
         }
     );
@@ -195,8 +205,9 @@ function renderPaymentMethodRow(method) {
  */
 function arePaymentMethodsDeactivated(toggleButtons) {
     var allDeactivated = true;
-    toggleButtons.each(function () {
-        allDeactivated = allDeactivated & !$(this).prop('checked');
+    toggleButtons.each(function (idx, button) {
+        var checked = $(button).prop('checked');
+        allDeactivated = allDeactivated && !checked;
     });
     return allDeactivated;
 }
