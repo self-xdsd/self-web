@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.selfxdsd</groupId>
 	<artifactId>self-web</artifactId>
-	<version>0.0.4-SNAPSHOT</version>
+	<version>0.0.5-SNAPSHOT</version>
 	<name>self-web</name>
 	<description>The Self Web Application</description>
 
