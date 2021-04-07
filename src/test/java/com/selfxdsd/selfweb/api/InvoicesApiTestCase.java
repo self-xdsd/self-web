@@ -74,7 +74,7 @@ public final class InvoicesApiTestCase {
             new IllegalStateException("Should not be called.")
         );
         MatcherAssert.assertThat(
-            new InvoicesApi(user).platformInvoicePdf(1).getStatusCode(),
+            new InvoicesApi(user).platformInvoicePdf(1, false).getStatusCode(),
             Matchers.equalTo(HttpStatus.FORBIDDEN)
         );
     }
@@ -90,7 +90,7 @@ public final class InvoicesApiTestCase {
             new IllegalStateException("Should not be called.")
         );
         MatcherAssert.assertThat(
-            new InvoicesApi(user).invoicePdf(1).getStatusCode(),
+            new InvoicesApi(user).invoicePdf(1, false).getStatusCode(),
             Matchers.equalTo(HttpStatus.FORBIDDEN)
         );
     }
@@ -139,7 +139,7 @@ public final class InvoicesApiTestCase {
         Mockito.when(user.asAdmin()).thenReturn(admin);
 
         MatcherAssert.assertThat(
-            new InvoicesApi(user).platformInvoicePdf(1).getStatusCode(),
+            new InvoicesApi(user).platformInvoicePdf(1, false).getStatusCode(),
             Matchers.equalTo(HttpStatus.NO_CONTENT)
         );
     }
@@ -162,7 +162,7 @@ public final class InvoicesApiTestCase {
 
         final ResponseEntity<StreamingResponseBody> resp = new InvoicesApi(
             user
-        ).platformInvoicePdf(1);
+        ).platformInvoicePdf(1, false);
         MatcherAssert.assertThat(
             resp.getStatusCode(),
             Matchers.equalTo(HttpStatus.OK)
@@ -186,7 +186,7 @@ public final class InvoicesApiTestCase {
         Mockito.when(user.asAdmin()).thenReturn(admin);
 
         MatcherAssert.assertThat(
-            new InvoicesApi(user).invoicePdf(1).getStatusCode(),
+            new InvoicesApi(user).invoicePdf(1, false).getStatusCode(),
             Matchers.equalTo(HttpStatus.NO_CONTENT)
         );
     }
@@ -210,7 +210,7 @@ public final class InvoicesApiTestCase {
         Mockito.when(user.asAdmin()).thenReturn(admin);
 
         MatcherAssert.assertThat(
-            new InvoicesApi(user).invoicePdf(1).getStatusCode(),
+            new InvoicesApi(user).invoicePdf(1, false).getStatusCode(),
             Matchers.equalTo(HttpStatus.NO_CONTENT)
         );
     }
@@ -235,7 +235,7 @@ public final class InvoicesApiTestCase {
 
         final ResponseEntity<StreamingResponseBody> resp = new InvoicesApi(
             user
-        ).invoicePdf(1);
+        ).invoicePdf(1, false);
         MatcherAssert.assertThat(
             resp.getStatusCode(),
             Matchers.equalTo(HttpStatus.OK)
