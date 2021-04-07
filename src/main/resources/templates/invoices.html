@@ -63,14 +63,13 @@
         netRevenue += invoice.commission;
         totalVat += invoice.vat;
         return [
-            "<a href='/api/invoices/platform/" + invoice.id + "/pdf'>" + invoice.number + "</a>",
+            "<a href='/api/invoices/platform/" + invoice.id + "/pdf' target='_blank'>" + invoice.number + "</a>",
             invoice.createdAt.split('T')[0],
             formatEuro(invoice.commission),
             formatEuro(invoice.vat),
             formatEuro(invoice.total),
             invoice.paidAt.split('T')[0],
-            "<a href='/api/invoices/platform/" + invoice.id + "/project/pdf'><i title='Contributor Invoice To Project' class='fa fa-cloud-download fa-lg'></i></a>"
-            +"<a href='/api/invoices/platform/" + invoice.id + "/project/pdf?view=true'><i title='Contributor Invoice To Project' class='fa fa-file-pdf-o fa-lg'></i></a>"
+            "<a href='/api/invoices/platform/" + invoice.id + "/project/pdf' target='_blank'><i title='Contributor Invoice To Project' class='fa fa-file-pdf-o fa-lg'></i></a>"
         ]
     }
     $(document).ready(
