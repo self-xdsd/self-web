@@ -110,7 +110,7 @@ public class InvoicesApi extends BaseApiController {
                     .contentType(MediaType.APPLICATION_PDF)
                     .header(
                         "Content-Disposition",
-                        "attachment; filename="
+                        "inline; filename="
                             + "platform_invoice_"
                             + invoice.serialNumber()
                             + ".pdf"
@@ -152,7 +152,7 @@ public class InvoicesApi extends BaseApiController {
                         .contentType(MediaType.APPLICATION_PDF)
                         .header(
                             "Content-Disposition",
-                            "attachment; filename="
+                            "inline; filename="
                                 + "invoice_SLFX_"
                                 + invoice.invoiceId()
                                 + ".pdf"

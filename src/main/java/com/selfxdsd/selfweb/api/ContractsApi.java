@@ -296,7 +296,7 @@ public class ContractsApi extends BaseApiController {
                         .contentType(MediaType.APPLICATION_PDF)
                         .header(
                             "Content-Disposition",
-                             "attachment; filename="
+                             "inline; filename="
                              + "invoice_slfx_" + found.invoiceId() + ".pdf"
                         )
                         .body(

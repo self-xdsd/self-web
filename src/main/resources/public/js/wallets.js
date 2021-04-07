@@ -272,10 +272,15 @@ function payInvoice(invoice, contract, payButton) {
      * @param invoice Invoice.
      */
     function newInvoiceAsTableRow(invoice) {
-        var status = "Active"
-        var downloadLink ="<a href='#' title='Download Invoice' class='downloadInvoice'>"
+        var status = "Active";
+        var pdfHref = "/api/projects/"
+            + contract.id.repoFullName
+            + "/contracts/" + contract.id.contributorUsername + "/invoices/"
+            + invoice.id
+            + "/pdf?role=" + contract.id.role;
+        var downloadLink = "<a href='" + pdfHref + "' target='_blank' title='Download Invoice' class='downloadInvoice'>"
             + "<i class='fa fa-file-pdf-o fa-lg'></i>"
-            + "</a>";
+            + "</a>  ";
         return "<tr>" +
             "<td>" + invoice.id + "</td>" +
             "<td>" + invoice.createdAt.split('T')[0] + "</td>"  +
