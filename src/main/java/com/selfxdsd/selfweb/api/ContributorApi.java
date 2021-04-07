@@ -208,7 +208,7 @@ public class ContributorApi extends BaseApiController {
      * @param name Repo name.
      * @param invoiceId Invoice ID.
      * @param role Contributor role (DEV, REV etc).
-     * @throws IOException If something goes wrong.
+     * @param view Flags if this invoice can be viewed in browser.
      * @return Resource PDF.
      * @checkstyle ParameterNumber (20 lines)
      */
@@ -220,8 +220,9 @@ public class ContributorApi extends BaseApiController {
         @PathVariable final String owner,
         @PathVariable final String name,
         @PathVariable final int invoiceId,
-        @RequestParam("role") final String role
-    ) throws IOException {
+        @RequestParam("role") final String role,
+        @RequestParam(value = "view", required = false) final boolean view
+    ) {
         final ResponseEntity<StreamingResponseBody> resp;
         final Contributor contributor = this.user.asContributor();
         if(contributor == null) {
@@ -239,11 +240,17 @@ public class ContributorApi extends BaseApiController {
                 if(found == null){
                     resp = ResponseEntity.badRequest().build();
                 } else {
+                    final String dispositionType;
+                    if(view){
+                        dispositionType = "inline";
+                    }else{
+                        dispositionType = "attachment";
+                    }
                     resp = ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_PDF)
                         .header(
                             "Content-Disposition",
-                            "attachment; filename="
+                            dispositionType + "; filename="
                             + "invoice_slfx_" + found.invoiceId() + ".pdf"
                         )
                         .body(

@@ -30,6 +30,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
@@ -88,13 +89,15 @@ public class InvoicesApi extends BaseApiController {
     /**
      * Get a PlatformInvoices as PDF.
      * @param platformInvoiceId Id of the PlatformInvoice.
+     * @param view Flags if this invoice can be viewed in browser.
      * @return PDF Stream.
      */
     @GetMapping(
         "/invoices/platform/{platformInvoiceId}/pdf"
     )
     public ResponseEntity<StreamingResponseBody> platformInvoicePdf(
-        @PathVariable final int platformInvoiceId
+        @PathVariable final int platformInvoiceId,
+        @RequestParam(value = "view", required = false) final boolean view
     ) {
         final ResponseEntity<StreamingResponseBody> response;
         if(!"admin".equals(this.user.role())) {
@@ -106,11 +109,17 @@ public class InvoicesApi extends BaseApiController {
             if(invoice == null) {
                 response = ResponseEntity.noContent().build();
             } else {
+                final String dispositionType;
+                if(view){
+                    dispositionType = "inline";
+                }else{
+                    dispositionType = "attachment";
+                }
                 response = ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_PDF)
                     .header(
                         "Content-Disposition",
-                        "attachment; filename="
+                        dispositionType + "; filename="
                             + "platform_invoice_"
                             + invoice.serialNumber()
                             + ".pdf"
@@ -126,13 +135,15 @@ public class InvoicesApi extends BaseApiController {
     /**
      * Get an Invoice as PDF (through the PlatformInvoice).
      * @param platformInvoiceId Id of the PlatformInvoice.
+     * @param view Flags if this invoice can be viewed in browser.
      * @return PDF Stream.
      */
     @GetMapping(
         "/invoices/platform/{platformInvoiceId}/project/pdf"
     )
     public ResponseEntity<StreamingResponseBody> invoicePdf(
-        @PathVariable final int platformInvoiceId
+        @PathVariable final int platformInvoiceId,
+        @RequestParam(value = "view", required = false) final boolean view
     ) {
         final ResponseEntity<StreamingResponseBody> response;
         if(!"admin".equals(this.user.role())) {
@@ -148,11 +159,17 @@ public class InvoicesApi extends BaseApiController {
                 if(invoice == null) {
                     response = ResponseEntity.noContent().build();
                 } else {
+                    final String dispositionType;
+                    if(view){
+                        dispositionType = "inline";
+                    }else{
+                        dispositionType = "attachment";
+                    }
                     response = ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_PDF)
                         .header(
                             "Content-Disposition",
-                            "attachment; filename="
+                            dispositionType + "; filename="
                                 + "invoice_SLFX_"
                                 + invoice.invoiceId()
                                 + ".pdf"

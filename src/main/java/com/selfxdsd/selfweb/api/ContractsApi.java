@@ -22,9 +22,21 @@
  */
 package com.selfxdsd.selfweb.api;
 
-import com.selfxdsd.api.*;
+import com.selfxdsd.api.Contract;
+import com.selfxdsd.api.Contracts;
+import com.selfxdsd.api.Invoice;
+import com.selfxdsd.api.Invoices;
+import com.selfxdsd.api.Payment;
+import com.selfxdsd.api.Project;
+import com.selfxdsd.api.Tasks;
+import com.selfxdsd.api.User;
+import com.selfxdsd.api.Wallet;
 import com.selfxdsd.selfweb.api.input.ContractInput;
-import com.selfxdsd.selfweb.api.output.*;
+import com.selfxdsd.selfweb.api.output.JsonContract;
+import com.selfxdsd.selfweb.api.output.JsonContracts;
+import com.selfxdsd.selfweb.api.output.JsonInvoice;
+import com.selfxdsd.selfweb.api.output.JsonInvoices;
+import com.selfxdsd.selfweb.api.output.JsonTasks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +44,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.json.Json;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
@@ -256,7 +273,7 @@ public class ContractsApi extends BaseApiController {
      * @param username Contributor's username.
      * @param invoiceId If od the Invoice.
      * @param role Contributor's role.
-     * @throws IOException If something goes wrong.
+     * @param view Flags if this invoice can be viewed in browser.
      * @return Resource PDF.
      * @checkstyle ParameterNumber (10 lines)
      */
@@ -269,7 +286,8 @@ public class ContractsApi extends BaseApiController {
         @PathVariable final String name,
         @PathVariable final String username,
         @PathVariable final int invoiceId,
-        @RequestParam("role") final String role) throws IOException {
+        @RequestParam("role") final String role,
+        @RequestParam(value = "view", required = false) final boolean view){
         final ResponseEntity<StreamingResponseBody> resp;
         final Project project = this.user.projects().getProjectById(
             owner + "/" + name, this.user.provider().name()
@@ -292,11 +310,17 @@ public class ContractsApi extends BaseApiController {
                 if(found == null){
                     resp = ResponseEntity.noContent().build();
                 } else {
+                    final String dispositionType;
+                    if(view){
+                        dispositionType = "inline";
+                    }else{
+                        dispositionType = "attachment";
+                    }
                     resp = ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_PDF)
                         .header(
                             "Content-Disposition",
-                             "attachment; filename="
+                             dispositionType + "; filename="
                              + "invoice_slfx_" + found.invoiceId() + ".pdf"
                         )
                         .body(

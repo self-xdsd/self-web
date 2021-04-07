@@ -150,8 +150,11 @@ var projectContractsCount = -1;
                 + "/contracts/" + contract.id.contributorUsername + "/invoices/"
                 + invoice.id
                 + "/pdf?role=" + contract.id.role;
-            var downloadLink = "<a href='" + pdfHref + "' title='Download Invoice' class='downloadInvoice'>"
+            var viewLink = "<a href='" + pdfHref + "&view=true' target='_blank'>"
                 + "<i class='fa fa-file-pdf-o fa-lg'></i>"
+                + "</a>  ";
+            var downloadLink = "<a href='" + pdfHref + "' title='Download Invoice'>"
+                + "<i class='fa fa-cloud-download fa-lg'></i>"
                 + "</a>  ";
             if (!invoice.isPaid) {
                 var latestPayment = invoice.latestPayment;
@@ -188,7 +191,7 @@ var projectContractsCount = -1;
                 invoice.createdAt.split('T')[0],
                 invoice.totalAmount,
                 status,
-                downloadLink + payIcon
+                downloadLink + viewLink + payIcon
             ];
         };
     }

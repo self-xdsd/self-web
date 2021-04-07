@@ -256,18 +256,22 @@ function invoiceAsTableRow(contract) {
                     + "data-original-title=\"" + failMessage.replaceAll('"', '\'') + "\">"
                     +"</i>";
             }
-            downloadIcons="<a href='" + invoicePdfHref + "' class='downloadInvoice'>" + "<i title='Your Invoice To The Project' class='fa fa-file-pdf-o fa-lg'></i></a>"
+            downloadIcons="<a href='" + invoicePdfHref + "'>" + "<i title='Your Invoice To The Project' class='fa fa-cloud-download fa-lg'></i></a>"
+             +"<a href='" + invoicePdfHref + "&view=true' target='_blank'><i class='fa fa-file-pdf-o fa-lg'></i></a>  ";
         } else {
             status = "Paid";
             if(invoice.latestPayment.transactionId.startsWith("fake_payment")) {
-                downloadIcons="<a href='" + invoicePdfHref + "' class='downloadInvoice'>" + "<i title='Your Invoice To The Project' class='fa fa-file-pdf-o fa-lg'></i></a>"
+                downloadIcons="<a href='" + invoicePdfHref + "'><i title='Your Invoice To The Project' class='fa fa-cloud-download fa-lg'></i></a>"
+                + "<a href='" + invoicePdfHref + "&view=true' target='_blank'><i class='fa fa-file-pdf-o fa-lg'></i></a>  ";
             } else {
                 var platformInvoicePdfHref = "/api/contributor/contracts/"
                     + contract.id.repoFullName
                     + "/invoices/" + invoice.id
                     + "/platform/pdf?role=" + contract.id.role;
-                downloadIcons="<a href='" + invoicePdfHref + "' class='downloadInvoice'>" + "<i title='Your Invoice To The Project' class='fa fa-file-pdf-o fa-lg'></i></a>"
-                + "  " + "<a href='" + platformInvoicePdfHref + "' class='downloadInvoice'>" + "<i title='Commission Invoice From Self XDSD' style='color: #701516;' class='fa fa-file-pdf-o fa-lg'></i></a>"
+                downloadIcons="<a href='" + invoicePdfHref + "'>" + "<i title='Your Invoice To The Project' class='fa fa-cloud-download fa-lg'></i></a>"
+                + "<a href='" + invoicePdfHref + "&view=true' target='_blank'><i class='fa fa-file-pdf-o fa-lg'></i></a>  ";
+                + "  <a href='" + platformInvoicePdfHref + "'><i title='Commission Invoice From Self XDSD' style='color: #701516;' class='fa fa-cloud-download fa-lg'></i></a>"
+                + "<a href='" + platformInvoicePdfHref + "&view=true' target='_blank'><i style='color: #701516;' class='fa fa-file-pdf-o fa-lg'></i></a>";
             }
         }
         return [
