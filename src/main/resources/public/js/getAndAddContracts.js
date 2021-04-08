@@ -368,10 +368,12 @@ var projectContractsCount = -1;
                 $("#projectContractsButton").addClass("active");
                 $("#projectContracts").addClass("show");
 
+                $("#projectTasksButton").removeClass("active");
                 $("#projectOverviewButton").removeClass("active");
                 $("#projectWalletsButton").removeClass("active");
                 $("#projectSettingsButton").removeClass("active");
-
+                
+                $("#projectTasks").removeClass("show");
                 $("#projectOverview").removeClass("show");
                 $("#projectWallets").removeClass("show");
                 $("#projectSettings").removeClass("show");

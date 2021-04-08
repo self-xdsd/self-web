@@ -22,6 +22,9 @@
                         <button class="nav-link" role="button" id="projectContractsButton">Contracts</button>
                     </li>
                     <li class="nav-item project-owner-buttons">
+                        <button class="nav-link" role="button" id="projectTasksButton">Tasks</button>
+                    </li>
+                    <li class="nav-item project-owner-buttons">
                         <button class="nav-link" role="button" id="projectWalletsButton">Wallets</button>
                     </li>
                     <li class="nav-item project-owner-buttons">
@@ -363,6 +366,47 @@
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4 collapse multi-collapse" id="projectTasks">
+        <div class="col-lg-12" id="tasksDivTable">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h4 class="m-0 font-weight-bold card-title">Tasks</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <div id="tasksTable_container" class="dataTables_wrapper dt-bootstrap4">
+                            <table id="tasks_table" class="display" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Task Id</th>
+                                        <th>Estimation</th>
+                                        <th>Hourly Rate</th>
+                                        <th>
+                                            Role
+                                            <i class="fa fa-question-circle-o fa-lg fakeWalletInfo"
+                                               aria-hidden="true"
+                                               data-toggle="tooltip"
+                                               data-placement="top"
+                                               title="Role of the person who is executing the task">
+                                            </i>
+                                        </th>
+                                        <th>
+                                            Assignee
+                                        </th>
+                                        <th>
+                                            Value
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -815,10 +859,33 @@
                     $("#projectContractsButton").removeClass("active");
                     $("#projectWalletsButton").removeClass("active");
                     $("#projectSettingsButton").removeClass("active");
+                    $("#projectTasksButton").removeClass("active");
 
+                    $("#projectTasks").removeClass("show");
                     $("#projectContracts").removeClass("show");
                     $("#projectWallets").removeClass("show");
                     $("#projectSettings").removeClass("show");
+                }
+            );
+    
+            $("#projectTasksButton").on(
+                "click",
+                function(){
+                    $(this).addClass("active");
+                    
+                    $("#projectTasks").addClass("show");
+
+                    $("#projectOverviewButton").removeClass("active");
+                    $("#projectContractsButton").removeClass("active");
+                    $("#projectWalletsButton").removeClass("active");
+                    $("#projectSettingsButton").removeClass("active");
+
+                    $("#projectOverview").removeClass("show");
+                    $("#projectContracts").removeClass("show");
+                    $("#projectWallets").removeClass("show");
+                    $("#projectSettings").removeClass("show");
+                    
+                    $("#tasks_table").dataTable();
                 }
             );
 
@@ -836,10 +903,12 @@
                     $(this).addClass("active");
                     $("#projectWallets").addClass("show");
 
+                    $("#projectTasksButton").removeClass("active");
                     $("#projectContractsButton").removeClass("active");
                     $("#projectOverviewButton").removeClass("active");
                     $("#projectSettingsButton").removeClass("active");
-
+                    
+                    $("#projectTasks").removeClass("show");
                     $("#projectContracts").removeClass("show");
                     $("#projectOverview").removeClass("show");
                     $("#projectSettings").removeClass("show");
@@ -866,11 +935,13 @@
                     if(projectContractsCount == -1) {
                         canDeleteProject();
                     }
-
+                    
+                    $("#projectTasksButton").removeClass("active");
                     $("#projectOverviewButton").removeClass("active");
                     $("#projectContractsButton").removeClass("active");
                     $("#projectWalletsButton").removeClass("active");
 
+                    $("#projectTasks").removeClass("show");
                     $("#projectOverview").removeClass("show");
                     $("#projectContracts").removeClass("show");
                     $("#projectWallets").removeClass("show");
