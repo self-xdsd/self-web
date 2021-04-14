@@ -401,7 +401,7 @@ public final class ContractsApiTestCase {
         Mockito.when(manager.id()).thenReturn(1);
         Mockito.when(manager.userId()).thenReturn("123");
         Mockito.when(manager.username()).thenReturn("zoeself");
-        Mockito.when(manager.percentage()).thenReturn(6.5);
+        Mockito.when(manager.projectPercentage()).thenReturn(6.5);
         final Provider prov = Mockito.mock(Provider.class);
         Mockito.when(prov.name()).thenReturn("github");
         Mockito.when(manager.provider()).thenReturn(prov);

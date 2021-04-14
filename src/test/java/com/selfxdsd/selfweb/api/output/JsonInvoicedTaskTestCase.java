@@ -59,9 +59,12 @@ public class JsonInvoicedTaskTestCase {
         
         Mockito.when(invoicedTask.value()).thenReturn(BigDecimal.valueOf(100));
         
-        Mockito.when(invoicedTask.commission())
+        Mockito.when(invoicedTask.projectCommission())
             .thenReturn(BigDecimal.valueOf(100));
-        
+
+        Mockito.when(invoicedTask.contributorCommission())
+            .thenReturn(BigDecimal.valueOf(30));
+
         final JsonObject jsonInvoicedTask = new JsonInvoicedTask(invoicedTask);
         
         MatcherAssert.assertThat(
@@ -92,9 +95,12 @@ public class JsonInvoicedTaskTestCase {
         
         Mockito.when(invoicedTask.value()).thenReturn(BigDecimal.valueOf(100));
         
-        Mockito.when(invoicedTask.commission())
+        Mockito.when(invoicedTask.projectCommission())
             .thenReturn(BigDecimal.valueOf(100));
-        
+
+        Mockito.when(invoicedTask.contributorCommission())
+            .thenReturn(BigDecimal.valueOf(30));
+
         final JsonObject jsonInvoicedTask = new JsonInvoicedTask(invoicedTask);
         
         MatcherAssert.assertThat(
@@ -124,8 +130,11 @@ public class JsonInvoicedTaskTestCase {
         
         Mockito.when(invoicedTask.value()).thenReturn(BigDecimal.valueOf(100));
         
-        Mockito.when(invoicedTask.commission())
+        Mockito.when(invoicedTask.projectCommission())
             .thenReturn(BigDecimal.valueOf(100));
+
+        Mockito.when(invoicedTask.contributorCommission())
+            .thenReturn(BigDecimal.valueOf(30));
         
         final JsonObject jsonInvoicedTask = new JsonInvoicedTask(invoicedTask);
         
@@ -156,8 +165,11 @@ public class JsonInvoicedTaskTestCase {
         
         Mockito.when(invoicedTask.value()).thenReturn(BigDecimal.valueOf(1000));
         
-        Mockito.when(invoicedTask.commission())
+        Mockito.when(invoicedTask.projectCommission())
             .thenReturn(BigDecimal.valueOf(100));
+
+        Mockito.when(invoicedTask.contributorCommission())
+            .thenReturn(BigDecimal.valueOf(30));
         
         final JsonObject jsonInvoicedTask = new JsonInvoicedTask(invoicedTask);
         
@@ -188,14 +200,52 @@ public class JsonInvoicedTaskTestCase {
         
         Mockito.when(invoicedTask.value()).thenReturn(BigDecimal.valueOf(100));
         
-        Mockito.when(invoicedTask.commission())
+        Mockito.when(invoicedTask.projectCommission())
             .thenReturn(BigDecimal.valueOf(3000));
+
+        Mockito.when(invoicedTask.contributorCommission())
+            .thenReturn(BigDecimal.valueOf(30));
         
         final JsonObject jsonInvoicedTask = new JsonInvoicedTask(invoicedTask);
         
         MatcherAssert.assertThat(
             jsonInvoicedTask.getInt("commission"),
             Matchers.equalTo(30)
+        );
+    }
+
+    /**
+     * JsonInvoicedTask has contributor commission.
+     */
+    @Test
+    public void hasContributorCommission(){
+        final InvoicedTask invoicedTask = Mockito.mock(InvoicedTask.class);
+
+        Mockito.when(invoicedTask.invoicedTaskId()).thenReturn(123);
+
+        Task task = Mockito.mock(Task.class);
+
+        Mockito.when(task.issueId()).thenReturn("123");
+
+        Mockito.when(invoicedTask.task()).thenReturn(task);
+
+        Mockito.when(task.estimation()).thenReturn(2);
+
+        Mockito.when(invoicedTask.task()).thenReturn(task);
+
+        Mockito.when(invoicedTask.value()).thenReturn(BigDecimal.valueOf(100));
+
+        Mockito.when(invoicedTask.projectCommission())
+            .thenReturn(BigDecimal.valueOf(3000));
+
+        Mockito.when(invoicedTask.contributorCommission())
+            .thenReturn(BigDecimal.valueOf(2000));
+
+        final JsonObject jsonInvoicedTask = new JsonInvoicedTask(invoicedTask);
+
+        MatcherAssert.assertThat(
+            jsonInvoicedTask.getInt("contributorCommission"),
+            Matchers.equalTo(20)
         );
     }
 }

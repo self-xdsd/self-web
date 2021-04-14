@@ -114,7 +114,8 @@ public class ProjectManagersApi extends BaseApiController {
                     newPm.getUsername(),
                     newPm.getProvider(),
                     newPm.getToken(),
-                    newPm.getCommission()
+                    newPm.getCommission(),
+                    newPm.getContributorCommission()
                 );
             response = ResponseEntity.ok(
                 new JsonProjectManager(registered).toString()

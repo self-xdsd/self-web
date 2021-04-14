@@ -32,6 +32,8 @@ import javax.validation.constraints.Positive;
  * @version $Id$
  * @since 0.0.1
  * @checkstyle JavadocMethod (200 lines)
+ * @checkstyle MemberName (200 lines)
+ * @checkstyle HiddenField (200 lines)
  */
 public class PmInput {
 
@@ -64,10 +66,16 @@ public class PmInput {
     private String token;
 
     /**
-     * PM's commission.
+     * Project's commission.
      */
-    @Positive(message = "PM's commission must be a positive number!")
+    @Positive(message = "Project's commission must be a positive number!")
     private double commission;
+
+    /**
+     * Contributor's commission.
+     */
+    @Positive(message = "Contributor's commission must be a positive number!")
+    private double contributorCommission;
 
     public String getUserId() {
         return userId;
@@ -107,5 +115,13 @@ public class PmInput {
 
     public void setCommission(final double comm) {
         this.commission = comm;
+    }
+
+    public double getContributorCommission() {
+        return contributorCommission;
+    }
+
+    public void setContributorCommission(final double contributorCommission) {
+        this.contributorCommission = contributorCommission;
     }
 }

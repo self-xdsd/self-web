@@ -49,7 +49,10 @@ public final class JsonInvoicedTask extends AbstractJsonObject {
                 .add("value", task.value().divide(BigDecimal.valueOf(100)))
                 .add(
                     "commission",
-                    task.commission().divide(BigDecimal.valueOf(100))
+                    task.projectCommission().divide(BigDecimal.valueOf(100))
+                ).add(
+                    "contributorCommission",
+                    task.contributorCommission().divide(BigDecimal.valueOf(100))
                 ).build()
         );
     }

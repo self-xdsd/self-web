@@ -110,7 +110,8 @@ public final class ProjectManagersApiTestCase {
                 "zoe",
                 "github",
                 "token123",
-                8.0
+                8.0,
+                5.0
             )
         ).thenReturn(registered);
         Mockito.when(core.projectManagers()).thenReturn(all);
@@ -121,6 +122,7 @@ public final class ProjectManagersApiTestCase {
         input.setProvider("github");
         input.setToken("token123");
         input.setCommission(8.0);
+        input.setContributorCommission(5.0);
 
         final ResponseEntity<String> resp = new ProjectManagersApi(user, core)
             .register(input);
@@ -169,7 +171,7 @@ public final class ProjectManagersApiTestCase {
         final Provider provider = Mockito.mock(Provider.class);
         Mockito.when(provider.name()).thenReturn("github");
         Mockito.when(manager.provider()).thenReturn(provider);
-        Mockito.when(manager.percentage()).thenReturn(8.0);
+        Mockito.when(manager.projectPercentage()).thenReturn(8.0);
         return manager;
     }
 }

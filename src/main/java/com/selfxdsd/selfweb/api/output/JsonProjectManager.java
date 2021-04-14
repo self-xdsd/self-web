@@ -48,8 +48,11 @@ public final class JsonProjectManager extends AbstractJsonObject {
                 .add("userId", manager.userId())
                 .add("username", manager.username())
                 .add("provider", manager.provider().name())
-                .add("commission", manager.percentage())
-                .build()
+                .add("commission", manager.projectPercentage())
+                .add(
+                    "contributorCommission",
+                    manager.contributorPercentage()
+                ).build()
         );
     }
 }
