@@ -22,7 +22,8 @@
                                     <th>Username</th>
                                     <th>Provider</th>
                                     <th>User ID</th>
-                                    <th>Commission</th>
+                                    <th>Project Commission</th>
+                                    <th>Contributor Commission</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -67,8 +68,15 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="pmCommission">Commission per task (%)*</label>
-                            <input name="commission" type="number" min="5.00" step="0.01" class="form-control required" id="pmCommission" placeholder="6.5">
+                            <label for="pmCommission">Project Commission per task (%)*</label>
+                            <input name="commission" type="number" min="5.00" step="0.01" class="form-control required" id="pmCommission" placeholder="8.0">
+                            <div class="invalid-feedback">
+                                Please specify a numeric commission.
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="contributorComm">Contributor Commission per task (%)*</label>
+                            <input name="contributorCommission" type="number" min="5.00" step="0.01" class="form-control required" id="contributorComm" placeholder="5.0">
                             <div class="invalid-feedback">
                                 Please specify a numeric commission.
                             </div>
@@ -122,7 +130,8 @@
                                             "<a href='https://" + manager.provider + ".com/"+ manager.username + "' target='_blank'>@" + manager.username + "</a>",
                                             manager.provider,
                                             manager.userId,
-                                            '$' + manager.commission
+                                            manager.commission + "%",
+                                            manager.contributorCommission + "%"
                                         ]
                                     ).draw(false)
                                     $("#addPmForm input").val('');

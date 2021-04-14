@@ -40,5 +40,6 @@ function managerAsTableRow(manager) {
         "<td>" + manager.provider + "</td>"  +
         "<td>" + manager.userId + "</td>"  +
         "<td>" + manager.commission + "%</td>" +
+        "<td>" + manager.contributorCommission + "%</td>" +
         "</tr>"
 }
