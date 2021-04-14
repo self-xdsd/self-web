@@ -41,7 +41,7 @@ function getProject() {
     });
 }
 
-function displayProject(userLogin, project) {
+function displayProject(userLogin, project, pmInvitePending) {
     console.log(project);
     $(".managedByLink").html(
         $('<a></a>')
@@ -60,6 +60,9 @@ function displayProject(userLogin, project) {
         $(".project-owner-buttons").hide();
     }
     $(".project-buttons").show();
+    if(project.provider === "github" && pmInvitePending){
+        $("#projectOverviewPmPending").show();
+    }
 }
 
 /**
