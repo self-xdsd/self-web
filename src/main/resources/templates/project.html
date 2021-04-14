@@ -42,6 +42,9 @@
                         <h4 class="m-0 font-weight-bold card-title">Project managed by: <span class="managedByLink"></span></h4>
                     </div>
                     <div class="card-body">
+                        <div id="projectOverviewPmPending" class="alert alert-warning" role="alert" style="display:none;">
+                            You're almost there. Just give our PM a few minutes to accept the Github invitation, then you'll be all set up.
+                        </div>
                         <p>
                             The Project Manager takes care of the following things for you:
                         </p>
@@ -903,7 +906,7 @@
                                 data: form.serialize(),
                                 success: function (project) {
                                     $("#loadingProject").hide();
-                                    displayProject(project.selfOwner, project);
+                                    displayProject(project.selfOwner, project, true);
                                     $(".badge-project-url").text(
                                         "https://self-xdsd.com/p/" + project.repoFullName
                                         + "?provider=" + project.provider
