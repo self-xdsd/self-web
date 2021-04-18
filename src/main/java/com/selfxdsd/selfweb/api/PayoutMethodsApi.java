@@ -145,7 +145,8 @@ public final class PayoutMethodsApi extends BaseApiController {
                     + "a Stripe Connect Account for Contributor "
                     + contributor.username()
                     + " (" + contributor.provider() + "): "
-                    + ex.getMessage()
+                    + ex.getMessage(),
+                    ex
                 );
                 resp = ResponseEntity.badRequest().build();
             }
