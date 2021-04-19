@@ -142,9 +142,9 @@ public class ContractsApi extends BaseApiController {
             if(contract == null) {
                 resp = ResponseEntity.noContent().build();
             } else {
-                final Tasks tasks = contract.tasks();
+                final Tasks all = StatusTasks.all(contract);
                 resp = ResponseEntity.ok(
-                    new JsonTasks(tasks).toString()
+                    new JsonTasks(all).toString()
                 );
             }
         }

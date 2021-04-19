@@ -23,8 +23,29 @@ var projectContractsCount = -1;
         )
         $("#tasks").show();
         $("#tasksTable").DataTable({
+            dom: 'Qlrtip',
+            searchBuilder: {
+                columns: [6],
+                conditions: {
+                    string: {
+                        "!=": null,
+                        "!null": null,
+                        "contains" : null,
+                        "ends" : null,
+                        "null" : null,
+                        "starts" : null,
+                    }
+                }
+            },
             language: {
-                loadingRecords: '<img src="/images/loading.svg" height="100">'
+                loadingRecords: '<img src="/images/loading.svg" height="100">',
+                searchBuilder:{
+                    add: "+",
+                    title: {
+                        0: 'Filters',
+                        _: 'Filters (%d)'
+                    },
+                },
             },
             ajax: {
                 url: "/api/projects/"
@@ -54,6 +75,9 @@ var projectContractsCount = -1;
                     }
                 },
                 {
+                    data: "invoiceNumber",
+                },
+                {
                     data: "assignmentDate",
                     render: (data) => data.split('T')[0]
                 },
@@ -68,8 +92,12 @@ var projectContractsCount = -1;
                 {
                     data: "value",
                     render: (data) => formatEuro(data)
+                },
+                {
+                    data: "status",
+                    orderable: false
                 }
-            ]
+            ],
         })
     }
 

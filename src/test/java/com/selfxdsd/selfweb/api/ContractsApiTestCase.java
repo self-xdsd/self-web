@@ -33,12 +33,17 @@ import org.springframework.http.ResponseEntity;
 
 import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonValue;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Unit tests for {@link ContractsApi}.
@@ -380,6 +385,135 @@ public final class ContractsApiTestCase {
     }
 
     /**
+     * ContractsApi.tasks(...) list of all tasks active and closed.
+     */
+    @Test
+    public void listsAllTasks(){
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        final Projects projects = Mockito.mock(Projects.class);
+        final Project project = this
+            .mockActiveProject("mihai", "mihai", "test");
+        final Contracts contracts = Mockito.mock(Contracts.class);
+        final Contract contract = Mockito.mock(Contract.class);
+        final Tasks activeTasks = Mockito.mock(Tasks.class);
+        final Invoices invoices = Mockito.mock(Invoices.class);
+
+        Mockito.when(user.username()).thenReturn("mihai");
+        Mockito.when(provider.name()).thenReturn("github");
+        Mockito.when(user.provider()).thenReturn(provider);
+        Mockito.when(user.projects()).thenReturn(projects);
+        Mockito.when(projects
+            .getProjectById("mihai/test", "github"))
+            .thenReturn(project);
+        Mockito.when(project.contracts()).thenReturn(contracts);
+        Mockito.when(contracts.findById(new Contract.Id(
+            "mihai/test",
+            "mihai",
+            "github",
+            "DEV"
+        ))).thenReturn(contract);
+        Mockito.when(contract.tasks()).thenReturn(activeTasks);
+        final List<Task> activeTasksSrc = List
+            .of(this.mockTask(), this.mockTask());
+        Mockito.when(activeTasks.spliterator()).thenReturn(
+            activeTasksSrc.spliterator()
+        );
+        Mockito.when(contract.invoices()).thenReturn(invoices);
+        //invoice has 5 invoiced tasks.
+        final List<Invoice> invoicesSrc = List.of(this.mockInvoice(1, 5));
+        Mockito.when(invoices.spliterator()).thenReturn(
+            invoicesSrc.spliterator()
+        );
+
+        final ContractsApi api = new ContractsApi(user);
+        final ResponseEntity<String> resp = api
+            .tasks("mihai", "test", "mihai", "DEV");
+        final JsonArray json = Json.createReader(
+            new StringReader(Objects.requireNonNull(resp.getBody()))
+        ).readArray();
+        MatcherAssert.assertThat(resp.getStatusCode(),
+            Matchers.is(HttpStatus.OK));
+        MatcherAssert.assertThat(
+            "Should have 7 tasks in total",
+            json,
+            Matchers.iterableWithSize(2 + 5)
+        );
+        MatcherAssert.assertThat(
+            "Should have 2 active tasks",
+            () -> json
+                .stream()
+                .filter(j -> j
+                    .asJsonObject()
+                    .getString("status")
+                    .equals("active"))
+                .iterator(),
+            Matchers.<JsonValue>iterableWithSize(2)
+        );
+        MatcherAssert.assertThat(
+            "Should have 5 closed tasks",
+            () -> json
+                .stream()
+                .filter(j -> j
+                    .asJsonObject()
+                    .getString("status")
+                    .equals("closed"))
+                .iterator(),
+            Matchers.<JsonValue>iterableWithSize(5)
+        );
+    }
+
+    /**
+     * ContractsApi.tasks(...) returns no content if Project was not found.
+     */
+    @Test
+    public void listsAllTasksHasNoContentIfProjectNotFound(){
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        final Projects projects = Mockito.mock(Projects.class);
+
+        Mockito.when(user.username()).thenReturn("mihai");
+        Mockito.when(provider.name()).thenReturn("github");
+        Mockito.when(user.provider()).thenReturn(provider);
+        Mockito.when(user.projects()).thenReturn(projects);
+
+        final ContractsApi api = new ContractsApi(user);
+        final ResponseEntity<String> resp = api
+            .tasks("mihai", "test", "mihai", "DEV");
+        MatcherAssert.assertThat(resp.getStatusCode(),
+            Matchers.is(HttpStatus.NO_CONTENT));
+    }
+
+    /**
+     * ContractsApi.tasks(...) returns no content if Project Contract
+     * was not found.
+     */
+    @Test
+    public void listsAllTasksHasNoContentIfContractNotFound(){
+        final User user = Mockito.mock(User.class);
+        final Provider provider = Mockito.mock(Provider.class);
+        final Projects projects = Mockito.mock(Projects.class);
+        final Contracts contracts = Mockito.mock(Contracts.class);
+        final Project project = this
+            .mockActiveProject("mihai", "mihai", "test");
+
+        Mockito.when(user.username()).thenReturn("mihai");
+        Mockito.when(provider.name()).thenReturn("github");
+        Mockito.when(user.provider()).thenReturn(provider);
+        Mockito.when(user.projects()).thenReturn(projects);
+        Mockito.when(projects
+            .getProjectById("mihai/test", "github"))
+            .thenReturn(project);
+        Mockito.when(project.contracts()).thenReturn(contracts);
+
+        final ContractsApi api = new ContractsApi(user);
+        final ResponseEntity<String> resp = api
+            .tasks("mihai", "test", "mihai", "DEV");
+        MatcherAssert.assertThat(resp.getStatusCode(),
+            Matchers.is(HttpStatus.NO_CONTENT));
+    }
+
+    /**
      * Mock an activated project.
      * @param selfOwner Owner username in Self.
      * @param repoOwner Owner username from the provider
@@ -457,4 +591,48 @@ public final class ContractsApiTestCase {
         return contracts;
     }
 
+    /**
+     * Mocks a Contract Task.
+     * @return Task.
+     */
+    private Task mockTask(){
+        final Task task = Mockito.mock(Task.class);
+        Mockito.when(task.issueId()).thenReturn("null");
+        Mockito.when(task.assignmentDate()).thenReturn(LocalDateTime.now());
+        Mockito.when(task.deadline()).thenReturn(null);
+        Mockito.when(task.estimation()).thenReturn(60);
+        Mockito.when(task.value()).thenReturn(BigDecimal.valueOf(100));
+        return task;
+    }
+
+    /**
+     * Mocks an InvoicedTask.
+     * @return InvoicedTask.
+     */
+    private InvoicedTask mockInvoicedTask(){
+        final InvoicedTask invoicedTask = Mockito.mock(InvoicedTask.class);
+        final Task task = this.mockTask();
+        Mockito.when(invoicedTask.task()).thenReturn(task);
+        return invoicedTask;
+    }
+
+    /**
+     * Mocks an Invoice.
+     * @param invoiceId Invoice id.
+     * @param invoicedTasksSize Number of invoiced tasks to have.
+     * @return Invoice.
+     */
+    private Invoice mockInvoice(final int invoiceId,
+                                final int invoicedTasksSize){
+        final Invoice invoice = Mockito.mock(Invoice.class);
+        final InvoicedTasks tasks = Mockito.mock(InvoicedTasks.class);
+        final List<InvoicedTask> tasksSrc = IntStream
+            .rangeClosed(1, invoicedTasksSize)
+            .mapToObj(i -> this.mockInvoicedTask())
+            .collect(Collectors.toList());
+        Mockito.when(invoice.invoiceId()).thenReturn(invoiceId);
+        Mockito.when(invoice.tasks()).thenReturn(tasks);
+        Mockito.when(tasks.spliterator()).thenReturn(tasksSrc.spliterator());
+        return invoice;
+    }
 }
