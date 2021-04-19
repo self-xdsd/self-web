@@ -59,14 +59,20 @@
     var netRevenue = 0;
     var totalVat = 0;
     function platformInvoiceAsTableRow(invoice) {
+        var displayedVAT;
         grossRevenue += invoice.total;
         netRevenue += invoice.commission;
-        totalVat += invoice.vat;
+        if(invoice.vat >= 0) {
+            totalVat += invoice.vat;
+            displayedVAT = formatEuro(invoice.vat);
+        } else {
+            displayedVAT = "Reverse"
+        }
         return [
             "<a href='/api/invoices/platform/" + invoice.id + "/pdf' target='_blank'>" + invoice.number + "</a>",
             invoice.createdAt.split('T')[0],
             formatEuro(invoice.commission),
-            formatEuro(invoice.vat),
+            displayedVAT,
             formatEuro(invoice.total),
             invoice.paidAt.split('T')[0],
             "<a href='/api/invoices/platform/" + invoice.id + "/project/pdf' target='_blank'><i title='Contributor Invoice To Project' class='fa fa-file-pdf-o fa-lg'></i></a>"
