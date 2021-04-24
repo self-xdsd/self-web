@@ -324,16 +324,17 @@ function payInvoice(invoice, contract, payButton) {
                         function (index, row) {
                             if ($(row).find("td:eq(0)").text() == json.paid) {
                                 var timestamp = json.payment.timestamp;
-                                var failMessage;
+                                var status = json.payment.status;
+                                var failMessage = (status === "FAILED")
+                                    ? json.payment.failReason.replaceAll('"', '\'')
+                                    : "Something went wrong, please try again.";
                                 if(timestamp.length > 0) {
                                     timestamp = timestamp.split('T')[0];
-                                    failMessage = timestamp + ": " + json.payment.failReason;
-                                } else {
-                                    failMessage = json.payment.failReason;
+                                    failMessage = timestamp + ": " + failMessage;
                                 }
                                 var status = "Payment failed " + "<i class='fa fa-exclamation-triangle fa-lg' style='color:red;' aria-hidden='true' "
                                     + "data-toggle='tooltip' data-placement='top' "
-                                    + "data-original-title=\"" + failMessage.replaceAll('"', '\'') + "\">"
+                                    + "data-original-title=\"" + failMessage + "\">"
                                     +"</i>";
 
                                 $(row).find("td:eq(3)").html(status);
@@ -380,14 +381,14 @@ function payInvoice(invoice, contract, payButton) {
                             );
                     }
                 );
-                if(jqXHR.status == 412) {
-                    alert(JSON.parse(jqXHR.responseText).message);
-                } else {
-                    alert(
-                        "Something went wrong (" + jqXHR.status + ")." +
-                        "Please, refresh the page and try again."
-                    );
-                }
+                var message = (jqXHR.status == 412)
+                    ? JSON.parse(jqXHR.responseText).message
+                    : "Something went wrong (" + jqXHR.status + "). Please try again.";
+                confirmDialog
+                    .create(message, "Error", "Yes")
+                    .then(()=> {
+                        payInvoice(invoice, contract, payButton);
+                    });
             }
         }
     );
