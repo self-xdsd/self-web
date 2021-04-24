@@ -307,57 +307,17 @@ function payInvoice(invoice, contract, payButton) {
             success: function (json) {
                 $("#invoicesBody").hide();
                 $("#loadingInvoices").show();
-                if(json.payment.status == 'SUCCESSFUL') {
-                    payButton.hide();
-                    $('#invoicesTable > tbody  > tr').each(
-                        function (index, row) {
-                            if ($(row).find("td:eq(0)").text() == json.paid) {
-                                $(row).find("td:eq(3)").text("Paid");
-                            }
+                payButton.hide();
+                $('#invoicesTable > tbody  > tr').each(
+                    function (index, row) {
+                        if ($(row).find("td:eq(0)").text() == json.paid) {
+                            $(row).find("td:eq(3)").text("Paid");
                         }
-                    );
-                    $("#invoicesTable").DataTable().row.add(
-                        $(newInvoiceAsTableRow(json.active))[0]
-                    ).draw();
-                } else {
-                    $('#invoicesTable > tbody  > tr').each(
-                        function (index, row) {
-                            if ($(row).find("td:eq(0)").text() == json.paid) {
-                                var timestamp = json.payment.timestamp;
-                                var failMessage;
-                                if(timestamp.length > 0) {
-                                    timestamp = timestamp.split('T')[0];
-                                    failMessage = timestamp + ": " + json.payment.failReason;
-                                } else {
-                                    failMessage = json.payment.failReason;
-                                }
-                                var status = "Payment failed " + "<i class='fa fa-exclamation-triangle fa-lg' style='color:red;' aria-hidden='true' "
-                                    + "data-toggle='tooltip' data-placement='top' "
-                                    + "data-original-title=\"" + failMessage.replaceAll('"', '\'') + "\">"
-                                    +"</i>";
-
-                                $(row).find("td:eq(3)").html(status);
-                                $('[data-toggle="tooltip"]').tooltip();
-                            }
-                        }
-                    );
-                    payButton.html('<i class="fa fa-credit-card fa-lg"></i>');
-                    payButton.on(
-                        "click",
-                        function(event) {
-                            event.preventDefault();
-                            var message = "Are you sure you want to make this payment?"
-                            if(activeWallet.type == 'FAKE') {
-                                message += ' You are using a fake wallet, the payment will be fictive.'
-                            }
-                            confirmDialog
-                                .create(message, "Warning", "Yes")
-                                .then(
-                                    () => payInvoice(invoice, contract, $(this))
-                                );
-                        }
-                    );
-                }
+                    }
+                );
+                $("#invoicesTable").DataTable().row.add(
+                    $(newInvoiceAsTableRow(json.active))[0]
+                ).draw();
                 $("#loadingInvoices").hide();
                 $("#invoicesBody").show();
             },
@@ -380,14 +340,11 @@ function payInvoice(invoice, contract, payButton) {
                             );
                     }
                 );
-                if(jqXHR.status == 412) {
-                    alert(JSON.parse(jqXHR.responseText).message);
-                } else {
-                    alert(
-                        "Something went wrong (" + jqXHR.status + ")." +
-                        "Please, refresh the page and try again."
-                    );
-                }
+                confirmDialog
+                    .create(jqXHR.responseText, "Error", "Yes")
+                    .then(()=> {
+                        payInvoice(invoice, contract, payButton);
+                    });
             }
         }
     );

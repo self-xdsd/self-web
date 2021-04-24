@@ -581,8 +581,8 @@ public class ContractsApi extends BaseApiController {
                         final Wallet wallet = project.wallets().active();
                         payment = wallet.pay(found);
                     }
-                    final Invoice active = contract.invoices().active();
                     if(payment == null) {
+                        final Invoice active = contract.invoices().active();
                         resp = ResponseEntity.ok(
                             Json.createObjectBuilder()
                                 .add("paid", found.invoiceId())
@@ -590,18 +590,16 @@ public class ContractsApi extends BaseApiController {
                                 .build()
                                 .toString()
                         );
-                    } else {
+                    } else if (payment.status()
+                        .equals(Payment.Status.SUCCESSFUL)) {
+                        final Invoice active = contract.invoices().active();
                         resp = ResponseEntity.ok(
                             Json.createObjectBuilder()
                                 .add("paid", found.invoiceId())
                                 .add(
                                     "payment",
                                     Json.createObjectBuilder()
-                                        .add("status", payment.status())
                                         .add(
-                                            "failReason",
-                                            payment.failReason()
-                                        ).add(
                                             "transactionId",
                                             payment.transactionId()
                                         ).add(
@@ -615,6 +613,9 @@ public class ContractsApi extends BaseApiController {
                                 .build()
                                 .toString()
                         );
+                    } else {
+                        resp = ResponseEntity.badRequest()
+                            .body("Something went wrong, please try again.");
                     }
                 }
             }
