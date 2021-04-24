@@ -243,7 +243,10 @@ function invoiceAsTableRow(contract) {
                 status = "Active";
             } else {
                 var timestamp = latestPayment.timestamp;
-                var failMessage = "Something went wrong, please try again.";
+                var status = latestPayment.status;
+                var failMessage = (status === "FAILED")
+                    ? latestPayment.failReason.replaceAll('"', '\'')
+                    : "Something went wrong, please try again.";
                 if(timestamp.length > 0) {
                     timestamp = timestamp.split('T')[0];
                     failMessage = timestamp + ": " + failMessage;

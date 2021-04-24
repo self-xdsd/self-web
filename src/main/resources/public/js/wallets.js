@@ -324,7 +324,10 @@ function payInvoice(invoice, contract, payButton) {
                         function (index, row) {
                             if ($(row).find("td:eq(0)").text() == json.paid) {
                                 var timestamp = json.payment.timestamp;
-                                var failMessage = "Something went wrong, please try again.";
+                                var status = json.payment.status;
+                                var failMessage = (status === "FAILED")
+                                    ? json.payment.failReason.replaceAll('"', '\'')
+                                    : "Something went wrong, please try again.";
                                 if(timestamp.length > 0) {
                                     timestamp = timestamp.split('T')[0];
                                     failMessage = timestamp + ": " + failMessage;
