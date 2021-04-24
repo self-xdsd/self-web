@@ -407,11 +407,11 @@ public final class ContractsApiTestCase {
         final Invoice invoice = this.mockInvoice(1, false,
             null);
         final Invoice active = this.mockInvoice(2, false,
-            this.mockPayment(Payment.Status.SUCCESSFUL));
+            this.mockPayment(Payment.Status.SUCCESSFUL, ""));
         final Invoices invoices = Mockito.mock(Invoices.class);
         final Wallet wallet = Mockito.mock(Wallet.class);
         final Wallets wallets = Mockito.mock(Wallets.class);
-        final Payment payment = this.mockPayment(Payment.Status.SUCCESSFUL);
+        final Payment payment = this.mockPayment(Payment.Status.SUCCESSFUL, "");
 
         Mockito.when(user.username()).thenReturn("mihai");
         Mockito.when(provider.name()).thenReturn("github");
@@ -448,6 +448,11 @@ public final class ContractsApiTestCase {
             Matchers.equalTo("tx_123")
         );
         MatcherAssert.assertThat(
+            json.getJsonObject("payment")
+                .getString("status"),
+            Matchers.equalTo(Payment.Status.SUCCESSFUL)
+        );
+        MatcherAssert.assertThat(
             json.getJsonObject("active")
                 .getInt("id"),
             Matchers.equalTo(2)
@@ -455,11 +460,10 @@ public final class ContractsApiTestCase {
     }
 
     /**
-     * ContractsApi.payInvoice(...) fails and the fail reason is not
-     * delivered to client. A generic message is sent instead.
+     * ContractsApi.payInvoice(...) fails with either FAILED or ERROR status.
      */
     @Test
-    public void invoicePaymentFailsAndReasonIsNotSent(){
+    public void invoicePaymentFails(){
         final User user = Mockito.mock(User.class);
         final Provider provider = Mockito.mock(Provider.class);
         final Projects projects = Mockito.mock(Projects.class);
@@ -480,10 +484,13 @@ public final class ContractsApiTestCase {
         );
         final Invoice invoice = this.mockInvoice(1, false,
             null);
+        final Invoice active = this.mockInvoice(2, false,
+            this.mockPayment(Payment.Status.SUCCESSFUL, ""));
         final Invoices invoices = Mockito.mock(Invoices.class);
         final Wallet wallet = Mockito.mock(Wallet.class);
         final Wallets wallets = Mockito.mock(Wallets.class);
-        final Payment payment = this.mockPayment(Payment.Status.FAILED);
+        final Payment payment = this.mockPayment(Payment.Status.FAILED,
+            "failed");
 
         Mockito.when(user.username()).thenReturn("mihai");
         Mockito.when(provider.name()).thenReturn("github");
@@ -496,6 +503,7 @@ public final class ContractsApiTestCase {
 
         Mockito.when(contract.invoices()).thenReturn(invoices);
         Mockito.when(invoices.getById(1)).thenReturn(invoice);
+        Mockito.when(invoices.active()).thenReturn(active);
         Mockito.when(project.wallets()).thenReturn(wallets);
         Mockito.when(wallets.active()).thenReturn(wallet);
         Mockito.when(wallet.pay(invoice)).thenReturn(payment);
@@ -504,10 +512,35 @@ public final class ContractsApiTestCase {
 
         final ResponseEntity<String> resp =
             api.payInvoice("mihai", "test", "john", 1, "DEV");
+        final JsonObject json = Json.createReader(
+            new StringReader(Objects.requireNonNull(resp.getBody()))
+        ).readObject();
         MatcherAssert.assertThat(resp.getStatusCode(),
-            Matchers.equalTo(HttpStatus.BAD_REQUEST));
-        MatcherAssert.assertThat(resp.getBody(),
-            Matchers.equalTo("Something went wrong, please try again."));
+            Matchers.equalTo(HttpStatus.OK));
+        MatcherAssert.assertThat(
+            json.getInt("paid"),
+            Matchers.equalTo(1)
+        );
+        MatcherAssert.assertThat(
+            json.getJsonObject("payment")
+                .getString("status"),
+            Matchers.equalTo(Payment.Status.FAILED)
+        );
+        MatcherAssert.assertThat(
+            json.getJsonObject("payment")
+                .getString("failReason"),
+            Matchers.equalTo("failed")
+        );
+        MatcherAssert.assertThat(
+            json.getJsonObject("payment")
+                .getString("transactionId"),
+            Matchers.equalTo("tx_123")
+        );
+        MatcherAssert.assertThat(
+            json.getJsonObject("active")
+                .getInt("id"),
+            Matchers.equalTo(2)
+        );
     }
 
     /**
@@ -536,7 +569,7 @@ public final class ContractsApiTestCase {
         final Invoice invoice = this.mockInvoice(1, true,
             null);
         final Invoice active = this.mockInvoice(2, false,
-            this.mockPayment(Payment.Status.SUCCESSFUL));
+            this.mockPayment(Payment.Status.SUCCESSFUL, ""));
         final Invoices invoices = Mockito.mock(Invoices.class);
 
         Mockito.when(user.username()).thenReturn("mihai");
@@ -676,12 +709,13 @@ public final class ContractsApiTestCase {
     /**
      * Mocks Payment.
      * @param status One of: {@link Payment.Status}.
+     * @param failReason Fail reason.
      * @return Payment.
      */
-    private Payment mockPayment(final String status){
+    private Payment mockPayment(final String status, final String failReason){
         final Payment payment = Mockito.mock(Payment.class);
         Mockito.when(payment.status()).thenReturn(status);
-        Mockito.when(payment.failReason()).thenReturn("");
+        Mockito.when(payment.failReason()).thenReturn(failReason);
         Mockito.when(payment.transactionId()).thenReturn("tx_123");
         Mockito.when(payment.paymentTime()).thenReturn(LocalDateTime.now());
         return payment;

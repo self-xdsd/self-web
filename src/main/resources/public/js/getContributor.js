@@ -241,6 +241,18 @@ function invoiceAsTableRow(contract) {
             var latestPayment = invoice.latestPayment;
             if(latestPayment === undefined) {
                 status = "Active";
+            } else {
+                var timestamp = latestPayment.timestamp;
+                var failMessage = "Something went wrong, please try again.";
+                if(timestamp.length > 0) {
+                    timestamp = timestamp.split('T')[0];
+                    failMessage = timestamp + ": " + failMessage;
+                }
+
+                status = "Payment failed " + "<i class='fa fa-exclamation-triangle fa-lg' style='color:red;' aria-hidden='true' "
+                    + "data-toggle='tooltip' data-placement='top' "
+                    + "data-original-title=\"" + failMessage + "\">"
+                    +"</i>";
             }
             downloadIcons="<a href='" + invoicePdfHref + "' target='_blank' class='downloadInvoice'>" + "<i title='Your Invoice To The Project' class='fa fa-file-pdf-o fa-lg'></i></a>"
         } else {

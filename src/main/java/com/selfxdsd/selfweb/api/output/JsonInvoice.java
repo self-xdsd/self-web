@@ -26,6 +26,7 @@ import com.selfxdsd.api.Invoice;
 import com.selfxdsd.api.Payment;
 
 import javax.json.Json;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -54,9 +55,10 @@ public final class JsonInvoice extends AbstractJsonObject {
      */
     public JsonInvoice(final Invoice invoice, final boolean full) {
         super(() -> {
-            final JsonObjectBuilder builder = Json.createObjectBuilder();
+            final JsonObject json;
+            JsonObjectBuilder builder;
             if(!full) {
-                builder
+                builder = Json.createObjectBuilder()
                     .add("id", invoice.invoiceId())
                     .add("createdAt", String.valueOf(invoice.createdAt()))
                     .add("isPaid", invoice.isPaid())
@@ -78,7 +80,7 @@ public final class JsonInvoice extends AbstractJsonObject {
                             )
                     );
             } else {
-                builder
+                builder = Json.createObjectBuilder()
                     .add("id", invoice.invoiceId())
                     .add("createdAt", String.valueOf(invoice.createdAt()))
                     .add("isPaid", invoice.isPaid())
@@ -103,21 +105,22 @@ public final class JsonInvoice extends AbstractJsonObject {
                     );
             }
             final Payment latest = invoice.latest();
-            // attach only if the latest payment is successfully paid.
-            // this way the fail reason will not leak to client;
-            if (latest != null && latest.status()
-                .equals(Payment.Status.SUCCESSFUL)) {
-                builder.add(
+            if(latest == null) {
+                json = builder.build();
+            } else {
+                json = builder.add(
                     "latestPayment",
                     Json.createObjectBuilder()
+                        .add("status", latest.status())
+                        .add("failReason", latest.failReason())
                         .add("transactionId", latest.transactionId())
                         .add(
                             "timestamp",
                             String.valueOf(latest.paymentTime())
                         ).build()
-                );
+                ).build();
             }
-            return builder.build();
+            return json;
         });
     }
 }
