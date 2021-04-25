@@ -381,9 +381,18 @@ function payInvoice(invoice, contract, payButton) {
                             );
                     }
                 );
-                var message = (jqXHR.status == 412)
-                    ? JSON.parse(jqXHR.responseText).message
-                    : "Something went wrong (" + jqXHR.status + "). Please try again.";
+                var message;
+                switch(jqXHR.status){
+                    case 412:
+                        message = JSON.parse(jqXHR.responseText).message;
+                        break;
+                    case 500:
+                        message = "We're sorry, but something went wrong. "
+                            + "All the failed payments are cancelled so feel free to try again.";
+                        break;
+                    default:
+                        message = "Something went wrong (" + jqXHR.status + "). Please try again.";
+                }
                 confirmDialog
                     .create(message, "Error", "Yes")
                     .then(()=> {
