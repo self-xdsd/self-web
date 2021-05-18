@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletRequest;
  * Self Database component.
  * @author criske
  * @version $Id$
- * @since 0.0.6
+ * @since 0.0.7
  */
 @Component
 @RequestScope
