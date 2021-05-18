@@ -29,7 +29,6 @@ import org.jooq.DSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -42,7 +41,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 0.0.6
  */
 @Component
-@RequestScope(proxyMode = ScopedProxyMode.INTERFACES)
+@RequestScope
 public class SelfDatabaseComponent implements Database {
 
     /**
