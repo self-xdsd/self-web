@@ -38,10 +38,6 @@ import javax.json.JsonArrayBuilder;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #33:60min Design the front-end part, similarly to how
- *  we already read and display the public repos. Don't forget to
- *  add a tooltip advising the user to go to Github Settings and
- *  grant Org Access if they do not see all the repos.
  */
 @RestController
 public class Repositories extends BaseApiController {
@@ -58,6 +54,35 @@ public class Repositories extends BaseApiController {
     @Autowired
     public Repositories(final User user) {
         this.user = user;
+    }
+
+    /**
+     * Get the user's personal repos (both public and private).
+     * @return ResponseEntity.
+     * @todo #443:60min Modify the front-end part of personal repos. We
+     *  should call this endpoint instead of Github directly.
+     */
+    @GetMapping(
+        value = "/repositories/personal",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> personalRepos() {
+        JsonArrayBuilder reposBuilder = Json.createArrayBuilder();
+        final Repos personal = this.user.provider().repos();
+        for(final Repo repo : personal) {
+            reposBuilder = reposBuilder.add(Json.createObjectBuilder()
+                .add("repoFullName", repo.fullName())
+                .add("provider", repo.provider())
+                .build());
+        }
+        final JsonArray repos = reposBuilder.build();
+        final ResponseEntity<String> response;
+        if(repos.isEmpty()){
+            response = ResponseEntity.noContent().build();
+        } else {
+            response = ResponseEntity.ok(repos.toString());
+        }
+        return response;
     }
 
     /**
