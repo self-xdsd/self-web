@@ -59,6 +59,8 @@ public class Repositories extends BaseApiController {
     /**
      * Get the user's personal repos (both public and private).
      * @return ResponseEntity.
+     * @todo #443:60min Modify the front-end part of personal repos. We
+     *  should call this endpoint instead of Github directly.
      */
     @GetMapping(
         value = "/repositories/personal",
