@@ -38,10 +38,6 @@ import javax.json.JsonArrayBuilder;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #33:60min Design the front-end part, similarly to how
- *  we already read and display the public repos. Don't forget to
- *  add a tooltip advising the user to go to Github Settings and
- *  grant Org Access if they do not see all the repos.
  */
 @RestController
 public class Repositories extends BaseApiController {
