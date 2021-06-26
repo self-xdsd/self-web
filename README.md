@@ -2,7 +2,7 @@
 
 ## self-web
 
-[![Build Status](https://travis-ci.org/self-xdsd/self-web.svg?branch=master)](https://travis-ci.org/self-xdsd/self-web)
+[![Build Status](https://travis-ci.com/self-xdsd/self-web.svg?branch=master)](https://travis-ci.com/self-xdsd/self-web)
 [![Coverage Status](https://coveralls.io/repos/github/self-xdsd/self-web/badge.svg?branch=master)](https://coveralls.io/github/self-xdsd/self-web?branch=master)
 
 [![Managed By Self XDSD](https://self-xdsd.com/b/mbself.svg)](https://self-xdsd.com/p/self-xdsd/self-web?provider=github)
