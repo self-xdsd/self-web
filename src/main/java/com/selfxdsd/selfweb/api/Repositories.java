@@ -61,6 +61,33 @@ public class Repositories extends BaseApiController {
     }
 
     /**
+     * Get the user's personal repos (both public and private).
+     * @return ResponseEntity.
+     */
+    @GetMapping(
+        value = "/repositories/personal",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> personalRepos() {
+        JsonArrayBuilder reposBuilder = Json.createArrayBuilder();
+        final Repos personal = this.user.provider().repos();
+        for(final Repo repo : personal) {
+            reposBuilder = reposBuilder.add(Json.createObjectBuilder()
+                .add("repoFullName", repo.fullName())
+                .add("provider", repo.provider())
+                .build());
+        }
+        final JsonArray repos = reposBuilder.build();
+        final ResponseEntity<String> response;
+        if(repos.isEmpty()){
+            response = ResponseEntity.noContent().build();
+        } else {
+            response = ResponseEntity.ok(repos.toString());
+        }
+        return response;
+    }
+
+    /**
      * Get the user's organization repos (repos in an organization
      * to which the user has admin rights).
      * @return ResponseEntity.

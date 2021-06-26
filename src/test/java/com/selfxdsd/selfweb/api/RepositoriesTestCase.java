@@ -181,4 +181,79 @@ public final class RepositoriesTestCase {
         );
     }
 
+    /**
+     * It can return the user's personal repos.
+     */
+    @Test
+    public void returnsFoundPersonalRepos() {
+        final Repo first = Mockito.mock(Repo.class);
+        Mockito.when(first.fullName()).thenReturn("mihai/first");
+        Mockito.when(first.provider()).thenReturn("github");
+
+        final Repo second = Mockito.mock(Repo.class);
+        Mockito.when(second.fullName()).thenReturn("mihai/second");
+        Mockito.when(second.provider()).thenReturn("github");
+
+
+        final Repos personal = Mockito.mock(Repos.class);
+        Mockito.when(personal.iterator()).thenReturn(
+            List.of(first, second).iterator()
+        );
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.repos()).thenReturn(personal);
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.provider()).thenReturn(provider);
+
+        final Repositories reposApi = new Repositories(user);
+        final ResponseEntity<String> resp = reposApi.personalRepos();
+        MatcherAssert.assertThat(
+            resp.getStatusCode(),
+            Matchers.equalTo(HttpStatus.OK)
+        );
+        final JsonArray array = Json
+            .createReader(new StringReader(resp.getBody()))
+            .readArray();
+        MatcherAssert.assertThat(array, Matchers.iterableWithSize(2));
+        MatcherAssert.assertThat(array.get(0)
+                .asJsonObject()
+                .getString("repoFullName"),
+            Matchers.equalTo("mihai/first")
+        );
+        MatcherAssert.assertThat(array.get(0)
+                .asJsonObject()
+                .getString("provider"),
+            Matchers.equalTo("github")
+        );
+        MatcherAssert.assertThat(array.get(1)
+                .asJsonObject()
+                .getString("repoFullName"),
+            Matchers.equalTo("mihai/second")
+        );
+        MatcherAssert.assertThat(array.get(1)
+                .asJsonObject()
+                .getString("provider"),
+            Matchers.equalTo("github")
+        );
+    }
+
+    /**
+     * If the user has no personal repos, it should return NO CONTENT.
+     */
+    @Test
+    public void returnsNoContentPersonalRepos() {
+        final Repos personal = Mockito.mock(Repos.class);
+        Mockito.when(personal.iterator()).thenReturn(
+            new ArrayList<Repo>().iterator()
+        );
+        final Provider provider = Mockito.mock(Provider.class);
+        Mockito.when(provider.repos()).thenReturn(personal);
+        final User user = Mockito.mock(User.class);
+        Mockito.when(user.provider()).thenReturn(provider);
+
+        final Repositories reposApi = new Repositories(user);
+        MatcherAssert.assertThat(
+            reposApi.personalRepos().getStatusCode(),
+            Matchers.equalTo(HttpStatus.NO_CONTENT)
+        );
+    }
 }
