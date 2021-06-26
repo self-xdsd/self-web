@@ -37,9 +37,6 @@ import java.util.Map;
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
  * @since 0.0.1
- * @todo #43:30min Update the getPublicRepos.js function to fetch the
- *  github/gitlab repos according to the "provider" attribute returned
- *  the from "/api/users/self" endpoint.
  */
 @RestController
 public class Users extends BaseApiController {
