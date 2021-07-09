@@ -5,7 +5,7 @@ body {
   height: 100%;
 }
 main {
-    padding-bottom: 75px;
+    padding-bottom: 15%;
 }
 #header {
     border-bottom-style: solid;
@@ -128,10 +128,14 @@ body {
     }
 }
 
-@media (max-width:767px)
+@media (max-width:900px)
 {
     body {
         padding-bottom: 472px;
+    }
+
+    main {
+        padding-bottom: 50%;
     }
 
     #how-it-works img[alt="Self XDSD Screenshot"]{
