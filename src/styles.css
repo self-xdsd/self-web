@@ -1,7 +1,211 @@
 /* You can add global styles to this file, and also import other style files */
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  height: 100%;
+  margin: 0;
+}
+main {
+  padding-bottom: 15%;
+}
+.bg-light {
+  background-color: #f8f9fa !important;
+}
+#header {
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #701516;
+}
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/*by setting pseudo elem border to 0 it removes dropdown arrow (a border itself) */
+.dropdown-menu::before {
+  border: 0 !important
+}
+
+.dropdown-menu::after {
+  border: 0 !important
+}
+
+.dropdown-menu {
+  font-size: 12px !important;
+}
+
+.card-title {
+  color: #701516 !important;
+}
+
+footer {
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #701516;
+}
+ul {
+  list-style: none;
+}
+
+.btn-outline-primary {
+  color: #701516;
+  border-color: #701516;
+}
+button.btn-outline-primary:hover,
+a.btn-outline-primary:hover {
+  color: white;
+  border-color: #701516;
+  background-color: #701516;
+}
+
+.checkmark {
+  width: 20px;
+  vertical-align: middle;
+}
+
+.gravatar {
+  display: inline;
+  float: right;
+  max-width: 60px;
+  height: 67px;
+}
+
+.gravatar_header img {
+  padding: 3px;
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border: 1px solid #ddd;
+  box-shadow: 1px 1px 3px #ccc;
+}
+
+.gravatar img {
+  padding: 3px;
+  width: 100%;
+  border: 1px solid #ddd;
+  box-shadow: 1px 1px 3px #ccc;
+}
+
+.card-user-header {
+  background: -moz-linear-gradient(top,#fff 0,#f4f4f4 100%);
+  background: -webkit-gradient(linear,left top,left bottom,color-stop(0%,#fff),color-stop(100%,#f4f4f4));
+  background: -webkit-linear-gradient(top,#fff 0,#f4f4f4 100%);
+  background: -o-linear-gradient(top,#fff 0,#f4f4f4 100%);
+  background: -ms-linear-gradient(top,#fff 0,#f4f4f4 100%);
+  background: linear-gradient(to bottom,#fff 0,#f4f4f4 100%);
+}
+
+.card p{
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+#createStripeConnectAccountButton,
+#completeOnboardingProcessButton,
+#stripeDashboardButton,
+#stripeCustomerButton {
+  background-color: #5469D4;
+}
+
+.autocomplete-suggestions {
+  overflow: auto;
+  border: 1px solid #CBD3DD;
+  background: #FFF;
+}
+
+html{
+  min-height: 100%;
+  position:relative;
+}
+
+footer{
+  position:absolute;
+  width:100%;
+  bottom:0;
+}
+body {
+  padding-bottom: 136px;
+}
+
+@media (min-width: 768px) {
+  .padding-header-navbar, .page-footer {
+    padding-top: 10px;
+    padding-right: 10%;
+    padding-bottom: 10px;
+    padding-left: 10%;
+  }
+}
+
+@media (max-width:900px)
+{
+  body {
+    padding-bottom: 472px;
+  }
+
+  main {
+    padding-bottom: 50%;
+  }
+
+  #how-it-works img[alt="Self XDSD Screenshot"]{
+    display:none ;
+  }
+
+  .about-self, .register-repo,.features{
+    width:100% !important;
+  }
+
+  #how-it-works .bg-light{
+    display: none;
+  }
+
+  .padding-header-navbar, .page-footer {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .dropdown-menu {
+    left: unset !important;
+  }
+}
+
+.tooltip{
+  pointer-events: none;
+  z-index: 2000;
+}
+
+@media (max-width:413px){
+  #realPaymentMethods{
+    overflow-x: scroll;
+  }
+
+}
+
+.toggle.btn {
+  min-width:80px !important;
+}
+
+#tasks,#contractsDivTable{
+  margin-bottom: 15px;
+}
+
+.no-payout-methods{
+  margin-bottom:20px;
+}
+
+#stripeDeleteButton{
+  width:145px;
+}
+
+.error-container{
+  max-width:100%;
+  padding-bottom: 0;
+}
+
+@media (max-width:426px){
+  .error-container{
+    height:140px;
+  }
+  .error-header{
+    transform: scale(1.5);
+  }
+}
+
+
 
 .btn-padding {
   padding-top: 5px;
