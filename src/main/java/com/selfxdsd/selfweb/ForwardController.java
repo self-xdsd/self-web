@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021, Self XDSD Contributors
+ * Copyright (c) 2020-2022, Self XDSD Contributors
  * All rights reserved.
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,44 +22,21 @@
  */
 package com.selfxdsd.selfweb;
 
-import com.selfxdsd.api.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * Controller for the repositories page.
+ * Forwards all paths to the Angular app.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.1
+ * @since 1.0.0
  */
-//@Controller
-public class ReposController {
+@Controller
+public class ForwardController {
 
-    /**
-     * Logged user.
-     */
-    private final User user;
-
-    /**
-     * Ctor.
-     * @param user Logged user.
-     */
-//    @Autowired
-    public ReposController(final User user) {
-        this.user = user;
-    }
-
-    /**
-     * Serve the Repos page of Self.
-     * @param model Model.
-     * @return Repos page.
-     */
-//    @GetMapping("/repositories")
-    public String index(final Model model) {
-        model.addAttribute("provider", user.provider().name());
-        return "repositories.html";
-    }
-
+  @RequestMapping(value = "/**/{[path:[^\\.]*}")
+  public String redirect() {
+    // Forward to home page so that route is preserved.
+    return "forward:/";
+  }
 }

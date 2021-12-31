@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @version $Id$
  * @since 0.0.1
  */
-@Controller
+//@Controller
 public class ProjectsController {
 
     /**
@@ -49,7 +49,7 @@ public class ProjectsController {
      * Ctor.
      * @param self Self's core.
      */
-    @Autowired
+//    @Autowired
     public ProjectsController(final Self self) {
         this.self = self;
     }
@@ -61,7 +61,7 @@ public class ProjectsController {
      * @param model Model.
      * @return Project page.
      */
-    @GetMapping("/github/{owner}/{name}")
+//    @GetMapping("/github/{owner}/{name}")
     public String githubProject(
         @PathVariable("owner") final String owner,
         @PathVariable("name") final String name,
@@ -78,7 +78,7 @@ public class ProjectsController {
      * @param model Model.
      * @return Project page.
      */
-    @GetMapping("/gitlab/{owner}/{name}")
+//    @GetMapping("/gitlab/{owner}/{name}")
     public String gitlabProject(
         @PathVariable("owner") final String owner,
         @PathVariable("name") final String name,
