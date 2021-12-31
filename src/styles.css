@@ -16,6 +16,10 @@ main {
   border-bottom-color: #701516;
 }
 
+.text-center {
+  text-align: center !important;
+}
+
 /*by setting pseudo elem border to 0 it removes dropdown arrow (a border itself) */
 .dropdown-menu::before {
   border: 0 !important
@@ -113,7 +117,7 @@ html{
   position:relative;
 }
 
-footer{
+footer {
   position:absolute;
   width:100%;
   bottom:0;
@@ -122,8 +126,23 @@ body {
   padding-bottom: 136px;
 }
 
+.row {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+}
 @media (min-width: 768px) {
-  .padding-header-navbar, .page-footer {
+  .padding-header-navbar {
+    padding-top: 10px;
+    padding-right: 10%;
+    padding-bottom: 10px;
+    padding-left: 10%;
+  }
+
+  .page-footer {
     padding-top: 10px;
     padding-right: 10%;
     padding-bottom: 10px;
