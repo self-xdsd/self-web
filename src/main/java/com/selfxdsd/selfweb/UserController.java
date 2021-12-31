@@ -31,14 +31,14 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @version $Id$
  * @since 0.0.1
  */
-@Controller
+//@Controller
 public class UserController {
 
     /**
      * Serve the User page of Self.
      * @return User page.
      */
-    @GetMapping("/user")
+//    @GetMapping("/user")
     public String index() {
         return "user.html";
     }

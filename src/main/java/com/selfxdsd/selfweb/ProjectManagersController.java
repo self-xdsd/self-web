@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @version $Id$
  * @since 0.0.1
  */
-@Controller
+//@Controller
 public class ProjectManagersController {
 
     /**
@@ -46,7 +46,7 @@ public class ProjectManagersController {
      * Constructor.
      * @param user Authenticated User.
      */
-    @Autowired
+//    @Autowired
     public ProjectManagersController(final User user) {
         this.user = user;
     }
@@ -55,7 +55,7 @@ public class ProjectManagersController {
      * Serve the PMs page (only for admins).
      * @return PMs page.
      */
-    @GetMapping("/admin/pms")
+//    @GetMapping("/admin/pms")
     public String projectManagers() {
         final String page;
         if("admin".equals(user.role())) {

@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @version $Id$
  * @since 0.0.1
  */
-@Controller
+//@Controller
 public class InvoicesController {
 
     /**
@@ -46,7 +46,7 @@ public class InvoicesController {
      * Constructor.
      * @param user Authenticated User.
      */
-    @Autowired
+//    @Autowired
     public InvoicesController(final User user) {
         this.user = user;
     }
@@ -55,7 +55,7 @@ public class InvoicesController {
      * Serve the Invoices page (only for admins).
      * @return PlatformInvoices page.
      */
-    @GetMapping("/admin/invoices")
+//    @GetMapping("/admin/invoices")
     public String projectManagers() {
         final String page;
         if("admin".equals(user.role())) {

@@ -46,7 +46,7 @@ public class SelfWebApplication extends WebSecurityConfigurerAdapter {
     protected void configure(final HttpSecurity http) throws Exception {
         http.authorizeRequests(
             link -> link.antMatchers(
-                "/",
+                "/*",
                 "/images/*",
                 "/images/illustrations/*",
                 "/css/*",

@@ -31,14 +31,14 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @version $Id$
  * @since 0.0.1
  */
-@Controller
+//@Controller
 public class ContributorDashBoardController {
 
     /**
      * Serve the Contributor Dashboard page.
      * @return Contributor Dashboard page.
      */
-    @GetMapping("/contributor")
+//    @GetMapping("/contributor")
     public String contributor() {
         return "contributor.html";
     }

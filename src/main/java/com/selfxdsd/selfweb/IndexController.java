@@ -31,14 +31,14 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @version $Id$
  * @since 0.0.1
  */
-@Controller
+//@Controller
 public class IndexController {
 
     /**
      * Serve the index page of Self.
      * @return Index page.
      */
-    @GetMapping("/")
+//    @GetMapping("/")
     public String index() {
         return "index.html";
     }
