@@ -5,7 +5,7 @@
       Self XDSD
     </a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto unauthenticated">
+      <ul *ngIf="authenticatedUser == undefined" class="navbar-nav mr-auto unauthenticated">
         <li class="nav-item">
           <a class="nav-link" href="/#how-it-works">How it works</a>
         </li>
@@ -13,7 +13,22 @@
           <a class="nav-link" href="/#plans">Plans</a>
         </li>
       </ul>
+      <ul *ngIf="authenticatedUser" class="navbar-nav mr-auto authenticated">
+        <li class="nav-item" id="reposHeaderLink">
+          <a class="nav-link" href="/repositories">My Repositories</a>
+        </li>
+        <li class="nav-item" id="contributorHeaderLink">
+          <a class="nav-link" href="/contributor">Contributor Dashboard</a>
+        </li>
+        <li *ngIf="authenticatedUser.role == 'admin'" class="nav-item admin-only" id="pmsHeaderLink">
+          <a class="nav-link" href="/admin/pms">Project Managers</a>
+        </li>
+        <li *ngIf="authenticatedUser.role == 'admin'" class="nav-item admin-only" id="invoicesHeaderLink">
+          <a class="nav-link" href="/admin/invoices">Invoices</a>
+        </li>
+      </ul>
     </div>
-    <app-logins></app-logins>
+    <app-logins *ngIf="authenticatedUser == undefined"></app-logins>
+    <div *ngIf="authenticatedUser">Welcome, {{authenticatedUser.login}}</div>
   </nav>
 </header>
