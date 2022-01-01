@@ -1,15 +1,19 @@
-<header id="header" class="bg-light padding-header-navbar">
-<mat-toolbar class="bg-light">
-  <img src="/assets/images/self-xdsd.png" width="35" height="35" class="d-inline-block align-top" alt="">
-  <span>Self XDSD</span>
-  <div>
-    <a mat-button href="/#how-it-works">How it works</a>
-    <a mat-button href="/#plans">Plans</a>
-  </div>
-  <span style="flex: 1 1 auto;
-    flex-grow: 1;
-    flex-shrink: 1;
-    flex-basis: auto;"></span>
-  <app-logins></app-logins>
-</mat-toolbar>
+<header id="header" class="bg-light padding-header-navbar mb-4">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <a class="navbar-brand" href="/">
+      <img src="/assets/images/self-xdsd.png" width="35" height="35" class="d-inline-block align-top" alt="">
+      Self XDSD
+    </a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto unauthenticated">
+        <li class="nav-item">
+          <a class="nav-link" href="/#how-it-works">How it works</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/#plans">Plans</a>
+        </li>
+      </ul>
+    </div>
+    <app-logins></app-logins>
+  </nav>
 </header>
