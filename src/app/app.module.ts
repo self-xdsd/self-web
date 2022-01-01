@@ -6,11 +6,8 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HeaderComponent } from './header/header.component';
 import { LoginsComponent } from './logins/logins.component';
-import { MatButtonModule } from "@angular/material/button";
-import {MatToolbarModule} from "@angular/material/toolbar";
-import {MatMenuModule} from "@angular/material/menu";
 import { FooterComponent } from './footer/footer.component';
-import {MatListModule} from "@angular/material/list";
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -23,10 +20,7 @@ import {MatListModule} from "@angular/material/list";
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatMenuModule,
-    MatListModule
+    NgbModule
   ],
   providers: [],
   bootstrap: [AppComponent]
