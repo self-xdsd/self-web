@@ -232,3 +232,23 @@ body {
   padding-bottom: 5px;
   padding-left: 5px;
 }
+
+.dropdown-toggle::after {
+  display: none;
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding-top: 0.25rem;
+  padding-right: 1.5rem;
+  padding-bottom: 0.25rem;
+  padding-left: 1rem;
+  clear: both;
+  font-weight: 400;
+  color: #212529;
+  text-align: inherit;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+}

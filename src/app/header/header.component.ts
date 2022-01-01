@@ -8,9 +8,6 @@ import {User} from "../user";
 })
 export class HeaderComponent implements OnInit {
 
-  /**
-   * Authenticated user.
-   */
   @Input() authenticatedUser?: User;
 
   constructor() { }

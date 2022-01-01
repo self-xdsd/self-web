@@ -5,5 +5,6 @@ export interface User {
   provider: string;
   provider_icon: string;
   provider_link: string;
+  avatar_url: string;
   role: string;
 }

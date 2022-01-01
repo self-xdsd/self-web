@@ -29,6 +29,6 @@
       </ul>
     </div>
     <app-logins *ngIf="authenticatedUser == undefined"></app-logins>
-    <div *ngIf="authenticatedUser">Welcome, {{authenticatedUser.login}}</div>
+    <app-authenticated-menu *ngIf="authenticatedUser" [authenticatedUser]="authenticatedUser"></app-authenticated-menu>
   </nav>
 </header>

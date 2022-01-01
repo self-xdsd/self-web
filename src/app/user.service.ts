@@ -17,6 +17,13 @@ export class UserService {
     );
   }
 
+  logout(): Observable<void> {
+    console.log("LOGOUT USER SERVICE");
+    return this.http.post<void>("/logout", {}).pipe(
+      catchError(this.handleError<void>('logout', undefined))
+    );
+  }
+
   /**
    * Handle Http operation that failed.
    * Let the app continue.
@@ -25,7 +32,9 @@ export class UserService {
    */
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
-      console.log(`${operation} failed: ${error.message}`);
+      if(error.status != 200) {
+        console.log(`${operation} failed: ${error.message}`);
+      }
       return of(result as T);
     };
   }
