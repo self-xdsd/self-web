@@ -9,13 +9,15 @@ import { LoginsComponent } from './logins/logins.component';
 import { FooterComponent } from './footer/footer.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule } from '@angular/common/http';
+import { AuthenticatedMenuComponent } from './authenticated-menu/authenticated-menu.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
     LoginsComponent,
-    FooterComponent
+    FooterComponent,
+    AuthenticatedMenuComponent
   ],
   imports: [
     BrowserModule,
