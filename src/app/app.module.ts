@@ -10,6 +10,11 @@ import { FooterComponent } from './footer/footer.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthenticatedMenuComponent } from './authenticated-menu/authenticated-menu.component';
+import { HomepageComponent } from './homepage/homepage.component';
+import { RepositoriesPageComponent } from './repositories-page/repositories-page.component';
+import { ContributorPageComponent } from './contributor-page/contributor-page.component';
+import { PlatformInvoicesPageComponent } from './platform-invoices-page/platform-invoices-page.component';
+import { ProjectManagersPageComponent } from './project-managers-page/project-managers-page.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +22,12 @@ import { AuthenticatedMenuComponent } from './authenticated-menu/authenticated-m
     HeaderComponent,
     LoginsComponent,
     FooterComponent,
-    AuthenticatedMenuComponent
+    AuthenticatedMenuComponent,
+    HomepageComponent,
+    RepositoriesPageComponent,
+    ContributorPageComponent,
+    PlatformInvoicesPageComponent,
+    ProjectManagersPageComponent
   ],
   imports: [
     BrowserModule,

@@ -22,5 +22,6 @@ export class AppComponent implements OnInit {
       .subscribe(user => {
         this.authenticatedUser = user
       });
+    console.log("APP COMPONENT INIT!!!");
   }
 }
