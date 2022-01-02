@@ -8,15 +8,15 @@
            alt="User avatar">
     </a>
     <div ngbDropdownMenu>
-      <a ngbDropdownItem href="/user">
+      <a ngbDropdownItem routerLink="/user">
         <span class="user_login">@{{authenticatedUser.login}}</span>
         <!--PROVIDER SMALL SVG HERE-->
       </a>
       <div class="dropdown-divider"></div>
-      <a ngbDropdownItem href="/repositories">My Repositories</a>
-      <a ngbDropdownItem href="/contributor">Contributor Dashboard</a>
-      <a ngbDropdownItem *ngIf="authenticatedUser.role == 'admin'" href="/admin/pms">Project Managers</a>
-      <a ngbDropdownItem *ngIf="authenticatedUser.role == 'admin'" href="/admin/invoices">Invoices</a>
+      <a ngbDropdownItem routerLink="/repositories">My Repositories</a>
+      <a ngbDropdownItem routerLink="/contributor">Contributor Dashboard</a>
+      <a ngbDropdownItem *ngIf="authenticatedUser.role == 'admin'" routerLink="/admin/pms">Project Managers</a>
+      <a ngbDropdownItem *ngIf="authenticatedUser.role == 'admin'" routerLink="/admin/invoices">Invoices</a>
       <div class="dropdown-divider"></div>
       <a ngbDropdownItem href="#" (click)="logout()">Sign Out</a>
     </div>
