@@ -1,4 +1,7 @@
 <header id="header" class="bg-light padding-header-navbar mb-4">
+  <div *ngIf="appInfo && appInfo.testEnv" class="alert alert-danger" role="alert">
+    This is a Test version, to be used as such. Data will not be transfered to Production and it may be deleted anytime. The Production version is <a href="https://self-xdsd.com">here</a>.
+  </div>
   <nav class="navbar navbar-expand-lg navbar-light">
     <a class="navbar-brand" routerLink="/">
       <img src="/assets/images/self-xdsd.png" width="35" height="35" class="d-inline-block align-top" alt="">
