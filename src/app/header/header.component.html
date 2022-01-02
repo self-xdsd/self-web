@@ -1,6 +1,6 @@
 <header id="header" class="bg-light padding-header-navbar mb-4">
   <nav class="navbar navbar-expand-lg navbar-light">
-    <a class="navbar-brand" href="/">
+    <a class="navbar-brand" routerLink="/">
       <img src="/assets/images/self-xdsd.png" width="35" height="35" class="d-inline-block align-top" alt="">
       Self XDSD
     </a>
@@ -15,16 +15,16 @@
       </ul>
       <ul *ngIf="authenticatedUser" class="navbar-nav mr-auto authenticated">
         <li class="nav-item" id="reposHeaderLink">
-          <a class="nav-link" href="/repositories">My Repositories</a>
+          <a class="nav-link" routerLink="/repositories">My Repositories</a>
         </li>
         <li class="nav-item" id="contributorHeaderLink">
-          <a class="nav-link" href="/contributor">Contributor Dashboard</a>
+          <a class="nav-link" routerLink="/contributor">Contributor Dashboard</a>
         </li>
         <li *ngIf="authenticatedUser.role == 'admin'" class="nav-item admin-only" id="pmsHeaderLink">
-          <a class="nav-link" href="/admin/pms">Project Managers</a>
+          <a class="nav-link" routerLink="/admin/pms">Project Managers</a>
         </li>
         <li *ngIf="authenticatedUser.role == 'admin'" class="nav-item admin-only" id="invoicesHeaderLink">
-          <a class="nav-link" href="/admin/invoices">Invoices</a>
+          <a class="nav-link" routerLink="/admin/invoices">Invoices</a>
         </li>
       </ul>
     </div>
