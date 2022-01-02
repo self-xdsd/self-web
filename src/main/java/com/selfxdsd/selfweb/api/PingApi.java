@@ -27,6 +27,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.json.Json;
+
 /**
  * Just a ping endpoint to make sure the app is running.
  * @author Mihai Andronache (amihaiemil@gmail.com)
@@ -49,7 +51,11 @@ public final class PingApi {
     @GetMapping("/ping")
     public ResponseEntity<String> ping() {
         return ResponseEntity.ok(
-            "Self Web " + this.version + " is up and running!"
+            Json.createObjectBuilder()
+                .add("version", this.version)
+                .add("testEnv", Boolean.valueOf(System.getenv("self_test_env")))
+                .build()
+                .toString()
         );
     }
 
