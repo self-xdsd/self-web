@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @version $Id$
  * @since 0.0.1
  */
-@Controller
+//@Controller
 public class ReposController {
 
     /**
@@ -46,7 +46,7 @@ public class ReposController {
      * Ctor.
      * @param user Logged user.
      */
-    @Autowired
+//    @Autowired
     public ReposController(final User user) {
         this.user = user;
     }
@@ -56,7 +56,7 @@ public class ReposController {
      * @param model Model.
      * @return Repos page.
      */
-    @GetMapping("/repositories")
+//    @GetMapping("/repositories")
     public String index(final Model model) {
         model.addAttribute("provider", user.provider().name());
         return "repositories.html";

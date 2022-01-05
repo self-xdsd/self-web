@@ -1,0 +1,37 @@
+<header id="header" class="bg-light padding-header-navbar mb-4">
+  <div *ngIf="appInfo && appInfo.testEnv" class="alert alert-danger" role="alert">
+    This is a Test version, to be used as such. Data will not be transfered to Production and it may be deleted anytime. The Production version is <a href="https://self-xdsd.com">here</a>.
+  </div>
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <a class="navbar-brand" routerLink="/">
+      <img src="/assets/images/self-xdsd.png" width="35" height="35" class="d-inline-block align-top" alt="">
+      Self XDSD
+    </a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul *ngIf="authenticatedUser == undefined" class="navbar-nav mr-auto unauthenticated">
+        <li class="nav-item">
+          <a class="nav-link" href="/#how-it-works">How it works</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/#plans">Plans</a>
+        </li>
+      </ul>
+      <ul *ngIf="authenticatedUser" class="navbar-nav mr-auto authenticated">
+        <li class="nav-item" id="reposHeaderLink">
+          <a class="nav-link" routerLink="/repositories">My Repositories</a>
+        </li>
+        <li class="nav-item" id="contributorHeaderLink">
+          <a class="nav-link" routerLink="/contributor">Contributor Dashboard</a>
+        </li>
+        <li *ngIf="authenticatedUser.role == 'admin'" class="nav-item admin-only" id="pmsHeaderLink">
+          <a class="nav-link" routerLink="/admin/pms">Project Managers</a>
+        </li>
+        <li *ngIf="authenticatedUser.role == 'admin'" class="nav-item admin-only" id="invoicesHeaderLink">
+          <a class="nav-link" routerLink="/admin/invoices">Invoices</a>
+        </li>
+      </ul>
+    </div>
+    <app-logins *ngIf="authenticatedUser == undefined"></app-logins>
+    <app-authenticated-menu *ngIf="authenticatedUser" [authenticatedUser]="authenticatedUser"></app-authenticated-menu>
+  </nav>
+</header>

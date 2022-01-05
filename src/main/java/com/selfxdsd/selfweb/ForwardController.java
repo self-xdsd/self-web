@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021, Self XDSD Contributors
+ * Copyright (c) 2020-2022, Self XDSD Contributors
  * All rights reserved.
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,29 +20,23 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.selfxdsd.selfweb.api;
+package com.selfxdsd.selfweb;
 
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Test;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * Unit tests for {@link PingApi}.
+ * Forwards all paths to the Angular app.
  * @author Mihai Andronache (amihaiemil@gmail.com)
  * @version $Id$
- * @since 0.0.1
+ * @since 1.0.0
  */
-public final class PingApiTestCase {
+@Controller
+public class ForwardController {
 
-    /**
-     * The ping endpoint works.
-     */
-    @Test
-    public void pingWorks() {
-        MatcherAssert.assertThat(
-            new PingApi().ping().getBody(),
-            Matchers.endsWith("is up and running!")
-        );
-    }
-
+  @RequestMapping(value = "/**/{[path:[^\\.]*}")
+  public String redirect() {
+    // Forward to home page so that route is preserved.
+    return "forward:/";
+  }
 }

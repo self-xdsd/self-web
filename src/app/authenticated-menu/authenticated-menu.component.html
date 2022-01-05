@@ -1,0 +1,24 @@
+<div *ngIf="authenticatedUser" class="container authenticated">
+  <div ngbDropdown class="nav-item gravatar_header d-inline-block">
+    <a role="button" ngbDropdownToggle>
+      <img src="{{authenticatedUser.avatar_url}}"
+           width="45"
+           height="45"
+           class="d-inline-block align-top user_avatar"
+           alt="User avatar">
+    </a>
+    <div ngbDropdownMenu>
+      <a ngbDropdownItem routerLink="/user">
+        <span class="user_login">@{{authenticatedUser.login}}</span>
+        <!--PROVIDER SMALL SVG HERE-->
+      </a>
+      <div class="dropdown-divider"></div>
+      <a ngbDropdownItem routerLink="/repositories">My Repositories</a>
+      <a ngbDropdownItem routerLink="/contributor">Contributor Dashboard</a>
+      <a ngbDropdownItem *ngIf="authenticatedUser.role == 'admin'" routerLink="/admin/pms">Project Managers</a>
+      <a ngbDropdownItem *ngIf="authenticatedUser.role == 'admin'" routerLink="/admin/invoices">Invoices</a>
+      <div class="dropdown-divider"></div>
+      <a ngbDropdownItem href="#" (click)="logout()">Sign Out</a>
+    </div>
+  </div>
+</div>
