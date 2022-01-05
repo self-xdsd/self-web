@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Location} from '@angular/common';
+import {Router} from "@angular/router";
 import {PlatformInvoicesService} from "../platform-invoices.service";
 import {PlatformInvoice} from "../platformInvoice";
 import {UserService} from "../user.service";
@@ -16,7 +16,7 @@ export class PlatformInvoicesPageComponent implements OnInit {
   filter = new FormControl('');
 
   constructor(
-    private location: Location,
+    private router: Router,
     private userService: UserService,
     private platformInvoicesService: PlatformInvoicesService
   ) {}
@@ -27,11 +27,10 @@ export class PlatformInvoicesPageComponent implements OnInit {
         if(user && user.role === 'admin') {
           this.loadPlatformInvoices();
         } else {
-          this.location.go("/");
+          this.router.navigateByUrl("/");
         }
       }
     )
-    this.loadPlatformInvoices();
   }
 
   loadPlatformInvoices(): void {
