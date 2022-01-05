@@ -11,9 +11,9 @@
             for the commission of Self. They are registered in the Accounting of the company as income.
           </div>
           <div class="mb-4">
-            <span id="gross"></span><br>
-            <span id="net"></span><br>
-            <span id="totalVat"></span>
+            <span id="gross">Gross Revenue (with VAT): <b>{{getTotal().grossRevenue}}</b></span><br>
+            <span id="net">Net Revenue (without VAT): <b>{{getTotal().netRevenue}}</b></span><br>
+            <span id="totalVat">Total VAT: <b>{{getTotal().totalVat}}</b></span>
           </div>
           <form>
             <div class="form-group form-inline">
