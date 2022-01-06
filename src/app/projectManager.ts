@@ -5,4 +5,5 @@ export interface ProjectManager {
   provider: string;
   commission: number;
   contributorCommission: number;
+  token: string;
 }
