@@ -36,4 +36,30 @@ export class ProjectManagersPageComponent implements OnInit {
       projectManagers => this.projectManagers = projectManagers
     );
   }
+
+  addNewProjectManager(
+    provider: string,
+    username: string,
+    userId: string,
+    commission: string,
+    contributorCommission: string,
+    token: string
+  ): void {
+    this.projectManagersService.addNewProjectManager(
+      {
+        userId: userId,
+        username: username,
+        provider: provider,
+        commission: Number.parseFloat(commission),
+        contributorCommission: Number.parseFloat(contributorCommission),
+        token: token
+      } as ProjectManager
+    ).subscribe(
+      addedPm => {
+        if(this.projectManagers && addedPm) {
+          this.projectManagers.push(addedPm);
+        }
+      }
+    )
+  }
 }

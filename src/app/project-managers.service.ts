@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable, of} from "rxjs";
 import {catchError} from "rxjs/operators";
 import {ProjectManager} from "./projectManager";
@@ -14,6 +14,18 @@ export class ProjectManagersService {
   getProjectManagers(): Observable<ProjectManager[]> {
     return this.http.get<ProjectManager[]>("/api/managers").pipe(
       catchError(this.handleError<ProjectManager[]>('getProjectManagers', undefined))
+    );
+  }
+
+  addNewProjectManager(newPm: ProjectManager): Observable<ProjectManager> {
+    return this.http.post<ProjectManager>(
+      "/api/managers/new",
+      newPm,
+      {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+      }
+    ).pipe(
+      catchError(this.handleError<ProjectManager>('addNewProjectManager', undefined))
     );
   }
 

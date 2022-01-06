@@ -33,65 +33,67 @@
         </div>
       </div>
     </div>
-<!--    <div class="col-lg-6" id="addPmFormDiv">-->
-<!--      <div class="card shadow mb-4">-->
-<!--        <div class="card-header py-3">-->
-<!--          <h4 class="m-0 font-weight-bold card-title">-->
-<!--            New Project Manager-->
-<!--          </h4>-->
-<!--        </div>-->
-<!--        <div class="card-body">-->
-<!--          <form id="addPmForm">-->
-<!--            <div class="form-group">-->
-<!--              <label for="providerSelect">Provider*</label>-->
-<!--              <select name="provider" class="form-control required" id="providerSelect">-->
-<!--                <option value="github">Github</option>-->
-<!--                <option value="gitlab">GitLab</option>-->
-<!--              </select>-->
-<!--              <div class="invalid-feedback">-->
-<!--                Please select a provider.-->
-<!--              </div>-->
-<!--            </div>-->
-<!--            <div class="form-group">-->
-<!--              <label for="pmUserName">Username From Provider*</label>-->
-<!--              <input name="username" type="text" class="form-control required" id="pmUserName" placeholder="Username (e.g. johndoe)">-->
-<!--              <div class="invalid-feedback">-->
-<!--                Please specify a plain username (without a preceding '@').-->
-<!--              </div>-->
-<!--            </div>-->
-<!--            <div class="form-group">-->
-<!--              <label for="pmUserId">User ID From Provider*</label>-->
-<!--              <input name="userId" type="text" class="form-control required" id="pmUserId" placeholder="User ID (e.g. 12345)">-->
-<!--              <div class="invalid-feedback">-->
-<!--                Please specify a user ID.-->
-<!--              </div>-->
-<!--            </div>-->
-<!--            <div class="form-group">-->
-<!--              <label for="pmCommission">Project Commission per task (%)*</label>-->
-<!--              <input name="commission" type="number" min="5.00" step="0.01" class="form-control required" id="pmCommission" placeholder="8.0">-->
-<!--              <div class="invalid-feedback">-->
-<!--                Please specify a numeric commission.-->
-<!--              </div>-->
-<!--            </div>-->
-<!--            <div class="form-group">-->
-<!--              <label for="contributorComm">Contributor Commission per task (%)*</label>-->
-<!--              <input name="contributorCommission" type="number" min="5.00" step="0.01" class="form-control required" id="contributorComm" placeholder="5.0">-->
-<!--              <div class="invalid-feedback">-->
-<!--                Please specify a numeric commission.-->
-<!--              </div>-->
-<!--            </div>-->
-<!--            <div class="form-group">-->
-<!--              <label for="pmToken">Token*</label>-->
-<!--              <input name="token" type="text" class="form-control required" id="pmToken" aria-describedby="tokenHelp" placeholder="Token">-->
-<!--              <div class="invalid-feedback">-->
-<!--                Please specify an access token.-->
-<!--              </div>-->
-<!--              <small id="tokenHelp" class="form-text text-muted">Personal access token issued by the provider.</small>-->
-<!--            </div>-->
-<!--            <button type="submit" class="btn btn-primary">Register</button>-->
-<!--          </form>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
+    <div class="col-lg-5" id="addPmFormDiv">
+      <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <h5 class="m-0 font-weight-bold card-title">
+            New Project Manager
+          </h5>
+        </div>
+        <div class="card-body">
+          <div id="addPmForm">
+            <div class="form-group">
+              <label for="providerSelect">Provider*</label>
+              <select name="provider" class="form-control required" id="providerSelect" #pmProvider>
+                <option value="github">Github</option>
+                <option value="gitlab">GitLab</option>
+              </select>
+              <div class="invalid-feedback">
+                Please select a provider.
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="pmUserName">Username From Provider*</label>
+              <input name="username" type="text" class="form-control required" id="pmUserName" placeholder="Username (e.g. johndoe)" #pmUsername>
+              <div class="invalid-feedback">
+                Please specify a plain username (without a preceding '@').
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="pmUserId">User ID From Provider*</label>
+              <input name="userId" type="text" class="form-control required" id="pmUserId" placeholder="User ID (e.g. 12345)" #pmUserId>
+              <div class="invalid-feedback">
+                Please specify a user ID.
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="pmCommission">Project Commission per task (%)*</label>
+              <input name="commission" type="number" min="5.00" step="0.01" class="form-control required" id="pmCommission" placeholder="8.0" #projectCommission>
+              <div class="invalid-feedback">
+                Please specify a numeric commission.
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="contributorComm">Contributor Commission per task (%)*</label>
+              <input name="contributorCommission" type="number" min="5.00" step="0.01" class="form-control required" id="contributorComm" placeholder="5.0" #contributorCommission>
+              <div class="invalid-feedback">
+                Please specify a numeric commission.
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="pmToken">Token*</label>
+              <input name="token" type="text" class="form-control required" id="pmToken" aria-describedby="tokenHelp" placeholder="Token" #pmToken>
+              <div class="invalid-feedback">
+                Please specify an access token.
+              </div>
+              <small id="tokenHelp" class="form-text text-muted">Personal access token issued by the provider.</small>
+            </div>
+            <button class="btn btn-success" (click)="addNewProjectManager(pmProvider.value, pmUsername.value, pmUserId.value, projectCommission.value, contributorCommission.value, pmToken.value);">
+              Register
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </main>

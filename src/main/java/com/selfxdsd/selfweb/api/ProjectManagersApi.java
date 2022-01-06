@@ -102,7 +102,7 @@ public class ProjectManagersApi extends BaseApiController {
         value = "/managers/new",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<String> register(@Valid final PmInput newPm) {
+    public ResponseEntity<String> register(@RequestBody @Valid final PmInput newPm) {
         final ResponseEntity<String> response;
         if(!"admin".equals(this.user.role())) {
             response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
