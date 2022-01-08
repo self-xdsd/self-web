@@ -4,6 +4,7 @@ import {PlatformInvoicesService} from "../platform-invoices.service";
 import {PlatformInvoice} from "../platformInvoice";
 import {UserService} from "../user.service";
 import {FormControl} from "@angular/forms";
+import {formatEur} from "../util/money";
 
 @Component({
   selector: 'app-platform-invoices-page',
@@ -55,9 +56,13 @@ export class PlatformInvoicesPageComponent implements OnInit {
       )
     }
     return {
-      grossRevenue: grossRevenue,
-      netRevenue: netRevenue,
-      totalVat: totalVat
+      grossRevenue: formatEur(grossRevenue),
+      netRevenue: formatEur(netRevenue),
+      totalVat: formatEur(totalVat)
     }
+  }
+
+  formatEur(value: number): string {
+    return formatEur(value);
   }
 }
