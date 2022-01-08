@@ -3,7 +3,13 @@ import {ProjectManager} from "../projectManager";
 import {Router} from "@angular/router";
 import {ProjectManagersService} from "../project-managers.service";
 import {UserService} from "../user.service";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup, ValidationErrors,
+  ValidatorFn
+} from "@angular/forms";
+import {notBlank} from "../validators/commonValidators";
 
 @Component({
   selector: 'app-project-managers-page',
@@ -15,12 +21,15 @@ export class ProjectManagersPageComponent implements OnInit {
   projectManagers?: ProjectManager[];
 
   addNewPmForm = new FormGroup({
-    provider: new FormControl('github', [Validators.required]),
-    username: new FormControl('', Validators.required),
-    userId: new FormControl('', Validators.required),
-    projectCommission: new FormControl('', Validators.required),
-    contributorCommission: new FormControl('', Validators.required),
-    token: new FormControl('', Validators.required)
+    provider: new FormControl(
+      'github',
+      [notBlank(), this.allowedProviders(['github', 'gitlab'])]
+    ),
+    username: new FormControl('', [notBlank(), this.withoutAtSymbol()]),
+    userId: new FormControl('', notBlank()),
+    projectCommission: new FormControl('', notBlank()),
+    contributorCommission: new FormControl('', notBlank()),
+    token: new FormControl('', notBlank())
   });
 
   blockSubmitButton?: boolean;
@@ -76,29 +85,25 @@ export class ProjectManagersPageComponent implements OnInit {
     )
   }
 
-  addNewProjectManager(
-    provider: string,
-    username: string,
-    userId: string,
-    commission: string,
-    contributorCommission: string,
-    token: string
-  ): void {
-    this.projectManagersService.addNewProjectManager(
-      {
-        userId: userId,
-        username: username,
-        provider: provider,
-        commission: Number.parseFloat(commission),
-        contributorCommission: Number.parseFloat(contributorCommission),
-        token: token
-      } as ProjectManager
-    ).subscribe(
-      addedPm => {
-        if(this.projectManagers && addedPm) {
-          this.projectManagers.push(addedPm);
-        }
-      }
-    )
+  /**
+   * Custom validator for provider field.
+   * @param providers Allowed providers.
+   */
+  allowedProviders(providers: string[]): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const allowed = providers.includes(control.value);
+      return allowed ? null : {forbiddenProvider: {value: control.value}};
+    };
+  }
+
+  /**
+   * Custom validator for the username field (shouldn't start with '@').
+   * @param providers Allowed providers.
+   */
+  withoutAtSymbol(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const allowed = !control.value?.startsWith('@');
+      return allowed ? null : {forbiddenUsername: {value: control.value}};
+    };
   }
 }
