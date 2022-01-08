@@ -41,57 +41,109 @@
           </h5>
         </div>
         <div class="card-body">
-          <div id="addPmForm">
+<!--          <div id="addPmForm">-->
+<!--            <div class="form-group">-->
+<!--              <label for="providerSelect">Provider*</label>-->
+<!--              <select name="provider" class="form-control required" id="providerSelect" #pmProvider>-->
+<!--                <option value="github">Github</option>-->
+<!--                <option value="gitlab">GitLab</option>-->
+<!--              </select>-->
+<!--              <div class="invalid-feedback">-->
+<!--                Please select a provider.-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="form-group">-->
+<!--              <label for="pmUserName">Username From Provider*</label>-->
+<!--              <input name="username" type="text" class="form-control required" id="pmUserName" placeholder="Username (e.g. johndoe)" #pmUsername>-->
+<!--              <div class="invalid-feedback">-->
+<!--                Please specify a plain username (without a preceding '@').-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="form-group">-->
+<!--              <label for="pmUserId">User ID From Provider*</label>-->
+<!--              <input name="userId" type="text" class="form-control required" id="pmUserId" placeholder="User ID (e.g. 12345)" #pmUserId>-->
+<!--              <div class="invalid-feedback">-->
+<!--                Please specify a user ID.-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="form-group">-->
+<!--              <label for="pmCommission">Project Commission per task (%)*</label>-->
+<!--              <input name="commission" type="number" min="5.00" step="0.01" class="form-control required" id="pmCommission" placeholder="8.0" #projectCommission>-->
+<!--              <div class="invalid-feedback">-->
+<!--                Please specify a numeric commission.-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="form-group">-->
+<!--              <label for="contributorComm">Contributor Commission per task (%)*</label>-->
+<!--              <input name="contributorCommission" type="number" min="5.00" step="0.01" class="form-control required" id="contributorComm" placeholder="5.0" #contributorCommission>-->
+<!--              <div class="invalid-feedback">-->
+<!--                Please specify a numeric commission.-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="form-group">-->
+<!--              <label for="pmToken">Token*</label>-->
+<!--              <input name="token" type="text" class="form-control required" id="pmToken" aria-describedby="tokenHelp" placeholder="Token" #pmToken>-->
+<!--              <div class="invalid-feedback">-->
+<!--                Please specify an access token.-->
+<!--              </div>-->
+<!--              <small id="tokenHelp" class="form-text text-muted">Personal access token issued by the provider.</small>-->
+<!--            </div>-->
+<!--            <button class="btn btn-success" (click)="addNewProjectManager(pmProvider.value, pmUsername.value, pmUserId.value, projectCommission.value, contributorCommission.value, pmToken.value);">-->
+<!--              Register-->
+<!--            </button>-->
+<!--          </div>-->
+          <form [formGroup]="addNewPmForm" (ngSubmit)="onSubmit()">
             <div class="form-group">
               <label for="providerSelect">Provider*</label>
-              <select name="provider" class="form-control required" id="providerSelect" #pmProvider>
+              <select name="provider" [ngClass]="{'form-control': true, 'is-invalid': addNewPmForm.get('provider')?.invalid }" id="providerSelect" formControlName="provider">
                 <option value="github">Github</option>
                 <option value="gitlab">GitLab</option>
               </select>
-              <div class="invalid-feedback">
+              <div *ngIf="addNewPmForm.get('provider')?.invalid" class="invalid-feedback">
                 Please select a provider.
               </div>
             </div>
             <div class="form-group">
               <label for="pmUserName">Username From Provider*</label>
-              <input name="username" type="text" class="form-control required" id="pmUserName" placeholder="Username (e.g. johndoe)" #pmUsername>
-              <div class="invalid-feedback">
+              <input name="username" type="text" [ngClass]="{'form-control': true, 'is-invalid': addNewPmForm.get('username')?.invalid && (addNewPmForm.get('username')?.dirty || addNewPmForm.get('username')?.touched) }" id="pmUserName" placeholder="Username (e.g. johndoe)" formControlName="username">
+              <div *ngIf="addNewPmForm.get('username')?.invalid && (addNewPmForm.get('username')?.dirty || addNewPmForm.get('username')?.touched)" class="invalid-feedback">
                 Please specify a plain username (without a preceding '@').
               </div>
             </div>
             <div class="form-group">
               <label for="pmUserId">User ID From Provider*</label>
-              <input name="userId" type="text" class="form-control required" id="pmUserId" placeholder="User ID (e.g. 12345)" #pmUserId>
-              <div class="invalid-feedback">
+              <input name="userId" type="text" [ngClass]="{'form-control': true, 'is-invalid': addNewPmForm.get('userId')?.invalid && (addNewPmForm.get('userId')?.dirty || addNewPmForm.get('userId')?.touched) }" id="pmUserId" placeholder="User ID (e.g. 12345)" formControlName="userId">
+              <div *ngIf="addNewPmForm.get('userId')?.invalid && (addNewPmForm.get('userId')?.dirty || addNewPmForm.get('userId')?.touched)" class="invalid-feedback">
                 Please specify a user ID.
               </div>
             </div>
             <div class="form-group">
               <label for="pmCommission">Project Commission per task (%)*</label>
-              <input name="commission" type="number" min="5.00" step="0.01" class="form-control required" id="pmCommission" placeholder="8.0" #projectCommission>
-              <div class="invalid-feedback">
-                Please specify a numeric commission.
+              <input name="commission" type="number" min="5.00" step="0.01" [ngClass]="{'form-control': true, 'is-invalid': addNewPmForm.get('projectCommission')?.invalid && (addNewPmForm.get('projectCommission')?.dirty || addNewPmForm.get('projectCommission')?.touched) }" id="pmCommission" placeholder="8.0" formControlName="projectCommission">
+              <div *ngIf="addNewPmForm.get('projectCommission')?.invalid && (addNewPmForm.get('projectCommission')?.dirty || addNewPmForm.get('projectCommission')?.touched)" class="invalid-feedback">
+                Please specify a numeric commission greater than 5.
               </div>
             </div>
             <div class="form-group">
               <label for="contributorComm">Contributor Commission per task (%)*</label>
-              <input name="contributorCommission" type="number" min="5.00" step="0.01" class="form-control required" id="contributorComm" placeholder="5.0" #contributorCommission>
-              <div class="invalid-feedback">
-                Please specify a numeric commission.
+              <input name="contributorCommission" type="number" min="5.00" step="0.01" [ngClass]="{'form-control': true, 'is-invalid': addNewPmForm.get('contributorCommission')?.invalid && (addNewPmForm.get('contributorCommission')?.dirty || addNewPmForm.get('contributorCommission')?.touched) }" id="contributorComm" placeholder="5.0" formControlName="contributorCommission">
+              <div *ngIf="addNewPmForm.get('contributorCommission')?.invalid && (addNewPmForm.get('contributorCommission')?.dirty || addNewPmForm.get('contributorCommission')?.touched)" class="invalid-feedback">
+                Please specify a numeric commission greater than 5.
               </div>
             </div>
             <div class="form-group">
               <label for="pmToken">Token*</label>
-              <input name="token" type="text" class="form-control required" id="pmToken" aria-describedby="tokenHelp" placeholder="Token" #pmToken>
-              <div class="invalid-feedback">
+              <input name="token" type="text" [ngClass]="{'form-control': true, 'is-invalid': addNewPmForm.get('token')?.invalid && (addNewPmForm.get('token')?.dirty || addNewPmForm.get('token')?.touched) }" id="pmToken" aria-describedby="tokenHelp" placeholder="Token" formControlName="token">
+              <div *ngIf="addNewPmForm.get('token')?.invalid && (addNewPmForm.get('token')?.dirty || addNewPmForm.get('token')?.touched)" class="invalid-feedback">
                 Please specify an access token.
               </div>
               <small id="tokenHelp" class="form-text text-muted">Personal access token issued by the provider.</small>
             </div>
-            <button class="btn btn-success" (click)="addNewProjectManager(pmProvider.value, pmUsername.value, pmUserId.value, projectCommission.value, contributorCommission.value, pmToken.value);">
-              Register
-            </button>
-          </div>
+            <button type="submit" [disabled]="addNewPmForm.invalid || blockSubmitButton" class="btn btn-success">Register</button>
+            <span *ngIf="blockSubmitButton" id="loadingStripeDashboardForm">
+                <img height="30" width="30" src="/assets/images/loading.svg">
+            </span>
+          </form>
         </div>
       </div>
     </div>

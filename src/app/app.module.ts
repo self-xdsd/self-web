@@ -15,6 +15,7 @@ import { RepositoriesPageComponent } from './repositories-page/repositories-page
 import { ContributorPageComponent } from './contributor-page/contributor-page.component';
 import { PlatformInvoicesPageComponent } from './platform-invoices-page/platform-invoices-page.component';
 import { ProjectManagersPageComponent } from './project-managers-page/project-managers-page.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { ProjectManagersPageComponent } from './project-managers-page/project-ma
     AppRoutingModule,
     BrowserAnimationsModule,
     NgbModule,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
