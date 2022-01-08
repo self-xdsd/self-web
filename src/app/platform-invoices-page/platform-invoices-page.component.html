@@ -47,9 +47,9 @@
                     <a href="/api/invoices/platform/{{platformInvoice.id}}/pdf" target='_blank'>{{platformInvoice.number}}</a>
                   </td>
                   <td>{{platformInvoice.createdAt.split('T')[0]}}</td>
-                  <td>{{platformInvoice.commission}}</td>
-                  <td>{{platformInvoice.vat >=0 ? platformInvoice.vat : "Reverse"}}</td>
-                  <td>{{platformInvoice.total}}</td>
+                  <td>{{formatEur(platformInvoice.commission)}}</td>
+                  <td>{{platformInvoice.vat >=0 ? formatEur(platformInvoice.vat) : "Reverse"}}</td>
+                  <td>{{formatEur(platformInvoice.total)}}</td>
                   <td>{{platformInvoice.paidAt.split('T')[0]}}</td>
                   <td>
                     <a href="/api/invoices/platform/{{platformInvoice.id}}/project/pdf" target='_blank'><i title='Contributor Invoice To Project' class='fa fa-file-pdf-o fa-lg'></i></a>
