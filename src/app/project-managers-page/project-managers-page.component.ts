@@ -3,6 +3,7 @@ import {ProjectManager} from "../projectManager";
 import {Router} from "@angular/router";
 import {ProjectManagersService} from "../project-managers.service";
 import {UserService} from "../user.service";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-project-managers-page',
@@ -12,6 +13,17 @@ import {UserService} from "../user.service";
 export class ProjectManagersPageComponent implements OnInit {
 
   projectManagers?: ProjectManager[];
+
+  addNewPmForm = new FormGroup({
+    provider: new FormControl('github', [Validators.required]),
+    username: new FormControl('', Validators.required),
+    userId: new FormControl('', Validators.required),
+    projectCommission: new FormControl('', Validators.required),
+    contributorCommission: new FormControl('', Validators.required),
+    token: new FormControl('', Validators.required)
+  });
+
+  blockSubmitButton?: boolean;
 
   constructor(
     private router: Router,
@@ -29,12 +41,39 @@ export class ProjectManagersPageComponent implements OnInit {
         }
       }
     )
+    this.blockSubmitButton = false;
   }
 
   loadProjectManagers(): void {
     this.projectManagersService.getProjectManagers().subscribe(
       projectManagers => this.projectManagers = projectManagers
     );
+  }
+
+  onSubmit() {
+    this.blockSubmitButton = true;
+    this.projectManagersService.addNewProjectManager(
+      {
+        userId: this.addNewPmForm.get('userId')?.value,
+        username: this.addNewPmForm.get('username')?.value,
+        provider: this.addNewPmForm.get('provider')?.value,
+        commission: Number.parseFloat(this.addNewPmForm.get('projectCommission')?.value),
+        contributorCommission: Number.parseFloat(this.addNewPmForm.get('contributorCommission')?.value),
+        token: this.addNewPmForm.get('token')?.value
+      } as ProjectManager
+    ).subscribe(
+      addedPm => {
+        if(this.projectManagers && addedPm) {
+          this.projectManagers.push(addedPm);
+        }
+        this.blockSubmitButton = false;
+        this.addNewPmForm.reset(
+          {
+            provider: 'github'
+          }
+        );
+      }
+    )
   }
 
   addNewProjectManager(
