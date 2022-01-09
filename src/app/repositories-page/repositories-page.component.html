@@ -1,1 +1,42 @@
-<p>repositories-page works!</p>
+<main class="container" role="main">
+  <header class="profile-header">
+    <div class="card">
+      <div class="card-user-header card-body">
+        <div class="row">
+          <div class="gravatar ml-3 mr-2">
+            <img class="user_avatar" src="{{authenticatedUser ? authenticatedUser.avatar_url : '/assets/images/user_avatar.jpg'}}" alt="Card image cap">
+          </div>
+          <div class="mt-2">
+            <h5 class="user_name" style="margin-bottom: 0">{{authenticatedUser?.name}}</h5>
+            <span class="text-muted user_login">@{{authenticatedUser?.login}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" class="nav-tabs">
+          <li [ngbNavItem]="'managed'">
+            <a style="color: black;" ngbNavLink>Managed Repos</a>
+            <ng-template ngbNavContent>
+              <app-repositories-table [type]="'managed'"></app-repositories-table>
+            </ng-template>
+          </li>
+          <li [ngbNavItem]="'personal'">
+            <a style="color: black;" ngbNavLink>Personal Repos</a>
+            <ng-template ngbNavContent>
+              <app-repositories-table [type]="'personal'"></app-repositories-table>
+            </ng-template>
+          </li>
+          <li [ngbNavItem]="'organization'">
+            <a style="color: black;" ngbNavLink>Organization Repos</a>
+            <ng-template ngbNavContent>
+              <app-repositories-table [type]="'organization'"></app-repositories-table>
+            </ng-template>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </header>
+  <div class="card card-body">
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+  </div>
+</main>

@@ -1,0 +1,16 @@
+<div class="table-responsive">
+  <div class="dataTables_wrapper dt-bootstrap4">
+    <div *ngIf="loading" class="text-center">
+      <img src="/assets/images/loading.svg">
+    </div>
+    <table *ngIf="!loading" class="table table-striped">
+      <thead>
+      </thead>
+      <tbody>
+        <tr *ngFor="let repo of repositories">
+          <td><a target="_blank" href="{{repo.provider === 'github' ? '/github/' + repo.repoFullName : '/gitlab/' + repo.repoFullName}}">{{repo.repoFullName}}</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
