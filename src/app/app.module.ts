@@ -16,6 +16,7 @@ import { ContributorPageComponent } from './contributor-page/contributor-page.co
 import { PlatformInvoicesPageComponent } from './platform-invoices-page/platform-invoices-page.component';
 import { ProjectManagersPageComponent } from './project-managers-page/project-managers-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { RepositoriesTableComponent } from './repositories-page/repositories-table/repositories-table.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     RepositoriesPageComponent,
     ContributorPageComponent,
     PlatformInvoicesPageComponent,
-    ProjectManagersPageComponent
+    ProjectManagersPageComponent,
+    RepositoriesTableComponent
   ],
   imports: [
     BrowserModule,
