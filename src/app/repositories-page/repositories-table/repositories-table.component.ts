@@ -14,11 +14,18 @@ export class RepositoriesTableComponent implements OnInit {
    */
   @Input() type?: string;
   repositories?: Repository[];
+  repositoriesPage?: Repository[];
   loading?: boolean;
+
+  page?: number;// = 1;
+  pageSize?: number;//=10;
+  collectionSize?: number;
 
   constructor(private repositoriesService: RepositoriesService) { }
 
   ngOnInit(): void {
+    this.page = 1;
+    this.pageSize = 10;
     this.loading = true;
     switch(this.type) {
       case 'personal': {
@@ -40,6 +47,8 @@ export class RepositoriesTableComponent implements OnInit {
     this.repositoriesService.getManagedRepos().subscribe(
       repos => {
         this.repositories = repos
+        this.collectionSize = this.repositories.length;
+        this.refreshRepositoriesPage();
         this.loading = false;
       }
     )
@@ -49,6 +58,8 @@ export class RepositoriesTableComponent implements OnInit {
     this.repositoriesService.getPersonalRepos().subscribe(
       repos => {
         this.repositories = repos
+        this.collectionSize = this.repositories.length;
+        this.refreshRepositoriesPage();
         this.loading = false;
       }
     )
@@ -58,9 +69,19 @@ export class RepositoriesTableComponent implements OnInit {
     this.repositoriesService.getOrganizationRepos().subscribe(
       repos => {
         this.repositories = repos
+        this.collectionSize = this.repositories.length;
+        this.refreshRepositoriesPage();
         this.loading = false;
       }
     )
+  }
+
+  refreshRepositoriesPage(): void {
+    if(this.repositories && this.pageSize && this.page) {
+      this.repositoriesPage = this.repositories
+        .map((repo, i) => ({id: i + 1, ...repo}))
+        .slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize);
+    }
   }
 
 }
