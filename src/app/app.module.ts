@@ -15,6 +15,7 @@ import { RepositoriesPageComponent } from './repositories-page/repositories-page
 import { ContributorPageComponent } from './contributor-page/contributor-page.component';
 import { PlatformInvoicesPageComponent } from './platform-invoices-page/platform-invoices-page.component';
 import { ProjectManagersPageComponent } from './project-managers-page/project-managers-page.component';
+import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RepositoriesTableComponent } from './repositories-page/repositories-table/repositories-table.component';
 
@@ -38,6 +39,7 @@ import { RepositoriesTableComponent } from './repositories-page/repositories-tab
     BrowserAnimationsModule,
     NgbModule,
     HttpClientModule,
+    FormsModule,
     ReactiveFormsModule
   ],
   providers: [],
