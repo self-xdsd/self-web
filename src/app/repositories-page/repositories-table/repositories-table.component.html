@@ -1,0 +1,27 @@
+<div class="table-responsive">
+  <div class="dataTables_wrapper dt-bootstrap4">
+    <div *ngIf="loading" class="text-center">
+      <img src="/assets/images/loading.svg">
+    </div>
+    <table *ngIf="!loading" class="table table-striped">
+      <thead>
+      </thead>
+      <tbody>
+        <tr *ngFor="let repo of repositoriesPage">
+          <td><a target="_blank" href="{{repo.provider === 'github' ? '/github/' + repo.repoFullName : '/gitlab/' + repo.repoFullName}}">{{repo.repoFullName}}</a></td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="repositories" class="p-2">Total {{type}} repositories: {{repositories.length}}</div>
+    <div *ngIf="repositories && pageSize && page && collectionSize" class="d-flex justify-content-between p-2">
+      <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize" (pageChange)="refreshRepositoriesPage()">
+      </ngb-pagination>
+      <select class="custom-select" style="width: auto" [(ngModel)]="pageSize" (ngModelChange)="refreshRepositoriesPage()">
+        <option [ngValue]="10">10 repositories per page</option>
+        <option [ngValue]="25">25 repositories per page</option>
+        <option [ngValue]="50">50 repositories per page</option>
+        <option [ngValue]="100">100 repositories per page</option>
+      </select>
+    </div>
+  </div>
+</div>

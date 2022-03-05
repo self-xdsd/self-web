@@ -1,7 +1,7 @@
 <div *ngIf="authenticatedUser" class="container authenticated">
   <div ngbDropdown class="nav-item gravatar_header d-inline-block">
     <a role="button" ngbDropdownToggle>
-      <img src="{{authenticatedUser.avatar_url}}"
+      <img src="{{authenticatedUser ? authenticatedUser.avatar_url : '/assets/images/user_avatar.jpg'}}"
            width="45"
            height="45"
            class="d-inline-block align-top user_avatar"
