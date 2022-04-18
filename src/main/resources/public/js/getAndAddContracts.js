@@ -171,8 +171,13 @@ var projectContractsCount = -1;
                         + "data-original-title=\"" + failMessage.replaceAll('"', '\'')+ "\">"
                         +"</i>";
                 }
-                var totalAmount = parseFloat(invoice.totalAmount.substring(0, invoice.totalAmount.length - 1)
-                        .replace(",",".").trim())
+                var totalAmount = parseFloat(
+                    invoice.totalAmount
+                        .substring(0, invoice.totalAmount.length - 1)
+                        .replace(".", "")
+                        .replace(",",".")
+                        .trim()
+                )
                 if (totalAmount >= 108.0) {
                     payIcon = "<a href='#' title='Pay Invoice' class='payInvoice' "
                         + "data-contributor='" + contract.id.contributorUsername + "' "
