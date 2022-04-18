@@ -9,7 +9,7 @@
 [![DevOps By Rultor.com](http://www.rultor.com/b/self-xdsd/self-web)](http://www.rultor.com/p/self-xdsd/self-web)
 [![We recommend IntelliJ IDEA](http://amihaiemil.github.io/images/intellij-idea-recommend.svg)](https://www.jetbrains.com/idea/)
 
-The Self Web Application, version `0.0.12`.
+The Self Web Application, version `0.0.13`.
 
 ## Contributing 
 
