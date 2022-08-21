@@ -5,9 +5,11 @@ import {RepositoriesPageComponent} from "./repositories-page/repositories-page.c
 import {ContributorPageComponent} from "./contributor-page/contributor-page.component";
 import {PlatformInvoicesPageComponent} from "./platform-invoices-page/platform-invoices-page.component";
 import {ProjectManagersPageComponent} from "./project-managers-page/project-managers-page.component";
+import {UserPageComponent} from "./user-page/user-page.component";
 
 const routes: Routes = [
   { path: '', component: HomepageComponent },
+  { path: 'user', component: UserPageComponent },
   { path: 'repositories', component: RepositoriesPageComponent },
   { path: 'contributor', component: ContributorPageComponent },
   { path: 'admin/pms', component: ProjectManagersPageComponent },

@@ -1,0 +1,21 @@
+<main class="container" role="main">
+  <div class="card w-100">
+    <div class="card-user-header card-body">
+      <h6>User profile</h6>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-5 col-lg-4 py-2"><strong>Username</strong></div>
+        <div class="col-7 col-lg-8 py-2 username">{{authenticatedUser?.login}}</div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-5 col-lg-4 py-2"><strong>Email</strong></div>
+        <div class="col-7 col-lg-8 py-2 email">{{authenticatedUser?.email ? authenticatedUser?.email : "Not specified" }}</div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-5 col-lg-4 py-2"><strong>Authenticated with</strong></div>
+        <div class="col-7 col-lg-8 py-2">{{authenticatedUser?.provider}}</div>
+      </div>
+    </div>
+  </div>
+</main>
