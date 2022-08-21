@@ -18,6 +18,7 @@ import { ProjectManagersPageComponent } from './project-managers-page/project-ma
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RepositoriesTableComponent } from './repositories-page/repositories-table/repositories-table.component';
+import { UserPageComponent } from './user-page/user-page.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { RepositoriesTableComponent } from './repositories-page/repositories-tab
     ContributorPageComponent,
     PlatformInvoicesPageComponent,
     ProjectManagersPageComponent,
-    RepositoriesTableComponent
+    RepositoriesTableComponent,
+    UserPageComponent
   ],
   imports: [
     BrowserModule,
