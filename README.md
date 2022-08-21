@@ -1,5 +1,13 @@
 <img alt="self-xsdsd-logo" src="https://self-xdsd.com/files/self-xdsd.png" width="80" height="80"/>
 
+## ANGULAR REFACTORING
+
+The Angular app will be automatically built and bundled within the deployable, by Maven, when running ``mvn clean install`` (see ``exec-maven-plugin`` in pom.xml).
+After starting the Spring application in IntelliJ, just go to ``http://localhost:8080/`` and you should see it working.
+
+**Angular hot-build**: in order for Angular to build and rebundle the front-end (move the build to ``/target/classes/static``) while you're
+writing code, you need to run ``ng build --watch --configuration development`` from the root directory of the project.
+
 ## self-web
 
 [![Build Status](https://travis-ci.com/self-xdsd/self-web.svg?branch=master)](https://travis-ci.com/self-xdsd/self-web)
