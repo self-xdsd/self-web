@@ -4,7 +4,8 @@
   </div>
   <nav class="navbar navbar-expand-lg navbar-light">
     <a class="navbar-brand" routerLink="/">
-      <img src="/assets/images/self-xdsd.png" width="35" height="35" class="d-inline-block align-top" alt="">
+      <img *ngIf="authenticatedUser == undefined" src="/assets/images/self-xdsd.png" width="35" height="35" class="d-inline-block align-top" alt="">
+      <img *ngIf="authenticatedUser !== undefined" src="{{authenticatedUser.provider === 'github' ? '/assets/images/github.png' : '/assets/images/gitlab-icon.svg'}}" width="30" height="30" class="d-inline-block align-top" alt="">
       Self XDSD
     </a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
