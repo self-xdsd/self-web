@@ -1,0 +1,7 @@
+<div *ngIf="loading" class="text-center">
+  <img src="/assets/images/loading.svg" alt="loading...">
+</div>
+<div *ngIf="!loading">
+  <div *ngIf="payoutMethods.length == 0">No payment methods</div>
+  <div *ngIf="payoutMethods.length > 0">Here payment methods</div>
+</div>

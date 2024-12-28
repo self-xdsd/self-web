@@ -19,21 +19,24 @@ import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RepositoriesTableComponent } from './repositories-page/repositories-table/repositories-table.component';
 import { UserPageComponent } from './user-page/user-page.component';
+import {PayoutMethodComponent} from "./contributor-page/payout-method/payout-method.component";
 
-@NgModule({ declarations: [
-        AppComponent,
-        HeaderComponent,
-        LoginsComponent,
-        FooterComponent,
-        AuthenticatedMenuComponent,
-        HomepageComponent,
-        RepositoriesPageComponent,
-        ContributorPageComponent,
-        PlatformInvoicesPageComponent,
-        ProjectManagersPageComponent,
-        RepositoriesTableComponent,
-        UserPageComponent
-    ],
+@NgModule({
+  declarations: [
+    AppComponent,
+    HeaderComponent,
+    LoginsComponent,
+    FooterComponent,
+    AuthenticatedMenuComponent,
+    HomepageComponent,
+    RepositoriesPageComponent,
+    ContributorPageComponent,
+    PlatformInvoicesPageComponent,
+    ProjectManagersPageComponent,
+    RepositoriesTableComponent,
+    UserPageComponent,
+    PayoutMethodComponent
+  ],
     bootstrap: [AppComponent], imports: [BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
