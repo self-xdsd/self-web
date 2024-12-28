@@ -8,7 +8,7 @@ import { HeaderComponent } from './header/header.component';
 import { LoginsComponent } from './logins/logins.component';
 import { FooterComponent } from './footer/footer.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { AuthenticatedMenuComponent } from './authenticated-menu/authenticated-menu.component';
 import { HomepageComponent } from './homepage/homepage.component';
 import { RepositoriesPageComponent } from './repositories-page/repositories-page.component';
@@ -20,31 +20,24 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RepositoriesTableComponent } from './repositories-page/repositories-table/repositories-table.component';
 import { UserPageComponent } from './user-page/user-page.component';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    HeaderComponent,
-    LoginsComponent,
-    FooterComponent,
-    AuthenticatedMenuComponent,
-    HomepageComponent,
-    RepositoriesPageComponent,
-    ContributorPageComponent,
-    PlatformInvoicesPageComponent,
-    ProjectManagersPageComponent,
-    RepositoriesTableComponent,
-    UserPageComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    NgbModule,
-    HttpClientModule,
-    FormsModule,
-    ReactiveFormsModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        HeaderComponent,
+        LoginsComponent,
+        FooterComponent,
+        AuthenticatedMenuComponent,
+        HomepageComponent,
+        RepositoriesPageComponent,
+        ContributorPageComponent,
+        PlatformInvoicesPageComponent,
+        ProjectManagersPageComponent,
+        RepositoriesTableComponent,
+        UserPageComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        NgbModule,
+        FormsModule,
+        ReactiveFormsModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule { }

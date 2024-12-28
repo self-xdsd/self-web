@@ -5,31 +5,32 @@ import {ProjectManagersService} from "../project-managers.service";
 import {UserService} from "../user.service";
 import {
   AbstractControl,
-  FormControl,
-  FormGroup, ValidationErrors,
+  UntypedFormControl,
+  UntypedFormGroup, ValidationErrors,
   ValidatorFn
 } from "@angular/forms";
 import {notBlank} from "../validators/commonValidators";
 
 @Component({
-  selector: 'app-project-managers-page',
-  templateUrl: './project-managers-page.component.html',
-  styleUrls: ['./project-managers-page.component.css']
+    selector: 'app-project-managers-page',
+    templateUrl: './project-managers-page.component.html',
+    styleUrls: ['./project-managers-page.component.css'],
+    standalone: false
 })
 export class ProjectManagersPageComponent implements OnInit {
 
   projectManagers?: ProjectManager[];
 
-  addNewPmForm = new FormGroup({
-    provider: new FormControl(
+  addNewPmForm = new UntypedFormGroup({
+    provider: new UntypedFormControl(
       'github',
       [notBlank(), this.allowedProviders(['github', 'gitlab'])]
     ),
-    username: new FormControl('', [notBlank(), this.withoutAtSymbol()]),
-    userId: new FormControl('', notBlank()),
-    projectCommission: new FormControl('', notBlank()),
-    contributorCommission: new FormControl('', notBlank()),
-    token: new FormControl('', notBlank())
+    username: new UntypedFormControl('', [notBlank(), this.withoutAtSymbol()]),
+    userId: new UntypedFormControl('', notBlank()),
+    projectCommission: new UntypedFormControl('', notBlank()),
+    contributorCommission: new UntypedFormControl('', notBlank()),
+    token: new UntypedFormControl('', notBlank())
   });
 
   blockSubmitButton?: boolean;

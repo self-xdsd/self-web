@@ -3,9 +3,10 @@ import {User} from "../user";
 import {UserService} from "../user.service";
 
 @Component({
-  selector: 'app-authenticated-menu',
-  templateUrl: './authenticated-menu.component.html',
-  styleUrls: ['./authenticated-menu.component.css']
+    selector: 'app-authenticated-menu',
+    templateUrl: './authenticated-menu.component.html',
+    styleUrls: ['./authenticated-menu.component.css'],
+    standalone: false
 })
 export class AuthenticatedMenuComponent implements OnInit {
 

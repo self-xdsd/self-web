@@ -20,7 +20,7 @@
                 </thead>
                 <tbody>
                   <tr *ngFor="let manager of projectManagers">
-                    <td><a target="_blank" href="{{manager.provider === 'github' ? 'https://github.com/' + manager.username : 'https://gitlab.com/' + manager.username}}">@{{manager.username}}</a></td>
+                    <td><a target="_blank" href="{{manager.provider === 'github' ? 'https://github.com/' + manager.username : 'https://gitlab.com/' + manager.username}}">&#64;{{manager.username}}</a></td>
                     <td>{{manager.provider}}</td>
                     <td>{{manager.userId}}</td>
                     <td>{{manager.commission}}%</td>
@@ -56,7 +56,7 @@
               <label for="pmUserName">Username From Provider*</label>
               <input name="username" type="text" [ngClass]="{'form-control': true, 'is-invalid': addNewPmForm.get('username')?.invalid && (addNewPmForm.get('username')?.dirty || addNewPmForm.get('username')?.touched) }" id="pmUserName" placeholder="Username (e.g. johndoe)" formControlName="username">
               <div *ngIf="addNewPmForm.get('username')?.invalid && (addNewPmForm.get('username')?.dirty || addNewPmForm.get('username')?.touched)" class="invalid-feedback">
-                Please specify a plain username (without a preceding '@').
+                Please specify a plain username (without a preceding '&#64;').
               </div>
             </div>
             <div class="form-group">

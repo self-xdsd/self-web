@@ -3,9 +3,10 @@ import {RepositoriesService} from "../repositories.service";
 import {Repository} from "../repository";
 
 @Component({
-  selector: 'app-repositories-table',
-  templateUrl: './repositories-table.component.html',
-  styleUrls: ['./repositories-table.component.css']
+    selector: 'app-repositories-table',
+    templateUrl: './repositories-table.component.html',
+    styleUrls: ['./repositories-table.component.css'],
+    standalone: false
 })
 export class RepositoriesTableComponent implements OnInit {
 

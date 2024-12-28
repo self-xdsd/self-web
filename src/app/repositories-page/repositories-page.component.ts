@@ -4,9 +4,10 @@ import {User} from "../user";
 import {Router} from "@angular/router";
 
 @Component({
-  selector: 'app-repositories-page',
-  templateUrl: './repositories-page.component.html',
-  styleUrls: ['./repositories-page.component.css']
+    selector: 'app-repositories-page',
+    templateUrl: './repositories-page.component.html',
+    styleUrls: ['./repositories-page.component.css'],
+    standalone: false
 })
 export class RepositoriesPageComponent implements OnInit {
 

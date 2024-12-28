@@ -15,12 +15,16 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "target/classes/static",
+            "outputPath": {
+              "base": "target/classes/static",
+              "browser" : ""
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "src/polyfills.ts"
+            ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
@@ -30,7 +34,8 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "browser": "src/main.ts"
           },
           "configurations": {
             "production": {
@@ -55,9 +60,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -69,10 +72,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "self-xdsd-angular:build:production"
+              "buildTarget": "self-xdsd-angular:build:production"
             },
             "development": {
-              "browserTarget": "self-xdsd-angular:build:development"
+              "buildTarget": "self-xdsd-angular:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -80,7 +83,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "self-xdsd-angular:build"
+            "buildTarget": "self-xdsd-angular:build"
           }
         },
         "test": {
@@ -102,6 +105,5 @@
         }
       }
     }
-  },
-  "defaultProject": "self-xdsd-angular"
+  }
 }

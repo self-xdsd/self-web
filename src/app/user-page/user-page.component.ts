@@ -4,9 +4,10 @@ import {Router} from "@angular/router";
 import {UserService} from "../user.service";
 
 @Component({
-  selector: 'app-user-page',
-  templateUrl: './user-page.component.html',
-  styleUrls: ['./user-page.component.css']
+    selector: 'app-user-page',
+    templateUrl: './user-page.component.html',
+    styleUrls: ['./user-page.component.css'],
+    standalone: false
 })
 export class UserPageComponent implements OnInit {
   authenticatedUser?: User;

@@ -3,18 +3,19 @@ import {Router} from "@angular/router";
 import {PlatformInvoicesService} from "../platform-invoices.service";
 import {PlatformInvoice} from "../platformInvoice";
 import {UserService} from "../user.service";
-import {FormControl} from "@angular/forms";
+import {UntypedFormControl} from "@angular/forms";
 import {formatEur} from "../util/money";
 
 @Component({
-  selector: 'app-platform-invoices-page',
-  templateUrl: './platform-invoices-page.component.html',
-  styleUrls: ['./platform-invoices-page.component.css']
+    selector: 'app-platform-invoices-page',
+    templateUrl: './platform-invoices-page.component.html',
+    styleUrls: ['./platform-invoices-page.component.css'],
+    standalone: false
 })
 export class PlatformInvoicesPageComponent implements OnInit {
 
   platformInvoices?: PlatformInvoice[];
-  filter = new FormControl('');
+  filter = new UntypedFormControl('');
 
   constructor(
     private router: Router,
