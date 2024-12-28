@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import {User} from "../user";
+import {Router} from "@angular/router";
+import {UserService} from "../user.service";
 
 @Component({
     selector: 'app-contributor-page',
@@ -8,9 +11,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ContributorPageComponent implements OnInit {
 
-  constructor() { }
+  activeTab?: string;
+  authenticatedUser?: User;
+
+  constructor(private router: Router, private userService: UserService) {}
 
   ngOnInit(): void {
+    this.activeTab = 'contracts';
+    this.userService.getAuthenticatedUser().subscribe(
+      user => {
+        if(user) {
+          this.authenticatedUser = user;
+        } else {
+          this.router.navigateByUrl("/");
+        }
+      }
+    )
   }
 
 }
