@@ -2,6 +2,8 @@
   <img src="/assets/images/loading.svg" alt="loading...">
 </div>
 <div *ngIf="!loading">
-  <div *ngIf="payoutMethods.length == 0">No payment methods</div>
-  <div *ngIf="payoutMethods.length > 0">Here payment methods</div>
+  <div *ngIf="payoutMethods.length == 0 || !stripe">No payment methods</div>
+  <div *ngIf="payoutMethods.length > 0 && stripe">
+    <app-stripe-payout-method [payoutMethod]="stripe"></app-stripe-payout-method>
+  </div>
 </div>

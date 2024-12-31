@@ -20,6 +20,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RepositoriesTableComponent } from './repositories-page/repositories-table/repositories-table.component';
 import { UserPageComponent } from './user-page/user-page.component';
 import {PayoutMethodComponent} from "./contributor-page/payout-method/payout-method.component";
+import {StripePayoutMethodComponent} from "./contributor-page/payout-method/stripe-payout-method/stripe-payout-method.component";
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import {PayoutMethodComponent} from "./contributor-page/payout-method/payout-met
     ProjectManagersPageComponent,
     RepositoriesTableComponent,
     UserPageComponent,
-    PayoutMethodComponent
+    PayoutMethodComponent,
+    StripePayoutMethodComponent
   ],
     bootstrap: [AppComponent], imports: [BrowserModule,
         AppRoutingModule,

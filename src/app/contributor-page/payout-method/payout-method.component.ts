@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {PayoutMethodService} from "./payout-method.service";
-import {Repository} from "../../repositories-page/repository";
 import {PayoutMethod} from "./payout-method";
 
 @Component({
@@ -12,6 +11,7 @@ import {PayoutMethod} from "./payout-method";
 export class PayoutMethodComponent implements OnInit {
   loading?: boolean;
   payoutMethods: PayoutMethod[];
+  stripe?: PayoutMethod;
 
   constructor(private payoutMethodService: PayoutMethodService) {
     this.payoutMethods = [];
@@ -22,8 +22,8 @@ export class PayoutMethodComponent implements OnInit {
     this.payoutMethodService.getPayoutMethods().subscribe(
       payoutMethods => {
         this.payoutMethods = payoutMethods
+        this.stripe = this.payoutMethods.filter((p) => p.type === 'STRIPE')[0];
         this.loading = false;
-        console.log("PMS HERE: " + payoutMethods.length);
       }
     )
   }

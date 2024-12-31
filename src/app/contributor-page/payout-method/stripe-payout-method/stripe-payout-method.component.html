@@ -1,0 +1,76 @@
+<div class="card shadow">
+  <div class="card-header py-3">
+    <h5 class="m-0 font-weight-bold card-title">Stripe Connect Account     <span *ngIf="!onboardingNeeded && !extraRequirements" class="badge badge-success">active</span>
+      <span *ngIf="onboardingNeeded || extraRequirements" class="badge badge-danger">action required</span></h5>
+  </div>
+  <div class="card-body">
+    <h5>Account ID: <span id="accountId">{{payoutMethod.identifier}}</span></h5>
+    <div *ngIf="onboardingNeeded" id="onboardingNeeded" class="mt-2">
+      <p>
+        Your Stripe Connect account has been created, but you have to complete the Onboarding Process before it becomes active.
+      </p>
+      <form id="completeOnboardingProcessForm">
+        <div class="form-group">
+          <button id="completeOnboardingProcessButton" type="submit" class="btn btn-primary" aria-describedby="completeOnboardingHelp">
+            Complete Onboarding Process
+          </button>
+          <span id="loadingCompleteOnboardingProcess" class="text-center" style="display: none;">
+                                        <img height="40" width="40" src="/images/loading.svg">
+                                    </span>
+          <small id="completeOnboardingHelp" class="form-text text-muted">
+            <p>
+              You will be redirected to <a href="https://stripe.com/docs/connect" target="_blank">Stripe Connect</a>
+              where you should fill out all required information in order to complete the Onboarding Process.
+            </p>
+          </small>
+          <div class="invalid-feedback browser-error">
+            <small>
+              Something went wrong. Please refresh the page and try again.<br>
+              If the error persists, please open an Issue <a href="https://github.com/self-xdsd/self-web/issues" target="_blank">here</a>.
+            </small>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div *ngIf="!onboardingNeeded" id="onboardingFinished" class="mt-2">
+      <div *ngIf="extraRequirements" id="stripeRequirements" class="mt-2">
+        <p>
+          Stripe reported some actions that you need to take regarding your account.<br>
+          Please go to your Stripe Dashboard and complete all the requirements.
+        </p>
+      </div>
+      <div *ngIf="!extraRequirements" id="stripeActive" class="mt-2">
+        <p>
+          Your Stripe account is fully set up and active.<br>
+          We will wire money to it for your work in projects which are using real wallets.
+        </p>
+      </div>
+      <div id="stripeDashboardFormDiv">
+        <p>
+          Use the button bellow anytime, to review your account and see your cash balance.
+        </p>
+        <div class="row ml-0">
+          <form id="stripeDashboardForm" class="mr-1">
+            <button id="stripeDashboardButton" type="submit" class="btn btn-primary">
+              Stripe Dashboard
+            </button>
+          </form>
+          <form id="deleteStripeForm">
+            <button id="stripeDeleteButton" type="submit" class="btn btn-danger">
+              Delete Account
+            </button>
+          </form>
+          <span id="loadingStripeDashboardForm" class="text-center" style="display: none;">
+                                    <img height="30" width="30" src="/images/loading.svg">
+                                </span>
+          <div class="invalid-feedback browser-error">
+            <small>
+              Something went wrong. Please refresh the page and try again.<br>
+              If the error persists, please open an Issue <a href="https://github.com/self-xdsd/self-web/issues" target="_blank">here</a>.
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
