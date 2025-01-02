@@ -15,8 +15,8 @@
             Complete Onboarding Process
           </button>
           <span id="loadingCompleteOnboardingProcess" class="text-center" style="display: none;">
-                                        <img height="40" width="40" src="/images/loading.svg">
-                                    </span>
+            <img height="40" width="40" src="/assets/images/loading.svg">
+          </span>
           <small id="completeOnboardingHelp" class="form-text text-muted">
             <p>
               You will be redirected to <a href="https://stripe.com/docs/connect" target="_blank">Stripe Connect</a>
@@ -55,14 +55,12 @@
               Stripe Dashboard
             </button>
           </form>
-          <form id="deleteStripeForm">
-            <button id="stripeDeleteButton" type="submit" class="btn btn-danger">
-              Delete Account
-            </button>
-          </form>
+          <button id="stripeDeleteButton" class="btn btn-danger" (click)="deleteConfirmation()">
+            Delete Account
+          </button>
           <span id="loadingStripeDashboardForm" class="text-center" style="display: none;">
-                                    <img height="30" width="30" src="/images/loading.svg">
-                                </span>
+            <img height="30" width="30" src="/assets/images/loading.svg">
+          </span>
           <div class="invalid-feedback browser-error">
             <small>
               Something went wrong. Please refresh the page and try again.<br>
