@@ -170,8 +170,9 @@ public class LoginProducer {
 
         @Override
         public String role() {
+            final String username = this.username();
             final String role;
-            if("amihaiemil".equals(this.username())) {
+            if("amihaiemil".equals(username) || "Maiorusergiu".equals(username)) {
                 role = "admin";
             } else {
                 role = "user";
