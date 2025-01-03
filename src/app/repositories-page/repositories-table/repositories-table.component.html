@@ -8,7 +8,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let repo of repositoriesPage">
-          <td><a target="_blank" href="{{repo.provider === 'github' ? '/github/' + repo.repoFullName : '/gitlab/' + repo.repoFullName}}">{{repo.repoFullName}}</a></td>
+          <td><a routerLink="{{repo.provider === 'github' ? '/github/' + repo.repoFullName : '/gitlab/' + repo.repoFullName}}">{{repo.repoFullName}}</a></td>
         </tr>
       </tbody>
     </table>

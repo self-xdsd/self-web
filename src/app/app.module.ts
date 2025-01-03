@@ -21,6 +21,7 @@ import { RepositoriesTableComponent } from './repositories-page/repositories-tab
 import { UserPageComponent } from './user-page/user-page.component';
 import {PayoutMethodComponent} from "./contributor-page/payout-method/payout-method.component";
 import {StripePayoutMethodComponent} from "./contributor-page/payout-method/stripe-payout-method/stripe-payout-method.component";
+import {ProjectPageComponent} from "./project-page/project-page.component";
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import {StripePayoutMethodComponent} from "./contributor-page/payout-method/stri
     AuthenticatedMenuComponent,
     HomepageComponent,
     RepositoriesPageComponent,
+    ProjectPageComponent,
     ContributorPageComponent,
     PlatformInvoicesPageComponent,
     ProjectManagersPageComponent,
