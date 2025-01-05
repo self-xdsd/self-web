@@ -15,7 +15,9 @@
               <div *ngIf="loading" class="text-center">
                 <img src="/assets/images/loading.svg">
               </div>
-              <div *ngIf="!loading && project">{{this.project?.repoFullName}} ... project overview card...</div>
+              <div *ngIf="!loading && project">
+                <app-project-overview [project]="project"></app-project-overview>
+              </div>
               <div *ngIf="!loading && !project">
                 <div>
                   <h5>This repository is not active</h5>

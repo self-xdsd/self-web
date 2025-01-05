@@ -1,0 +1,131 @@
+<div class="collapse multi-collapse show" id="projectOverview">
+  <div class="row">
+    <div class="col-xl-8 col-lg-7">
+      <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <h6 class="m-0 font-weight-bold card-title">Project managed by: <span class="managedByLink"><a href="https://github.com/zoeself" target="_blank">zoeself</a></span></h6>
+        </div>
+        <div class="card-body">
+          <div id="projectOverviewPmPending" class="alert alert-warning" role="alert" style="display:none;">
+            You're almost there. Just give our PM a few minutes to accept the Github invitation, then you'll be all set up.
+          </div>
+          <p>
+            The Project Manager takes care of the following things for you:
+          </p>
+          <div class="mb-2">
+            <h6><code>Issue assignment</code></h6>
+            <p>
+              Whenever someone opens a new Issue in your repository, the PM will
+              automatically register it as a task and will assign a contributor to work on it.
+            </p>
+            <p>
+              If it turns out that the Issue is invalid, not applicable or simply not worth working on as a task,
+              just say <code><span class="managedBy">zoeself</span> deregister</code> and it will be taken out of scope.
+              The Issue will not be invoiced and the PM will not charge a commission for it.
+            </p>
+            <p>
+              Also, when opening a new Issue, you can label it with <code>no-task</code> and the PM will not put
+              it in scope.
+            </p>
+            <p>If you want to put an Issue in scope, say <code><span class="managedBy">zoeself</span> register</code>.</p>
+          </div>
+          <div class="mb-2">
+            <h6><code>Issue resignation</code></h6>
+            <p>If the task's assignee does not close the Issue before the deadline,
+              the PM will resign them and look for another assignee. The resigned assignee will not be paid.</p>
+          </div>
+          <div class="mb-2">
+            <h6><code>TO-DOs as Issues</code></h6>
+            <p>At each <code>push</code>, the PM will scan the code for TO-DOs and open issues for them.</p>
+            <p>When a TO-DO is removed from the code, the PM will close the corresponding Issue.</p>
+          </div>
+          <div class="mb-2">
+            <h6><code>Invoicing and Payments</code></h6>
+            <p>
+              After an Issue or PR is closed, the PM will add the task to the assignee's
+              active Invoice.
+            </p>
+            <p>
+              Invoices over <code>108 €</code> are automatically paid out <code>each Monday</code> from your active Wallet.
+            </p>
+          </div>
+          <div class="mb-2">
+            <h6><code>Commands</code></h6>
+            <p>
+              The Project Manager listens to certain commands given by users. For example,
+              if the assignee cannot solve the task, they can say <code><span class="managedBy">zoeself</span> resign</code> right
+              in the Issue comments and the PM will look for someone else.
+              <a href="#">Here</a> is guide on all possible commands and who can give them.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-4 col-lg-5">
+      <div id="walletCard" class="card shadow mb-4">
+        <!-- Card Header - Dropdown -->
+        <div class="card-header py-3">
+          <h6 class="m-0 font-weight-bold card-title" id="walletCardTitle">Fake Wallet <i class="fa fa-question-circle-o fa-lg fakeWalletInfo" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="" data-original-title="We assigned your project a fake wallet with 100.000 €. You can work with it until you decide to register a real wallet. The business flow is the same, except the payments are fictive."></i></h6>
+        </div>
+        <!-- Card Body -->
+        <div class="card-body">
+          <div class="chart-pie pt-4">
+            <canvas id="walletPieChart" style="display: block; height: 253px; width: 290px;" class="chartjs-render-monitor" width="290" height="253">
+            </canvas>
+          </div>
+          <hr>
+          <span>
+                            Approximate Total: <span class="font-weight-bold" id="walletCash">100.000,00&nbsp;€</span>
+                        </span><br>
+          <span>
+                            Debt: <span class="font-weight-bold" id="walletDebt">0,00&nbsp;€</span>
+                            <i class="fa fa-question-circle-o fa-lg fakeWalletInfo" style="display: none;" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="" data-original-title="Total cost of all currently assigned tasks, active invoices and PM commission.">
+                            </i>
+                        </span><br>
+          <span>Available: <span class="font-weight-bold" id="walletAvailable">100.000,00&nbsp;€</span>
+                        </span>
+        </div>
+      </div>
+      <div id="ownerCard" class="card shadow mb-4" style="display: none;">
+        <!-- Card Header - Dropdown -->
+        <div class="card-header py-3">
+          <h4 class="m-0 font-weight-bold text-primary">Ownership</h4>
+        </div>
+        <!-- Card Body -->
+        <div class="card-body">
+          <p>This project is owned by: <b><span class="selfOwner"></span></b></p>
+          <p>You can see this page because you are an admin in the Organization which
+            owns the repository. However, in Self XDSD there is only one Project Owner, the one
+            who activated the repository.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card shadow mt-2">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold card-title">Badge for your repo: <img src="/b/mbself.svg"></h6>
+    </div>
+    <div class="card-footer project-buttons" style="">
+      <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+          <button class="nav-link active" role="button" id="markdownBadge">Markdown</button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" role="button" id="htmlBadge">HTML</button>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body">
+      <div id="markdownBadgeCode" style="">
+        <code>[![Managed By Self XDSD](https://self-xdsd.com/b/mbself.svg)](<span class="badge-project-url">https://self-xdsd.com/p/self-xdsd/todo-finder-cli?provider=github</span>)</code>
+      </div>
+      <div id="htmlBadgeCode" style="display: none;">
+        <code>
+          &lt;a href='<span class="badge-project-url">https://self-xdsd.com/p/self-xdsd/todo-finder-cli?provider=github</span>'&gt;
+          &lt;img src='https://self-xdsd.com/b/mbself.svg' alt='Managed by Self XDSD'&gt;
+          &lt;/a&gt;
+        </code>
+      </div>
+    </div>
+  </div>
+</div>
