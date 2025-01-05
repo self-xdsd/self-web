@@ -132,9 +132,10 @@ public class ProjectsApi extends BaseApiController {
      */
     @PostMapping(
         value = "/projects/new",
+        consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<String> activate(@Valid final RepoInput repo) {
+    public ResponseEntity<String> activate(@Valid @RequestBody final RepoInput repo) {
         final ResponseEntity<String> resp;
         LOG.debug("Activating repo " + repo.fullName() + "... ");
         final Repo found = this.getRepo(repo.getOwner(), repo.getName());

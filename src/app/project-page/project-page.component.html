@@ -10,24 +10,52 @@
       <div class="card-footer">
         <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" class="nav-tabs">
           <li [ngbNavItem]="'overview'">
-            <a style="color: black;" ngbNavLink>Overview</a>
+            <a *ngIf="project" style="color: black;" ngbNavLink>Overview</a>
             <ng-template ngbNavContent>
-              ...overview...
+              <div *ngIf="loading" class="text-center">
+                <img src="/assets/images/loading.svg">
+              </div>
+              <div *ngIf="!loading && project">{{this.project?.repoFullName}} ... project overview card...</div>
+              <div *ngIf="!loading && !project">
+                <div>
+                  <h5>This repository is not active</h5>
+                  <p>Looks like this repository is not currently managed by Self XDSD. Go ahead and activate it.</p>
+                  <button (click)="activateRepo()" [disabled]="loadingActivate" class="btn btn-primary" aria-describedby="activateHelp">Activate</button>
+                  <span *ngIf="loadingActivate"  class="text-center">
+                    <img height="30" width="30" src="/assets/images/loading.svg">
+                  </span>
+                  <small id="activateHelp" class="form-text text-muted">
+                    <p>Three things will happen when you activate a new repo:</p>
+                    <ul class="pl-0">
+                      <li>1. We will register your repo as a project and assign it a Project Manager.</li>
+                      <li>2. We will invite the PM to your repository with management permissions.</li>
+                      <li>3. We will set up a Webhook in your repository so the PM is notified of certain events automatically.</li>
+                    </ul>
+                  </small>
+                  <div class="invalid-feedback browser-error" style="display: none;">
+                    <small>
+                      Oops, your browser did something unexpected.
+                      Please refresh the page and try again.
+                    </small>
+                  </div>
+                </div>
+
+              </div>
             </ng-template>
           </li>
-          <li [ngbNavItem]="'contracts'">
+          <li *ngIf="project" [ngbNavItem]="'contracts'">
             <a style="color: black;" ngbNavLink>Contracts</a>
             <ng-template ngbNavContent>
               ...contracts...
             </ng-template>
           </li>
-          <li [ngbNavItem]="'wallets'">
+          <li *ngIf="project" [ngbNavItem]="'wallets'">
             <a style="color: black;" ngbNavLink>Wallets</a>
             <ng-template ngbNavContent>
               ...wallets...
             </ng-template>
           </li>
-          <li [ngbNavItem]="'settings'">
+          <li *ngIf="project" [ngbNavItem]="'settings'">
             <a style="color: black;" ngbNavLink>Settings</a>
             <ng-template ngbNavContent>
               ...settings...
