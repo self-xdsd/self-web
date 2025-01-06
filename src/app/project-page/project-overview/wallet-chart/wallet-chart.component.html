@@ -1,0 +1,40 @@
+<div id="walletCard" class="card shadow mb-4">
+  <!-- Card Header - Dropdown -->
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold card-title" *ngIf="wallet.type !== 'STRIPE'">
+      Fake Wallet
+      <i class="fa fa-question-circle-o fa-lg fakeWalletInfo"
+         ngbPopover="We assigned your project a fake wallet with 100.000 €. You can work with it until you decide to register a real wallet. The business flow is the same, except the payments are fictive." triggers="mouseenter:mouseleave"
+      >
+      </i>
+    </h6>
+    <h6 class="m-0 font-weight-bold card-title" *ngIf="wallet.type === 'STRIPE'">
+      Stripe Wallet
+    </h6>
+  </div>
+  <!-- Card Body -->
+  <div class="card-body">
+    <div class="chart-pie pt-4">
+      <canvas baseChart
+              [labels]="doughnutChartLabels"
+              [datasets]="doughnutChartDatasets"
+              [options]="doughnutChartOptions"
+              [legend]="true"
+              [type]="'doughnut'">
+      </canvas>
+    </div>
+    <hr>
+    <span>
+      Approximate Total: <span class="font-weight-bold" id="walletCash">{{formatEur(wallet.cash)}}</span>
+    </span><br>
+    <span>
+        Debt: <span class="font-weight-bold" id="walletDebt">{{formatEur(wallet.debt)}} </span>
+        <i class="fa fa-question-circle-o fa-lg fakeWalletInfo"
+           ngbPopover="Total cost of all currently assigned tasks, active invoices and PM commission." triggers="mouseenter:mouseleave"
+        >
+        </i>
+    </span><br>
+    <span>Available: <span class="font-weight-bold" id="walletAvailable">{{formatEur(wallet.available)}}</span>
+    </span>
+  </div>
+</div>

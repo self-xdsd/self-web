@@ -21,6 +21,8 @@
     "@angular/router": "^19.0.5",
     "@ng-bootstrap/ng-bootstrap": "^18.0.0",
     "bootstrap": "^4.6.0",
+    "chart.js": "^4.4.7",
+    "ng2-charts": "^8.0.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

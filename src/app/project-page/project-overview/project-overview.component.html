@@ -62,30 +62,7 @@
       </div>
     </div>
     <div class="col-xl-4 col-lg-5">
-      <div id="walletCard" class="card shadow mb-4">
-        <!-- Card Header - Dropdown -->
-        <div class="card-header py-3">
-          <h6 class="m-0 font-weight-bold card-title" id="walletCardTitle">Fake Wallet <i class="fa fa-question-circle-o fa-lg fakeWalletInfo" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="" data-original-title="We assigned your project a fake wallet with 100.000 €. You can work with it until you decide to register a real wallet. The business flow is the same, except the payments are fictive."></i></h6>
-        </div>
-        <!-- Card Body -->
-        <div class="card-body">
-          <div class="chart-pie pt-4">
-            <canvas id="walletPieChart" style="display: block; height: 253px; width: 290px;" class="chartjs-render-monitor" width="290" height="253">
-            </canvas>
-          </div>
-          <hr>
-          <span>
-                            Approximate Total: <span class="font-weight-bold" id="walletCash">100.000,00&nbsp;€</span>
-                        </span><br>
-          <span>
-                            Debt: <span class="font-weight-bold" id="walletDebt">0,00&nbsp;€</span>
-                            <i class="fa fa-question-circle-o fa-lg fakeWalletInfo" style="display: none;" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="" data-original-title="Total cost of all currently assigned tasks, active invoices and PM commission.">
-                            </i>
-                        </span><br>
-          <span>Available: <span class="font-weight-bold" id="walletAvailable">100.000,00&nbsp;€</span>
-                        </span>
-        </div>
-      </div>
+      <app-wallet-chart [wallet]="project.wallet"></app-wallet-chart>
       <div id="ownerCard" class="card shadow mb-4" style="display: none;">
         <!-- Card Header - Dropdown -->
         <div class="card-header py-3">

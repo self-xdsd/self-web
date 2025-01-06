@@ -11,4 +11,5 @@ export class ProjectOverviewComponent {
 
   @Input() project!: Project;
 
+  protected readonly onabort = onabort;
 }

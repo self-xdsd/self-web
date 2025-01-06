@@ -24,7 +24,9 @@ import {StripePayoutMethodComponent} from "./contributor-page/payout-method/stri
 import {ProjectPageComponent} from "./project-page/project-page.component";
 import {ProjectOverviewComponent} from "./project-page/project-overview/project-overview.component";
 import {RepoBadgeComponent} from "./project-page/project-overview/repo-badge/repo-badge.component";
-
+import {WalletChartComponent} from "./project-page/project-overview/wallet-chart/wallet-chart.component";
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { BaseChartDirective } from 'ng2-charts';
 @NgModule({
   declarations: [
     AppComponent,
@@ -37,6 +39,7 @@ import {RepoBadgeComponent} from "./project-page/project-overview/repo-badge/rep
     ProjectPageComponent,
     ProjectOverviewComponent,
     RepoBadgeComponent,
+    WalletChartComponent,
     ContributorPageComponent,
     PlatformInvoicesPageComponent,
     ProjectManagersPageComponent,
@@ -50,5 +53,5 @@ import {RepoBadgeComponent} from "./project-page/project-overview/repo-badge/rep
         BrowserAnimationsModule,
         NgbModule,
         FormsModule,
-        ReactiveFormsModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
+        ReactiveFormsModule, BaseChartDirective], providers: [provideHttpClient(withInterceptorsFromDi()), provideCharts(withDefaultRegisterables())] })
 export class AppModule { }
