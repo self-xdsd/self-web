@@ -3,7 +3,7 @@
     <div class="col-xl-8 col-lg-7">
       <div class="card shadow mb-4">
         <div class="card-header py-3">
-          <h6 class="m-0 font-weight-bold card-title">Project managed by: <span class="managedByLink"><a href="https://github.com/zoeself" target="_blank">zoeself</a></span></h6>
+          <h6 class="m-0 font-weight-bold card-title">Project managed by: <span class="managedByLink"><a href="https://{{project.provider}}.com/{{project.manager.username}}" target="_blank">&#64;{{project.manager.username}}</a></span></h6>
         </div>
         <div class="card-body">
           <div id="projectOverviewPmPending" class="alert alert-warning" role="alert" style="display:none;">
@@ -20,14 +20,14 @@
             </p>
             <p>
               If it turns out that the Issue is invalid, not applicable or simply not worth working on as a task,
-              just say <code><span class="managedBy">zoeself</span> deregister</code> and it will be taken out of scope.
+              just say <code>&#64;{{project.manager.username}} deregister</code> and it will be taken out of scope.
               The Issue will not be invoiced and the PM will not charge a commission for it.
             </p>
             <p>
               Also, when opening a new Issue, you can label it with <code>no-task</code> and the PM will not put
               it in scope.
             </p>
-            <p>If you want to put an Issue in scope, say <code><span class="managedBy">zoeself</span> register</code>.</p>
+            <p>If you want to put an Issue in scope, say <code>&#64;{{project.manager.username}}  register</code>.</p>
           </div>
           <div class="mb-2">
             <h6><code>Issue resignation</code></h6>
@@ -46,16 +46,16 @@
               active Invoice.
             </p>
             <p>
-              Invoices over <code>108 €</code> are automatically paid out <code>each Monday</code> from your active Wallet.
+              Invoices over <code>{{formatEur(automaticPaymentValue())}}</code> are automatically paid out <code>each Monday</code> from your active Wallet.
             </p>
           </div>
           <div class="mb-2">
             <h6><code>Commands</code></h6>
             <p>
               The Project Manager listens to certain commands given by users. For example,
-              if the assignee cannot solve the task, they can say <code><span class="managedBy">zoeself</span> resign</code> right
+              if the assignee cannot solve the task, they can say <code>&#64;{{project.manager.username}} resign</code> right
               in the Issue comments and the PM will look for someone else.
-              <a href="#">Here</a> is guide on all possible commands and who can give them.
+              <a href="https://docs.self-xdsd.com/projectmanager.html#commands" target="_blank">Here</a> is guide on all possible commands and who can give them.
             </p>
           </div>
         </div>

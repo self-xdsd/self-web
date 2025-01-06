@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {Project} from "../project";
+import {formatEur} from "../../util/money";
 
 @Component({
   selector: 'app-project-overview',
@@ -11,5 +12,9 @@ export class ProjectOverviewComponent {
 
   @Input() project!: Project;
 
-  protected readonly onabort = onabort;
+  automaticPaymentValue(): number {
+    return 100 + this.project.manager.commission;
+  }
+
+  protected readonly formatEur = formatEur;
 }
