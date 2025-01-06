@@ -23,6 +23,7 @@ import {PayoutMethodComponent} from "./contributor-page/payout-method/payout-met
 import {StripePayoutMethodComponent} from "./contributor-page/payout-method/stripe-payout-method/stripe-payout-method.component";
 import {ProjectPageComponent} from "./project-page/project-page.component";
 import {ProjectOverviewComponent} from "./project-page/project-overview/project-overview.component";
+import {RepoBadgeComponent} from "./project-page/project-overview/repo-badge/repo-badge.component";
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import {ProjectOverviewComponent} from "./project-page/project-overview/project-
     RepositoriesPageComponent,
     ProjectPageComponent,
     ProjectOverviewComponent,
+    RepoBadgeComponent,
     ContributorPageComponent,
     PlatformInvoicesPageComponent,
     ProjectManagersPageComponent,

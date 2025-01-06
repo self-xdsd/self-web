@@ -1,0 +1,32 @@
+<div class="card shadow mt-2">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold card-title">Badge for your repo: <img src="/assets/b/mbself.svg"></h6>
+  </div>
+  <div class="card-footer project-buttons" style="">
+    <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" class="nav-tabs">
+      <li [ngbNavItem]="'markdown'">
+        <a style="color: black;" ngbNavLink>Markdown</a>
+        <ng-template ngbNavContent>
+          <div id="markdownBadgeCode">
+            <code>[![Managed By Self XDSD](https://self-xdsd.com/assets/b/mbself.svg)](<span class="badge-project-url">https://self-xdsd.com/p/{{repoFulLName}}?provider={{provider}}</span>)</code>
+          </div>
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="'html'">
+        <a style="color: black;" ngbNavLink>HTML</a>
+        <ng-template ngbNavContent>
+          <div id="htmlBadgeCode">
+            <code>
+              &lt;a href='<span class="badge-project-url">https://self-xdsd.com/p/{{repoFulLName}}?provider={{provider}}</span>'&gt;
+              &lt;img src='https://self-xdsd.com/assets/b/mbself.svg' alt='Managed by Self XDSD'&gt;
+              &lt;/a&gt;
+            </code>
+          </div>
+        </ng-template>
+      </li>
+    </ul>
+  </div>
+  <div class="card-body">
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+  </div>
+</div>

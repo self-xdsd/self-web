@@ -101,31 +101,5 @@
       </div>
     </div>
   </div>
-  <div class="card shadow mt-2">
-    <div class="card-header py-3">
-      <h6 class="m-0 font-weight-bold card-title">Badge for your repo: <img src="/b/mbself.svg"></h6>
-    </div>
-    <div class="card-footer project-buttons" style="">
-      <ul class="nav nav-tabs card-header-tabs">
-        <li class="nav-item">
-          <button class="nav-link active" role="button" id="markdownBadge">Markdown</button>
-        </li>
-        <li class="nav-item">
-          <button class="nav-link" role="button" id="htmlBadge">HTML</button>
-        </li>
-      </ul>
-    </div>
-    <div class="card-body">
-      <div id="markdownBadgeCode" style="">
-        <code>[![Managed By Self XDSD](https://self-xdsd.com/b/mbself.svg)](<span class="badge-project-url">https://self-xdsd.com/p/self-xdsd/todo-finder-cli?provider=github</span>)</code>
-      </div>
-      <div id="htmlBadgeCode" style="display: none;">
-        <code>
-          &lt;a href='<span class="badge-project-url">https://self-xdsd.com/p/self-xdsd/todo-finder-cli?provider=github</span>'&gt;
-          &lt;img src='https://self-xdsd.com/b/mbself.svg' alt='Managed by Self XDSD'&gt;
-          &lt;/a&gt;
-        </code>
-      </div>
-    </div>
-  </div>
+  <app-repo-badge [provider]="project.provider" [repoFulLName]="project.repoFullName"></app-repo-badge>
 </div>
