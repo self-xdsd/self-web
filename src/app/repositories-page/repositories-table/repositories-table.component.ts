@@ -1,6 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, computed, effect, input, OnInit, signal, untracked} from '@angular/core';
 import {RepositoriesService} from "../repositories.service";
 import {Repository} from "../repository";
+import {Subject} from "rxjs";
+import {takeUntil} from "rxjs/operators";
+import {toSignal} from "@angular/core/rxjs-interop";
 
 @Component({
     selector: 'app-repositories-table',
@@ -13,22 +16,45 @@ export class RepositoriesTableComponent implements OnInit {
   /**
    * Managed repos, personal repos or Organization repos.
    */
-  @Input() type?: string;
-  repositories?: Repository[];
+  type = input.required<string>();
+  // repositories?: Repository[];
   repositoriesPage?: Repository[];
-  loading?: boolean;
+  loading: boolean = false;
 
   page?: number;// = 1;
   pageSize?: number;//=10;
   collectionSize?: number;
 
-  constructor(private repositoriesService: RepositoriesService) { }
+  //#region Observables
+  unsubscribeAll$ = new Subject<void>();
+  //#endregion
+
+  //#region Signals
+  repositories = toSignal(this.repositoriesService.repos$);
+  searchQuery = signal<string>('');
+  filteredRepositories = computed(() => {
+    const sq = this.searchQuery();
+    return this.repositories()?.filter(
+      (x:Repository) => x.repoFullName.toLowerCase().includes(sq.toLowerCase())
+    );
+  });
+  //#endregion
+
+
+
+
+  constructor(private repositoriesService: RepositoriesService) {
+    effect(() => {
+      const searchQuery = this.searchQuery();
+      this.refreshRepositoriesPage();
+    })
+  }
 
   ngOnInit(): void {
     this.page = 1;
     this.pageSize = 10;
     this.loading = true;
-    switch(this.type) {
+    switch(this.type()) {
       case 'personal': {
         this.getPersonalRepos()
         break;
@@ -44,45 +70,74 @@ export class RepositoriesTableComponent implements OnInit {
     }
   }
 
+  ngOnDestroy(): void {
+    this.unsubscribeAll$.next();
+    this.unsubscribeAll$.complete();
+  }
+
   getManagedRepos(): void {
-    this.repositoriesService.getManagedRepos().subscribe(
-      repos => {
-        this.repositories = repos
-        this.collectionSize = this.repositories.length;
-        this.refreshRepositoriesPage();
+    this.repositoriesService.getManagedRepos()
+      .pipe(takeUntil(this.unsubscribeAll$))
+      .subscribe({
+        next:(repos) => {
+          // if(!repos) return;
+          // this.repositories = repos
+          this.collectionSize = this.filteredRepositories()?.length;
+          this.refreshRepositoriesPage();
+          this.loading = false;
+        },
+        error:() => {
         this.loading = false;
-      }
-    )
+        }
+
+      });
   }
 
   getPersonalRepos(): void {
-    this.repositoriesService.getPersonalRepos().subscribe(
+    this.repositoriesService.getPersonalRepos()
+      .pipe(takeUntil(this.unsubscribeAll$))
+      .subscribe(
       repos => {
-        this.repositories = repos
-        this.collectionSize = this.repositories.length;
+        // if(!repos) return;
+        // this.repositories = repos
+        this.collectionSize = this.filteredRepositories()?.length;
         this.refreshRepositoriesPage();
+        this.loading = false;
+      },
+      error => {
         this.loading = false;
       }
     )
   }
 
   getOrganizationRepos(): void {
-    this.repositoriesService.getOrganizationRepos().subscribe(
+    this.repositoriesService.getOrganizationRepos()
+      .pipe(takeUntil(this.unsubscribeAll$))
+      .subscribe(
       repos => {
-        this.repositories = repos
-        this.collectionSize = this.repositories.length;
+        this.collectionSize = this.filteredRepositories()?.length;
         this.refreshRepositoriesPage();
+        this.loading = false;
+      },
+      error => {
         this.loading = false;
       }
     )
   }
 
   refreshRepositoriesPage(): void {
-    if(this.repositories && this.pageSize && this.page) {
-      this.repositoriesPage = this.repositories
-        .map((repo, i) => ({id: i + 1, ...repo}))
+    if(this.pageSize && this.page) {
+      this.repositoriesPage = this.filteredRepositories()
+        ?.map((repo, i) => ({id: i + 1, ...repo}))
         .slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize);
     }
   }
+
+  //#region Event Handlers
+
+  hndSearch(search: string): void {
+    this.searchQuery.set(search);
+  }
+  //#endregion
 
 }

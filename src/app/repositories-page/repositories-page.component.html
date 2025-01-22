@@ -17,18 +17,25 @@
           <li [ngbNavItem]="'managed'">
             <a style="color: black;" ngbNavLink>Managed Repos</a>
             <ng-template ngbNavContent>
+              <p class="mb-5">These are all your repositories which are managed by Self XDSD.</p>
               <app-repositories-table [type]="'managed'"></app-repositories-table>
             </ng-template>
           </li>
           <li [ngbNavItem]="'personal'">
             <a style="color: black;" ngbNavLink>Personal Repos</a>
             <ng-template ngbNavContent>
-              <app-repositories-table [type]="'personal'"></app-repositories-table>
+              <div class="d-flex flex-column gap-3">
+                <p class="mb-5">These are all your personal repositories, both public and private.</p>
+                <app-repositories-table [type]="'personal'"></app-repositories-table>
+              </div>
+
             </ng-template>
           </li>
           <li [ngbNavItem]="'organization'">
             <a style="color: black;" ngbNavLink>Organization Repos</a>
             <ng-template ngbNavContent>
+              <p class="mb-5">You should see here all the repos from Organizations where you have admin rights, including private repos.<br>
+                Missing some of them? Make sure you grant Self XDSD access in Github.</p>
               <app-repositories-table [type]="'organization'"></app-repositories-table>
             </ng-template>
           </li>

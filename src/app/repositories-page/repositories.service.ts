@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import {Observable, of} from "rxjs";
+import {BehaviorSubject, Observable, of} from "rxjs";
 import { HttpClient } from "@angular/common/http";
-import {catchError} from "rxjs/operators";
+import {catchError, tap} from "rxjs/operators";
 import {Repository} from "./repository";
 
 @Injectable({
@@ -9,22 +9,31 @@ import {Repository} from "./repository";
 })
 export class RepositoriesService {
 
+  //#region Observables
+  private onReposChange$ = new BehaviorSubject<Repository[]>([]);
+
+  repos$ = this.onReposChange$.asObservable();
+  //#endregion
+
   constructor(private http: HttpClient) { }
 
   getManagedRepos(): Observable<Repository[]> {
     return this.http.get<Repository[]>("/api/repositories/managed").pipe(
+      tap((repos) => this.onReposChange$.next(repos)),
       catchError(this.handleError<Repository[]>('getManagedRepos', []))
     );
   }
 
   getPersonalRepos(): Observable<Repository[]> {
     return this.http.get<Repository[]>("/api/repositories/personal").pipe(
+      tap((repos) => this.onReposChange$.next(repos)),
       catchError(this.handleError<Repository[]>('getPersonalRepos', []))
     );
   }
 
   getOrganizationRepos(): Observable<Repository[]> {
     return this.http.get<Repository[]>("/api/repositories/orgs").pipe(
+      tap((repos) => this.onReposChange$.next(repos)),
       catchError(this.handleError<Repository[]>('getOrganizationRepos', []))
     );
   }

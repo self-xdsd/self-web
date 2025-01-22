@@ -1,0 +1,20 @@
+
+
+.empty-state-template {
+  background-color: #f9f9f9;
+  transition: background-color 0.3s ease;
+}
+.empty-state-template:hover {
+  background-color: #e9ecef;
+}
+
+input {
+  max-width: 250px;
+}
+
+.search-icon {
+  margin-left: -34px;
+  z-index: 2;
+  padding: 11px;
+  color: grey;
+}
