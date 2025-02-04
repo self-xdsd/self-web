@@ -1,258 +1,316 @@
-<div class="card shadow">
-  <div class="card-header py-3">
-    <h5 class="m-0 font-weight-bold card-title">Contracts</h5>
-  </div>
-  <div class="card-body">
-    <p>You can see here all the contracts you have with various projects managed by Self XDSD, as well as current tasks and invoices. <br>
-      Please read this page to understand how the invoicing, commission and VAT are working.</p>
-  </div>
-  <div class="table-responsive card-body">
-    <div id="invoicesTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
-      <div class="mb-3">
-        <div class="input-group">
-          <input
-            type="search"
-            class="form-control border-end-0 border input-search"
-            placeholder="Filter by repository name"
-            #searchQuery
-            (input)="hndSearch(searchQuery.value)"
-          />
-          <span class="input-group-append search-icon">
+
+
+
+<div *ngIf="isLoading()" class="text-center">
+  <img src="/assets/images/loading.svg">
+</div>
+
+
+  @let isAtLeastOneContract = contributor()?.contracts?.length! > 0;
+  <div class="card shadow"  *ngIf="!isLoading()">
+    <div class="card-header py-3">
+      <h5 class="m-0 font-weight-bold card-title">Contracts</h5>
+    </div>
+    <div class="card-body">
+      <p>You can see here all the contracts you have with various projects managed by Self XDSD, as well as current tasks and invoices. <br>
+        Please read this page to understand how the invoicing, commission and VAT are working.</p>
+    </div>
+    <div class="table-responsive card-body">
+      <div id="invoicesTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+        <div class="mb-3">
+          <div class="input-group">
+            <input
+              type="search"
+              class="form-control border-end-0 border input-search"
+              placeholder="Filter by repository name"
+              #searchQuery
+              (input)="hndSearch(searchQuery.value)"
+            />
+            <span class="input-group-append search-icon">
             <i class="fa fa-search"></i>
         </span>
-        </div>
+          </div>
 
-      </div>
-      <table class="table table-striped">
-        <thead>
-        <tr>
-          <th scope="col">Project</th>
-          <th scope="col">Role</th>
-          <th scope="col">Hourly Rate</th>
-          <th scope="col">
-            Value
-            <i class="fa fa-question-circle-o fa-lg fakeWalletInfo"
-               ngbPopover="Invoice of the Contributor to the Project." triggers="mouseenter:mouseleave"
-            >
-            </i>
-          </th>
-          <th scope="col">Options</th>
-        </tr>
-        </thead>
-        <tbody>
-          @for(contract of contributor()?.contracts; track $index) {
-            <tr>
-              <td>
-                <a
-                  href="https://{{contributor()?.provider!}}.com/{{contract.id.repoFullName}}}"
-                  target="_blank"
-                >
-                  {{contract.id.repoFullName}}
-                </a>
-              </td>
-              <td>{{contract.id.role}}</td>
-              <td>{{contract.hourlyRate}}</td>
-              <td>{{contract.value}}</td>
-              <td>
-                <div>
-                  <a (click)="hndLoadTasksAndInvoices(contract)" class="pr-1 cursor-pointer" title="See Tasks &amp; Invoices">
-                    <i class="fa fa-laptop fa-lg"></i>
+        </div>
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th scope="col">Project</th>
+            <th scope="col">Role</th>
+            <th scope="col">Hourly Rate</th>
+            <th scope="col">
+              Value
+              <i class="fa fa-question-circle-o fa-lg fakeWalletInfo"
+                 ngbPopover="Invoice of the Contributor to the Project." triggers="mouseenter:mouseleave"
+              >
+              </i>
+            </th>
+            <th scope="col">Options</th>
+          </tr>
+          </thead>
+          <tbody>
+            @for(contract of contributor()?.contracts; track $index) {
+              <tr>
+                <td>
+                  <a
+                    href="https://{{contributor()?.provider!}}.com/{{contract.id.repoFullName}}}"
+                    target="_blank"
+                  >
+                    {{contract.id.repoFullName}}
                   </a>
-                  <a (click)="hndMarkProject(contract)" class="pr-1 cursor-pointer" title="Mark Contract For Removal">
-                    <i style="font-size: 20px" class="fa fa-trash"></i>
-                  </a>
-                  <i
-                    class="fa fa-euro fa-lg"
-                    [ngClass]="{
+                </td>
+                <td>{{contract.id.role}}</td>
+                <td>{{contract.hourlyRate}}</td>
+                <td>{{contract.value}}</td>
+                <td>
+                  <div>
+                    <a (click)="hndLoadTasksAndInvoices(contract)" class="pr-1 cursor-pointer" title="See Tasks &amp; Invoices">
+                      <i class="fa fa-laptop fa-lg"></i>
+                    </a>
+                    @if(contract.markedForRemoval !== "null") {
+                      <i class="fa fa-exclamation-circle fa-lg pr-1"
+                         style="color:red;"
+                         ngbTooltip=
+                           "This contract has been marked for removal on {{contract.markedForRemoval | date: 'dd/MM/yyyy'}}.
+                      No more tasks will be assigned to it and it will be removed after 30 days.
+                      Contact the PO if you want to have it reactivated.">
+                      </i>
+                    } @else {
+                      <a
+                        (click)="hndMarkProject(contract)"
+                        class="pr-1 cursor-pointer"
+                        title="Mark Contract For Removal"
+                      >
+                        <i style="font-size: 20px" class="fa fa-trash"></i>
+                      </a>
+                    }
+
+                    <i
+                      class="fa fa-euro fa-lg"
+                      [ngClass]="{
                     'color-green': contract.projectWalletType === 'STRIPE',
                     'color-red': contract.projectWalletType === 'FAKE'
                     }"
-                    placement="top"
-                    ngbTooltip="{{
+                      placement="top"
+                      ngbTooltip="{{
                     contract.projectWalletType === 'FAKE' ?
                      'The project uses a fake Wallet, you will not be paid.' :
                      'The project uses a real Stripe Wallet. Make sure to completely set up your Payout Method in order to be paid.'
 }}"
-                  >
+                    >
 
-                  </i>
+                    </i>
+                  </div>
+
+                </td>
+
+              </tr>
+            }
+
+          </tbody>
+        </table>
+        @if(isAtLeastOneContract) {
+          <div class="p-2">Total Contracts: {{ contributor()?.contracts?.length! }}</div>
+        } @else {
+          <p class="text-center border rounded py-3 my-3 empty-state-template">No data available in table</p>
+        }
+
+        @if(isAtLeastOneContract) {
+          <div class="d-flex justify-content-between p-2">
+            <!--          <ngb-pagination [collectionSize]="1" [(page)]="1" [pageSize]="5">-->
+            <!--          </ngb-pagination>-->
+            <select class="custom-select" style="width: auto">
+              <option [ngValue]="10">10 repositories per page</option>
+              <option [ngValue]="25">25 repositories per page</option>
+              <option [ngValue]="50">50 repositories per page</option>
+              <option [ngValue]="100">100 repositories per page</option>
+            </select>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+
+  <div id="tasks-table" *ngIf="selectedContract()" class="row mt-4">
+    @let isAtLeastOneTask = tasks()?.length! > 0;
+    <div class="col-lg-6">
+      <div class="card shadow">
+        <div class="card-header py-3">
+          @let repoName = selectedContract()?.id?.repoFullName;
+          @let role = selectedContract()?.id?.role;
+          <h5 class="m-0 font-weight-bold card-title">Tasks in {{repoName}} ({{role}})</h5>
+        </div>
+        <div class="card-body">
+          <p>These tasks are assigned to you at the moment. <br>
+            Read more about estimations and microtasking here.</p>
+        </div>
+        <div class="table-responsive card-body">
+          <div id="invoicesTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+            <div class="mb-3">
+              <div class="input-group">
+                <input
+                  type="search"
+                  class="form-control border-end-0 border input-search"
+                  placeholder="Filter by repository name"
+                  #searchQuery
+                  (input)="hndSearch(searchQuery.value)"
+                />
+                <span class="input-group-append search-icon">
+                    <i class="fa fa-search"></i>
+                </span>
+              </div>
+
+            </div>
+            <table class="table table-striped">
+              <thead>
+              <tr>
+                <th scope="col">Issue</th>
+                <th scope="col">Assigned</th>
+                <th scope="col">Deadline</th>
+                <th scope="col">
+                  Estimation
+                </th>
+                <th scope="col">Value</th>
+              </tr>
+              </thead>
+              <tbody>
+
+                @if(isContractLoading()) {
+                  <tr>
+                    <td valign="top" colspan="5" class="text-center"><img src="/assets/images/loading.svg" height="100">
+                    </td>
+                  </tr>
+
+                } @else {
+                  @for(task of tasks(); track $index) {
+                    <tr>
+                      <td>Issue</td>
+                      <td>Assigned</td>
+                      <td>Deadline</td>
+                      <td>Estimation</td>
+                      <td>Value</td>
+                    </tr>
+                  }
+
+                }
+
+
+
+              </tbody>
+            </table>
+            @if(isAtLeastOneTask) {
+              <div class="p-2">Total Tasks: {{ tasks()?.length! }}</div>
+            } @else {
+              <p class="text-center border rounded py-3 my-3 empty-state-template">No data available in table</p>
+            }
+
+            @if(isAtLeastOneTask) {
+              <div class="d-flex justify-content-between p-2">
+                <select class="custom-select" style="width: auto">
+                  <option [ngValue]="10">10 repositories per page</option>
+                  <option [ngValue]="25">25 repositories per page</option>
+                  <option [ngValue]="50">50 repositories per page</option>
+                  <option [ngValue]="100">100 repositories per page</option>
+                </select>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+    @if(selectedContract()) {
+      @let isAtLeastOneInvoice = invoices()?.length! > 0;
+      <div class="col-lg-6" id="invoices-table">
+        <div class="card shadow">
+          <div class="card-header py-3">
+            @let repoName = selectedContract()?.id?.repoFullName;
+            @let role = selectedContract()?.id?.role;
+            <h5 class="m-0 font-weight-bold card-title">Invoices in {{repoName}} ({{role}})</h5>
+          </div>
+          <div class="table-responsive card-body">
+            <div id="invoicesTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+              <div class="mb-3">
+                <div class="input-group">
+                  <input
+                    type="search"
+                    class="form-control border-end-0 border input-search"
+                    placeholder="Filter by repository name"
+                    #searchQuery
+                    (input)="hndSearch(searchQuery.value)"
+                  />
+                  <span class="input-group-append search-icon">
+            <i class="fa fa-search"></i>
+        </span>
                 </div>
 
-              </td>
-
-            </tr>
-          }
-
-        </tbody>
-      </table>
-      @if(true) {
-        <div class="p-2">Total Contracts: {{ contributor()?.contracts?.length! }}</div>
-      } @else {
-        <p class="text-center border rounded py-3 my-3 empty-state-template">No data available in table</p>
-      }
-
-      @if(true) {
-        <div class="d-flex justify-content-between p-2">
-<!--          <ngb-pagination [collectionSize]="1" [(page)]="1" [pageSize]="5">-->
-<!--          </ngb-pagination>-->
-          <select class="custom-select" style="width: auto">
-            <option [ngValue]="10">10 repositories per page</option>
-            <option [ngValue]="25">25 repositories per page</option>
-            <option [ngValue]="50">50 repositories per page</option>
-            <option [ngValue]="100">100 repositories per page</option>
-          </select>
-        </div>
-      }
-    </div>
-  </div>
-</div>
-
-<div class="row mt-4">
-  <div class="col-lg-6">
-    <div class="card shadow">
-      <div class="card-header py-3">
-        <h5 class="m-0 font-weight-bold card-title">Tasks in Maiorusergiu/repoTest1 (PO)</h5>
-      </div>
-      <div class="card-body">
-        <p>These tasks are assigned to you at the moment. <br>
-          Read more about estimations and microtasking here.</p>
-      </div>
-      <div class="table-responsive card-body">
-        <div id="invoicesTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
-          <div class="mb-3">
-            <div class="input-group">
-              <input
-                type="search"
-                class="form-control border-end-0 border input-search"
-                placeholder="Filter by repository name"
-                #searchQuery
-                (input)="hndSearch(searchQuery.value)"
-              />
-              <span class="input-group-append search-icon">
-            <i class="fa fa-search"></i>
-        </span>
-            </div>
-
-          </div>
-          <table class="table table-striped">
-            <thead>
-            <tr>
-              <th scope="col">Issue</th>
-              <th scope="col">Assigned</th>
-              <th scope="col">Deadline</th>
-              <th scope="col">
-                Estimation
-              </th>
-              <th scope="col">Value</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <td>Issue</td>
-              <td>Assigned</td>
-              <td>Deadline</td>
-              <td>Estimation</td>
-              <td>Value</td>
-            </tr>
-
-            </tbody>
-          </table>
-          @if(true) {
-            <div class="p-2">Total Contracts: {{ contributor()?.contracts?.length! }}</div>
-          } @else {
-            <p class="text-center border rounded py-3 my-3 empty-state-template">No data available in table</p>
-          }
-
-          @if(true) {
-            <div class="d-flex justify-content-between p-2">
-              <!--          <ngb-pagination [collectionSize]="1" [(page)]="1" [pageSize]="5">-->
-              <!--          </ngb-pagination>-->
-              <select class="custom-select" style="width: auto">
-                <option [ngValue]="10">10 repositories per page</option>
-                <option [ngValue]="25">25 repositories per page</option>
-                <option [ngValue]="50">50 repositories per page</option>
-                <option [ngValue]="100">100 repositories per page</option>
-              </select>
-            </div>
-          }
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-lg-6">
-    <div class="card shadow">
-      <div class="card-header py-3">
-        <h5 class="m-0 font-weight-bold card-title">Invoices in Maiorusergiu/repoTest1 (PO)</h5>
-      </div>
-      <div class="table-responsive card-body">
-        <div id="invoicesTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
-          <div class="mb-3">
-            <div class="input-group">
-              <input
-                type="search"
-                class="form-control border-end-0 border input-search"
-                placeholder="Filter by repository name"
-                #searchQuery
-                (input)="hndSearch(searchQuery.value)"
-              />
-              <span class="input-group-append search-icon">
-            <i class="fa fa-search"></i>
-        </span>
-            </div>
-
-          </div>
-          <table class="table table-striped">
-            <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Created</th>
-              <th scope="col">Gross Revenue</th>
-              <th scope="col">Status</th>
-              <th scope="col">Download</th>
-            </tr>
-            </thead>
-            <tbody>
+              </div>
+              <table class="table table-striped">
+                <thead>
                 <tr>
-                  <td>ID</td>
-                  <td>Created</td>
-                  <td>Gross Revenue</td>
-                  <td>Status</td>
-                  <td>
-                    <a href="/api/contributor/contracts/Maiorusergiu/Admin-Dashboard/invoices/343/pdf?role=PO"
-                       target="_blank"
-                       class="downloadInvoice">
-                      <i title="Your Invoice To The Project" class="fa fa-file-pdf-o fa-lg"></i>
-                    </a>
-                  </td>
-
+                  <th scope="col">ID</th>
+                  <th scope="col">Created</th>
+                  <th scope="col">Gross Revenue</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Download</th>
                 </tr>
+                </thead>
+                <tbody>
+                  @if(isContractLoading()) {
+                    <tr>
+                      <td valign="top" colspan="5" class="text-center"><img src="/assets/images/loading.svg" height="100">
+                      </td>
+                    </tr>
 
-            </tbody>
-          </table>
-          @if(true) {
-            <div class="p-2">Total Contracts: {{ contributor()?.contracts?.length! }}</div>
-          } @else {
-            <p class="text-center border rounded py-3 my-3 empty-state-template">No data available in table</p>
-          }
+                  } @else {
+                    @for(invoice of invoices(); track $index){
+                      <tr>
+                        <td>{{invoice.id}}</td>
+                        <td>{{invoice.createdAt | date: 'dd/MM/yyyy'.replace('/', '-').replace('/', '-')}}</td>
+                        <td>{{invoice.amount}}</td>
+                        <td>{{invoice.isPaid === true ? 'Paid' : 'Active'}}</td>
+                        <td>
+                          <a href="/api/contributor/contracts/Maiorusergiu/Admin-Dashboard/invoices/343/pdf?role=PO"
+                             target="_blank"
+                             class="downloadInvoice">
+                            <i title="Your Invoice To The Project" class="fa fa-file-pdf-o fa-lg"></i>
+                          </a>
+                        </td>
+                      </tr>
+                    }
 
-          @if(true) {
-            <div class="d-flex justify-content-between p-2">
-              <!--          <ngb-pagination [collectionSize]="1" [(page)]="1" [pageSize]="5">-->
-              <!--          </ngb-pagination>-->
-              <select class="custom-select" style="width: auto">
-                <option [ngValue]="10">10 repositories per page</option>
-                <option [ngValue]="25">25 repositories per page</option>
-                <option [ngValue]="50">50 repositories per page</option>
-                <option [ngValue]="100">100 repositories per page</option>
-              </select>
+                  }
+
+                </tbody>
+              </table>
+              @if(isAtLeastOneInvoice) {
+                <div class="p-2">Total Invoices: {{ invoices()?.length! }}</div>
+              } @else {
+                <p class="text-center border rounded py-3 my-3 empty-state-template">No data available in table</p>
+              }
+
+              @if(isAtLeastOneInvoice) {
+                <div class="d-flex justify-content-between p-2">
+                  <!--          <ngb-pagination [collectionSize]="1" [(page)]="1" [pageSize]="5">-->
+                  <!--          </ngb-pagination>-->
+                  <select class="custom-select" style="width: auto">
+                    <option [ngValue]="10">10 repositories per page</option>
+                    <option [ngValue]="25">25 repositories per page</option>
+                    <option [ngValue]="50">50 repositories per page</option>
+                    <option [ngValue]="100">100 repositories per page</option>
+                  </select>
+                </div>
+              }
             </div>
-          }
+          </div>
         </div>
       </div>
-    </div>
-  </div>
+
+    }
 
 
-</div>
 

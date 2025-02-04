@@ -13,8 +13,6 @@ export class ContributorService {
   //#endregion
   //#region Constants
   private readonly contributorEndpoint: string = '/api/contributor';
-  private readonly invoicesEndpoint: string = '/api/contributor/contracts/Maiorusergiu/repoTest1/invoices?role=PO';
-  private readonly tasksEndpoint: string = '/api/contributor/contracts/Maiorusergiu/repoTest1/tasks?role=PO';
   //#endregion
   //#region Observables
   private onContributorChange$ = new BehaviorSubject<Contributor | null>(null);
@@ -38,8 +36,9 @@ export class ContributorService {
       );
   }
 
-  getTasks(): Observable<ITask[]> {
-    return this.http.get<ITask[]>(this.tasksEndpoint)
+  getTasks(repoName: string, role: string): Observable<ITask[]> {
+    const endpoint: string = `/api/contributor/contracts/${repoName}/tasks?role=${role}`;
+    return this.http.get<ITask[]>(endpoint)
       .pipe(
         tap(
           (tasks ) => this.onTasksChange$.next(tasks)
@@ -47,8 +46,9 @@ export class ContributorService {
       );
   }
 
-  getInvoices(): Observable<Invoice[]> {
-    return this.http.get<Invoice[]>(this.invoicesEndpoint)
+  getInvoices(repoName: string, role: string): Observable<Invoice[]> {
+    const endpoint: string = `/api/contributor/contracts/${repoName}/invoices?role=${role}`;
+    return this.http.get<Invoice[]>(endpoint)
       .pipe(
         tap(
           (invoices ) => this.onInvoicesChange$.next(invoices)

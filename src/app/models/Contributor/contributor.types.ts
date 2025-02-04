@@ -6,7 +6,19 @@ export interface Contributor {
 }
 
 export interface Invoice {
+  id: number,
+  createdAt: Date,
+  isPaid: boolean,
+  amount: string,
+  totalAmount: string,
+  latestPayment?: InvoicePayment
+}
 
+export type InvoicePayment = {
+  "status": string,
+  failReason: string,
+  "transactionId": string,
+  "timestamp": Date
 }
 
 export interface ITask {

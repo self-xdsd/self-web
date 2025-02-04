@@ -10,6 +10,22 @@ main {
 .bg-light {
   background-color: #f8f9fa !important;
 }
+
+a {
+  color: black;
+}
+
+input {
+  max-width: 250px;
+}
+
+.search-icon {
+  margin-left: -34px;
+  z-index: 2;
+  padding: 11px;
+  color: grey;
+}
+
 #header {
   border-bottom-style: solid;
   border-bottom-width: 1px;
