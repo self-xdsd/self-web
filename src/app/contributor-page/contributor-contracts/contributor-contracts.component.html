@@ -185,11 +185,16 @@
                 } @else {
                   @for(task of tasks(); track $index) {
                     <tr>
-                      <td>Issue</td>
-                      <td>Assigned</td>
-                      <td>Deadline</td>
-                      <td>Estimation</td>
-                      <td>Value</td>
+                      <td>
+                        <a href="https://github.com/{{repoName}}/issues/{{task.issueId}}" target="_blank">
+                          #{{task.issueId}}
+                        </a>
+                      </td>
+                      <td>{{task.assignmentDate | date: 'dd/MM/yyyy'}}</td>
+                      <td>{{task.deadline | date: 'dd/MM/yyyy'}}</td>
+                      <td>{{task.estimation}} min</td>
+                      <td>{{task.value}} €</td>
+
                     </tr>
                   }
 
@@ -274,10 +279,21 @@
                         <td>{{invoice.amount}}</td>
                         <td>{{invoice.isPaid === true ? 'Paid' : 'Active'}}</td>
                         <td>
-                          <a href="/api/contributor/contracts/Maiorusergiu/Admin-Dashboard/invoices/343/pdf?role=PO"
+                          <a href="/api/contributor/{{repoName}}/invoices/{{invoice.id}}/pdf?role={{role}}"
                              target="_blank"
                              class="downloadInvoice">
                             <i title="Your Invoice To The Project" class="fa fa-file-pdf-o fa-lg"></i>
+                          </a>
+                          <a
+                            *ngIf="invoice.latestPayment"
+                            href="/api/contributor/contracts/{{repoName}}/invoices/{{invoice.id}}/platform/pdf?role={{role}}"
+                            target="_blank"
+                            class="downloadInvoice pl-1"
+                          >
+                            <i title="Commission Invoice From Self XDSD"
+                               style="color: #701516;"
+                               class="fa fa-file-pdf-o fa-lg">
+                            </i>
                           </a>
                         </td>
                       </tr>

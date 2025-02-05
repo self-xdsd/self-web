@@ -22,7 +22,11 @@ export type InvoicePayment = {
 }
 
 export interface ITask {
-
+  assignmentDate: Date;
+  deadline: Date;
+  estimation: number;
+  issueId: string;
+  value: number;
 }
 
 
