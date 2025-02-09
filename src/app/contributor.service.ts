@@ -55,5 +55,10 @@ export class ContributorService {
         )
       );
   }
+
+  markContract(repoName: string, role: string): Observable<Contract> {
+    const endpoint: string = `/api/contributor/contracts/${repoName}/mark?role=${role}`;
+    return this.http.delete<Contract>(endpoint);
+  }
   //#endregion
 }

@@ -4,7 +4,7 @@ import {NgbPagination, NgbPopover, NgbTooltipModule} from "@ng-bootstrap/ng-boot
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ContributorService} from "../../contributor.service";
 import {combineLatest, of, Subject} from "rxjs";
-import {finalize, switchMap, takeUntil} from "rxjs/operators";
+import {finalize, switchMap, takeUntil, tap} from "rxjs/operators";
 import {toSignal} from "@angular/core/rxjs-interop";
 import {Contract, Contributor} from "../../models/Contributor/contributor.types";
 
@@ -122,7 +122,17 @@ export class ContributorContractsComponent {
   }
 
   hndMarkProject(contract: Contract) {
-    console.log(contract);
+    let contractToMark = this.contributor()?.contracts.find((c: Contract) => c === contract);
+    if(!contractToMark) return;
+    const repoName = contractToMark.id.repoFullName;
+    const role = contractToMark.id.role;
+    this.contributorService.markContract(repoName, role)
+      .subscribe({
+        next:(res: Contract) => {
+          contractToMark = res;
+        }
+
+      });
   }
   //#endregion
 

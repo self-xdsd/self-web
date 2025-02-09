@@ -71,7 +71,7 @@
                       <i class="fa fa-exclamation-circle fa-lg pr-1"
                          style="color:red;"
                          ngbTooltip=
-                           "This contract has been marked for removal on {{contract.markedForRemoval | date: 'dd/MM/yyyy'}}.
+                           "This contract has been marked for removal on {{contract.markedForRemoval | date: 'dd-MM-yyyy'}}.
                       No more tasks will be assigned to it and it will be removed after 30 days.
                       Contact the PO if you want to have it reactivated.">
                       </i>
@@ -190,8 +190,8 @@
                           #{{task.issueId}}
                         </a>
                       </td>
-                      <td>{{task.assignmentDate | date: 'dd/MM/yyyy'}}</td>
-                      <td>{{task.deadline | date: 'dd/MM/yyyy'}}</td>
+                      <td>{{task.assignmentDate | date: 'dd-MM-yyyy'}}</td>
+                      <td>{{task.deadline | date: 'dd-MM-yyyy'}}</td>
                       <td>{{task.estimation}} min</td>
                       <td>{{task.value}} €</td>
 
@@ -275,7 +275,7 @@
                     @for(invoice of invoices(); track $index){
                       <tr>
                         <td>{{invoice.id}}</td>
-                        <td>{{invoice.createdAt | date: 'dd/MM/yyyy'.replace('/', '-').replace('/', '-')}}</td>
+                        <td>{{invoice.createdAt | date: 'dd-MM-yyyy'}}</td>
                         <td>{{invoice.amount}}</td>
                         <td>{{invoice.isPaid === true ? 'Paid' : 'Active'}}</td>
                         <td>
@@ -285,7 +285,7 @@
                             <i title="Your Invoice To The Project" class="fa fa-file-pdf-o fa-lg"></i>
                           </a>
                           <a
-                            *ngIf="invoice.latestPayment"
+                            *ngIf="invoice.latestPayment?.status === 'SUCCESSFUL'"
                             href="/api/contributor/contracts/{{repoName}}/invoices/{{invoice.id}}/platform/pdf?role={{role}}"
                             target="_blank"
                             class="downloadInvoice pl-1"
