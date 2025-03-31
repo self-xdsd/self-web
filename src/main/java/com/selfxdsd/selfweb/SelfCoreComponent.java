@@ -22,11 +22,16 @@
  */
 package com.selfxdsd.selfweb;
 
-import com.selfxdsd.api.*;
-import com.selfxdsd.core.Env;
+import com.selfxdsd.api.Contributors;
+import com.selfxdsd.api.Login;
+import com.selfxdsd.api.ProjectManagers;
+import com.selfxdsd.api.Projects;
+import com.selfxdsd.api.Self;
+import com.selfxdsd.api.User;
 import com.selfxdsd.core.SelfCore;
-import com.selfxdsd.storage.MySql;
+import com.selfxdsd.storage.Database;
 import com.selfxdsd.storage.SelfJooq;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
@@ -47,19 +52,11 @@ public class SelfCoreComponent implements Self {
 
     /**
      * Default constructor for Spring.
+     * @param database Database connection.
      */
-    public SelfCoreComponent() {
-        this(
-            new SelfCore(
-                new SelfJooq(
-                    new MySql(
-                        System.getenv(Env.DB_URL),
-                        System.getenv(Env.DB_USER),
-                        System.getenv(Env.DB_PASSWORD)
-                    )
-                )
-            )
-        );
+    @Autowired
+    public SelfCoreComponent(final Database database) {
+        this.core = new SelfCore(new SelfJooq(database));
     }
 
     /**
